@@ -23,7 +23,7 @@ include test/Makefile
 include examples/*.py
 include scripts/*.py
 include scripts/*.csv
-include README
+include README.rst
 include COPYING
 include DEVELOPMENT
 include THANKS
