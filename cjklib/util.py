@@ -245,6 +245,18 @@ def istitlecase(strng):
     """
     return titlecase(strng) == strng
 
+def utf_8_encode(_str):
+    if sys.version_info[0] < 3:
+        return _str.encode('utf-8')
+    else:
+        return _str
+
+def utf_8_decode(_bytes):
+    if sys.version_info[0] < 3:
+        return _bytes
+    else:
+        return _bytes.decode('utf-8')
+
 if sys.maxunicode < 0x10000:
     def fromCodepoint(codepoint):
         """
@@ -435,7 +447,7 @@ class UnicodeCSVFileIterator(object):
     @staticmethod
     def utf_8_encoder(unicode_csv_data):
         for line in unicode_csv_data:
-            yield line.encode('utf-8')
+            yield utf_8_encode(line)
 
     @staticmethod
     def byte_string_dialect(dialect):

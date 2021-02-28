@@ -418,7 +418,7 @@ class DatabaseConnector(object):
             return tableName in tableNames
 
         import sys
-        if sys.platform == 'win32' and self.engine.name == 'sqlite':
+        if sys.platform == 'win32' and self.engine.name == 'sqlite' and sys.version_info[0] < 3:
             # work around bug http://bugs.python.org/issue8192
             hasTable = has_table
         else:
@@ -475,15 +475,15 @@ class DatabaseConnector(object):
         encoded in utf8. We need to fix that here.
         :param data: a tuple or scalar value
         """
-        if hasattr(data, '__iter__'):
+        if hasattr(data, '__iter__') and not isinstance(data, str):
             newData = []
             for cell in data:
-                if type(cell) == type(''):
+                if type(cell) == bytes:
                     cell = cell.decode('utf8')
                 newData.append(cell)
             return tuple(newData)
         else:
-            if type(data) == type(''):
+            if type(data) == bytes:
                 return data.decode('utf8')
             else:
                 return data
