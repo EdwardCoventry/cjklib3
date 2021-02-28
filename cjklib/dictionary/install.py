@@ -63,7 +63,7 @@ from sqlalchemy.exc import OperationalError
 import cjklib
 from cjklib import dbconnector
 from cjklib import build
-from cjklib.util import cachedmethod, ExtendedOption, getConfigSettings
+from cjklib.util import cachedmethod, ExtendedOption, getConfigSettings, utf_8_decode
 
 try:
     from progressbar import Percentage, Bar, ETA, FileTransferSpeed, ProgressBar
@@ -276,7 +276,7 @@ class PageDownloaderBase(DownloaderBase):
         if not self.quiet: warn("Getting download page %s..."
             % self.DEFAULT_DOWNLOAD_PAGE, endline=False)
         f = urllib.urlopen(self.DEFAULT_DOWNLOAD_PAGE)
-        downloadPage = f.read()
+        downloadPage = utf_8_decode(f.read())
         f.close()
         if not self.quiet: warn("done")
 
@@ -314,9 +314,9 @@ class HanDeDictDownloader(PageDownloaderBase):
     """Downloader for the HanDeDict dictionary."""
     PROVIDES = 'HanDeDict'
     DEFAULT_DOWNLOAD_PAGE \
-        = u'http://www.handedict.de/chinesisch_deutsch.php?mode=dl'
+        = u'http://handedict.zydeo.net/en/download'
     DOWNLOAD_REGEX = re.compile(
-        u'<a href="(handedict/handedict-(?:\d+).tar.bz2)">')
+        u'<a href="(api/export/download)">')
     DATE_REGEX = re.compile(u'<a href="handedict/handedict-(\d+).tar.bz2">')
     DATE_FMT = '%Y%m%d'
 
@@ -324,7 +324,8 @@ class HanDeDictDownloader(PageDownloaderBase):
 class CFDICTDownloader(DownloaderBase):
     """Downloader for the CFDICT dictionary."""
     PROVIDES = 'CFDICT'
-    DOWNLOAD_LINK = u'http://www.chine-informations.com/chinois/open/CFDICT/cfdict.zip'
+    #DOWNLOAD_LINK = u'http://www.chine-informations.com/chinois/open/CFDICT/cfdict.zip'
+    DOWNLOAD_LINK = u'https://chine.in/mandarin/dictionnaire/CFDICT/download.php'
 
     def getDownloadLink(self):
         return self.DOWNLOAD_LINK
