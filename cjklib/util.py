@@ -257,6 +257,12 @@ def utf_8_decode(_bytes):
     else:
         return _bytes.decode('utf-8')
 
+def utf_8_unicode(_unicode):
+    if sys.version_info[0] < 3:
+        return unicode(_unicode, 'utf-8')
+    else:
+        return _unicode
+
 if sys.maxunicode < 0x10000:
     def fromCodepoint(codepoint):
         """
@@ -442,7 +448,7 @@ class UnicodeCSVFileIterator(object):
         if not hasattr(self, '_csvReader'):
             self._csvReader = self._getCSVReader(self.fileHandle)
 
-        return [unicode(cell, 'utf-8') for cell in self._csvReader.next()]
+        return [utf_8_unicode(cell) for cell in self._csvReader.next()]
 
     @staticmethod
     def utf_8_encoder(unicode_csv_data):
