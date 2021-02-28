@@ -32,6 +32,24 @@ Alternatively for MySQL as backend:
 .. _pysqlite2: http://code.google.com/p/pysqlite/downloads/list
 .. _MySQL-Python: http://sourceforge.net/projects/mysql-python/
 
+Porting to Python 3
+===================
+
+.. code-block:: bash
+
+    conda create -n py37 python=3.7
+    conda activate py37
+    git clone <git-repo-url>
+    cd cjklib3
+    pip install 2to3
+    2to3 -w .
+    curl http://ftp.unicode.org/Public/UNIDATA/Unihan.zip -o Unihan.zip
+    python -m cjklib.build.cli build cjklibData --attach= --database=sqlite:///cjklib/cjklib.db
+    pip install .
+    installcjkdict --download CEDICT
+    python -m cjklib.build.cli build fullCEDICT --attach=sqlite:///cjklib/cjklib.db --database=sqlite:///cjklib/cjklib.db
+    pip install .
+
 Installing
 ==========
 
