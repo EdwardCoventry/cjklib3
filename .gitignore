@@ -7,4 +7,8 @@ test/downloads
 env
 .noseids
 Unihan.zip
-
+cjklib.db
+cjklib.db-journal
+.ipynb_checkpoints
+cedict_1_0_ts_utf-8_mdbg.txt.gz
+*.py.bak
