@@ -2299,7 +2299,7 @@ class CombinedStrokeCountBuilder(StrokeCountBuilder):
                     self.tableEntries)
                 warn("Specific stroke counts do not include stroke count" \
                     " as given by Unihan: " \
-                    + ' '.join(['%s ([%s], %d)' \
+                    + ' '.join(['%s ([%s], %s)' \
                         % (c, ' '.join([str(i) for i in s]), u) \
                         for c, s, u in soMismatch]))
 
@@ -3221,6 +3221,15 @@ class EDICTFormatBuilder(EntryGeneratorBuilder):
             z = gzip.GzipFile(filePath, 'r')
             return StringIO.StringIO(z.read().decode(self.ENCODING))
         else:
+            try:
+                import gzip
+                import StringIO
+                z = gzip.GzipFile(filePath, 'r')
+                return StringIO.StringIO(z.read().decode(self.ENCODING))
+            except IntegrityError, e:
+                if e.args[0] != 'Not a gzipped file':
+                    raise
+
             import codecs
             return codecs.open(filePath, 'r', self.ENCODING)
 
