@@ -63,7 +63,7 @@ from sqlalchemy.exc import OperationalError
 import cjklib
 from cjklib import dbconnector
 from cjklib import build
-from cjklib.util import cachedmethod, ExtendedOption, getConfigSettings, utf_8_decode
+from cjklib.util import cachedmethod, ExtendedOption, getConfigSettings, bytes_decode, replace_encode
 
 try:
     from progressbar import Percentage, Bar, ETA, FileTransferSpeed, ProgressBar
@@ -98,7 +98,7 @@ def warn(message, endline=True):
     :type message: str
     :param message: message to print
     """
-    print message.encode(locale.getpreferredencoding(), 'replace'),
+    print replace_encode(message, locale.getpreferredencoding()),
     if endline: print
 
 #{ Access methods
@@ -276,7 +276,7 @@ class PageDownloaderBase(DownloaderBase):
         if not self.quiet: warn("Getting download page %s..."
             % self.DEFAULT_DOWNLOAD_PAGE, endline=False)
         f = urllib.urlopen(self.DEFAULT_DOWNLOAD_PAGE)
-        downloadPage = utf_8_decode(f.read())
+        downloadPage = bytes_decode(f.read(), 'utf-8')
         f.close()
         if not self.quiet: warn("done")
 

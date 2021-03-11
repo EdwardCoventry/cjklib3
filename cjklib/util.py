@@ -245,21 +245,27 @@ def istitlecase(strng):
     """
     return titlecase(strng) == strng
 
-def utf_8_encode(_str):
+def get_encode(_str, encoding='utf-8'):
     if sys.version_info[0] < 3:
-        return _str.encode('utf-8')
+        return _str.encode(encoding)
     else:
         return _str
 
-def utf_8_decode(_bytes):
+def replace_encode(_str, encoding='utf-8'):
+    if sys.version_info[0] < 3:
+        return _str.encode(encoding, 'replace')
+    else:
+        return _str
+
+def bytes_decode(_bytes, encoding='utf-8'):
     if sys.version_info[0] < 3:
         return _bytes
     else:
-        return _bytes.decode('utf-8')
+        return _bytes.decode(encoding)
 
-def utf_8_unicode(_unicode):
+def get_unicode(_unicode, encoding='utf-8'):
     if sys.version_info[0] < 3:
-        return unicode(_unicode, 'utf-8')
+        return unicode(_unicode, encoding)
     else:
         return _unicode
 
@@ -337,7 +343,7 @@ else:
 
             `PEP 261 <http://www.python.org/dev/peps/pep-0261/>`_
         """
-        return unichr(codepoint)
+        return chr(codepoint)
 
     def toCodepoint(char):
         """
@@ -448,12 +454,12 @@ class UnicodeCSVFileIterator(object):
         if not hasattr(self, '_csvReader'):
             self._csvReader = self._getCSVReader(self.fileHandle)
 
-        return [utf_8_unicode(cell) for cell in self._csvReader.next()]
+        return [get_unicode(cell, 'utf-8') for cell in self._csvReader.next()]
 
     @staticmethod
     def utf_8_encoder(unicode_csv_data):
         for line in unicode_csv_data:
-            yield utf_8_encode(line)
+            yield get_encode(line, 'utf-8')
 
     @staticmethod
     def byte_string_dialect(dialect):

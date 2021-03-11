@@ -29,6 +29,7 @@ import sys
 import PyICU as icu
 
 from cjklib.reading import ReadingFactory
+from cjklib.util import get_encode
 
 class ReadingTransliterator(icu.Transliterator):
     def __init__(self, fromReading, toReading, variant=None, **options):
@@ -89,8 +90,8 @@ def main():
     r = icu.Transliterator.createInstance(_id,
         icu.UTransDirection.UTRANS_FORWARD)
 
-    print ("In:  %s" % text).encode(encoding)
-    print ("Out: %s" % r.transliterate(text)).encode(encoding)
+    print get_encode(("In:  %s" % text), encoding)
+    print get_encode(("Out: %s" % r.transliterate(text)), encoding)
 
     #text = u'hèunggóng fògeih daaihhohk'
     #print r.createInverse().transliterate(text).encode(encoding)

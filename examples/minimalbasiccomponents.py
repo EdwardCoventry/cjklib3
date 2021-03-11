@@ -33,6 +33,7 @@ from sqlalchemy import select, union
 
 from cjklib import dbconnector
 from cjklib import characterlookup
+from cjklib.util import get_encode
 
 characterSet = 'GB2312Set'
 
@@ -119,4 +120,4 @@ while characterQueue:
             characterQueue.remove(charEntry)
             fullyDecomposedCharacters.add(charEntry)
 
-print "".join(minimalBasicComponents).encode('utf8')
+print get_encode("".join(minimalBasicComponents), 'utf8')

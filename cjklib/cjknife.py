@@ -42,7 +42,7 @@ from cjklib import dictionary
 from cjklib.dictionary import search
 from cjklib import exception
 from cjklib.util import (getConfigSettings, toCodepoint, isValidSurrogate,
-    getCharacterList)
+    getCharacterList, get_unicode, replace_encode)
 
 # work around http://bugs.python.org/issue2517
 if sys.version_info < (2, 5):
@@ -965,7 +965,7 @@ def main():
         print "Use parameter -h for a short summary on supported functions"
 
     for o, a in opts:
-        a = a.decode(default_encoding)
+        a = get_unicode(a, default_encoding)
 
         # help screen
         if o in ("-h", "--help"):
@@ -982,8 +982,8 @@ def main():
             if a.lower() in readingLookup:
                 sourceReading = readingLookup[a.lower()]
             else:
-                print >> sys.stderr, ("Error: '%s' is not a valid reading" % a
-                    ).encode(output_encoding, "replace")
+                print >> sys.stderr, replace_encode(("Error: '%s' is not a valid reading" % a
+                    ), output_encoding)
                 sys.exit(1)
 
         # setting of target reading
@@ -991,8 +991,8 @@ def main():
             if a.lower() in readingLookup:
                 targetReading = readingLookup[a.lower()]
             else:
-                print >> sys.stderr, ("Error: '%s' is not a valid reading" % a
-                    ).encode(output_encoding, "replace")
+                print >> sys.stderr, replace_encode(("Error: '%s' is not a valid reading" % a
+                    ), output_encoding)
                 sys.exit(1)
 
         # setting of locale
@@ -1000,8 +1000,8 @@ def main():
             if a.upper() in 'TCJKV':
                 charLocale = a.upper()
             else:
-                print >> sys.stderr, ("Error: '%s' is not a valid locale" % a
-                    ).encode(output_encoding, "replace")
+                print >> sys.stderr, replace_encode(("Error: '%s' is not a valid locale" % a
+                    ), output_encoding)
                 sys.exit(1)
 
         # setting of locale
@@ -1015,8 +1015,8 @@ def main():
             if a.lower() in dictionaries:
                 dictionaryN = dictionaries[a.lower()]
             else:
-                print >> sys.stderr, ("Error: '%s' is not a valid dictionary" %
-                    a).encode(output_encoding, "replace")
+                print >> sys.stderr, replace_encode(("Error: '%s' is not a valid dictionary" %
+                    a), output_encoding)
                 sys.exit(1)
 
         # setting of database
@@ -1056,18 +1056,16 @@ def main():
             if len(parameter) == 1 or isValidSurrogate(parameter):
                 infoDict = charInfo.getCharacterInformation(parameter)
 
-                print ("Information for character " + infoDict['char'] + " (" \
+                print replace_encode(("Information for character " + infoDict['char'] + " (" \
                     + infoDict['locale name'] + " locale, " \
-                    + infoDict['characterDomain'] + ' domain)')\
-                    .encode(output_encoding, "replace")
+                    + infoDict['characterDomain'] + ' domain)'), output_encoding)
                 print "Unicode codepoint: " + infoDict['codepoint hex'] + " (" \
                     + infoDict['codepoint dec'] + ", "+ infoDict['type'] \
                     + " form)"
                 print "In character domains: " + ', '.join(infoDict['domains'])
                 if 'equivalent form' in infoDict:
-                    print ("Equivalent character form: " \
-                        + infoDict['equivalent form'])\
-                        .encode(output_encoding, "replace")
+                    print replace_encode(("Equivalent character form: " \
+                        + infoDict['equivalent form']), output_encoding)
 
                 if infoDict['radical index']:
                     radicalForms = ""
@@ -1077,31 +1075,27 @@ def main():
                     if infoDict['radical variants']:
                         radicalForms = radicalForms + ", variants: " \
                             + ", ".join(infoDict['radical variants'])
-                    print ("Radical index: " + str(infoDict['radical index']) \
-                        + radicalForms)\
-                        .encode(output_encoding, "replace")
+                    print replace_encode(("Radical index: " + str(infoDict['radical index']) \
+                        + radicalForms), output_encoding)
 
                 if 'stroke count' in infoDict:
                     strokeCount = str(infoDict['stroke count'])
                 else:
                     strokeCount = 'N/A'
-                print ("Stroke count: " + strokeCount)\
-                    .encode(output_encoding, "replace")
+                print replace_encode(("Stroke count: " + strokeCount), output_encoding)
 
                 if infoDict['type'] == 'character':
                     readingList = infoDict['readings'].keys()
                     readingList.sort()
                     for readingN in readingList:
-                        print ("Phonetic data (" + readingN + "): " \
-                            + ", ".join(infoDict['readings'][readingN]))\
-                            .encode(output_encoding, "replace")
+                        print replace_encode(("Phonetic data (" + readingN + "): " \
+                            + ", ".join(infoDict['readings'][readingN])), output_encoding)
 
                     variantList = infoDict['variants'].keys()
                     variantList.sort()
                     for variantType in variantList:
-                        print (variantType + ': ' \
-                            + ', '.join(infoDict['variants'][variantType]))\
-                            .encode(output_encoding, "replace")
+                        print replace_encode((variantType + ': ' \
+                            + ', '.join(infoDict['variants'][variantType])), output_encoding)
 
                 glyphList = infoDict['glyphs'].keys()
                 glyphList.sort()
@@ -1120,14 +1114,12 @@ def main():
                     if 'decomposition' in infoDict['glyphs'][glyph]:
                         stringList = getDecompositionForList(
                             infoDict['glyphs'][glyph]['decomposition'])
-                        print ("\n".join(stringList))\
-                            .encode(output_encoding, "replace")
+                        print replace_encode(("\n".join(stringList)), output_encoding)
                     if 'stroke order' in infoDict['glyphs'][glyph]:
-                        print ("Stroke order: " + ''.join(
+                        print replace_encode(("Stroke order: " + ''.join(
                             infoDict['glyphs'][glyph]['stroke order']) + ' (' \
                             + infoDict['glyphs'][glyph]['stroke order abbrev'] \
-                            + ')')\
-                            .encode(output_encoding, "replace")
+                            + ')'), output_encoding)
             else:
                 # encoding errors can lead to a string > 1 char
                 print repr(parameter)
@@ -1140,8 +1132,7 @@ def main():
             if command in ("-q", "-r", "--get-reading"):
                 try:
                     readingList = charInfo.getReadingForCharacters(charList)
-                    print getPrintableList(readingList, " ")\
-                        .encode(output_encoding, "replace")
+                    print replace_encode(getPrintableList(readingList, " "), output_encoding)
                 except exception.UnsupportedError:
                     print "Error: no character mapping for this reading." \
                         + " Maybe the mapping in question has not been " \
@@ -1161,19 +1152,18 @@ def main():
                         + "traditional forms"
                 if simplified == traditional:
                     print "Chinese simplified/Traditional: " \
-                        + simplified.encode(output_encoding, "replace")
+                        + replace_encode(simplified, output_encoding)
                 else:
                     print "Simplified:  " \
-                        + simplified.encode(output_encoding, "replace")
-                    print "Traditional: " + traditional.encode(output_encoding,
-                        "replace")
+                        + replace_encode(simplified, output_encoding)
+                    print "Traditional: " + replace_encode(traditional, output_encoding)
 
         # character lookup by reading
         elif command in ("-a", "--by-reading"):
             try:
                 characterList = charInfo.getCharactersForReading(parameter,
                     sourceReading)
-                print "".join(characterList).encode(output_encoding, "replace")
+                print replace_encode("".join(characterList), output_encoding)
             except exception.UnsupportedError:
                 print "Error: no character mapping for this reading." \
                     + " Maybe the mapping in question has not been installed."
@@ -1189,8 +1179,7 @@ def main():
                     int(parameter))
                 for residualStrokeCount in sorted(strokeCountDict.keys()):
                     print '+' + str(residualStrokeCount) + ': ' \
-                        + ''.join(strokeCountDict[residualStrokeCount])\
-                            .encode(output_encoding, "replace")
+                        + replace_encode(''.join(strokeCountDict[residualStrokeCount]), output_encoding)
             except ValueError:
                 print "Error: bad parameter"
                 sys.exit(1)
@@ -1199,7 +1188,7 @@ def main():
         elif command in ("-p", "--by-components"):
             componentList = getCharacterList(parameter)
             charList = charInfo.getCharactersForComponents(componentList)
-            print ''.join(charList).encode(output_encoding, "replace")
+            print replace_encode(''.join(charList), output_encoding)
 
         # TODO
         ## character lookup by stroke order
@@ -1213,23 +1202,23 @@ def main():
         # reading conversion
         elif command in ("-m", "--convert-reading"):
             try:
-                print charInfo.convertReading(parameter, sourceReading,
-                    targetReading).encode(output_encoding, "replace")
+                print replace_encode(charInfo.convertReading(parameter, sourceReading,
+                    targetReading), output_encoding)
             except exception.DecompositionError, m:
                 print "Error: invalid input string:", \
-                    getExceptionString(m).encode(output_encoding, "replace")
+                    replace_encode(getExceptionString(m), output_encoding)
                 sys.exit(1)
             except exception.CompositionError, m:
                 print "Error: can't compose target entities:", \
-                    getExceptionString(m).encode(output_encoding, "replace")
+                    replace_encode(getExceptionString(m), output_encoding)
                 sys.exit(1)
             except exception.AmbiguousConversionError, m:
                 print "Error: input reading is ambiguous, can't convert:", \
-                    getExceptionString(m).encode(output_encoding, "replace")
+                    replace_encode(getExceptionString(m), output_encoding)
                 sys.exit(1)
             except exception.ConversionError, m:
                 print "Error: can't convert input string:", \
-                    getExceptionString(m).encode(output_encoding, "replace")
+                    replace_encode(getExceptionString(m), output_encoding)
                 sys.exit(1)
             except exception.UnsupportedError:
                 print "Error: conversion for given readings not supported"
@@ -1249,7 +1238,7 @@ def main():
                         % entry._asdict())
                 else:
                     string = "%(Headword)s %(Translation)s" % entry._asdict()
-                print string.encode(output_encoding, "replace")
+                print replace_encode(string, output_encoding)
 
         # dictionary search
         elif command == "-y":
@@ -1265,7 +1254,7 @@ def main():
                         % entry._asdict())
                 else:
                     string = "%(Headword)s %(Translation)s" % entry._asdict()
-                print string.encode(output_encoding, "replace")
+                print replace_encode(string, output_encoding)
 
         # TODO deprecated
         elif command in ("-c", "-b", "-e"):
@@ -1291,7 +1280,7 @@ def main():
                         % entry._asdict())
                 else:
                     string = "%(Headword)s %(Translation)s" % entry._asdict()
-                print string.encode(output_encoding, "replace")
+                print replace_encode(string, output_encoding)
 
         # listing of available options for parameter setting
         elif command in ("-L", "--list-options"):

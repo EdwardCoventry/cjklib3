@@ -36,6 +36,7 @@ from sqlalchemy import select
 
 from cjklib.characterlookup import CharacterLookup
 from cjklib import exception
+from cjklib.util import get_encode
 
 class ImporterBase(object):
     TEMPLATE = None
@@ -290,7 +291,7 @@ Available templates:"""
 
     print "<Pages>"
     for a in titleList:
-        print templateClass(a).toXml().encode('utf8')
+        print get_encode(templateClass(a).toXml(), 'utf8')
     print "</Pages>"
 
 

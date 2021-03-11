@@ -418,7 +418,7 @@ class DatabaseConnector(object):
             return tableName in tableNames
 
         import sys
-        if sys.platform == 'win32' and self.engine.name == 'sqlite' and sys.version_info[0] < 3:
+        if sys.platform == 'win32' and self.engine.name == 'sqlite' and sys.version_info < (2, 7):
             # work around bug http://bugs.python.org/issue8192
             hasTable = has_table
         else:

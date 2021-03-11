@@ -31,6 +31,7 @@ from optparse import OptionParser
 
 from cjklib.characterlookup import CharacterLookup
 from cjklib.exception import NoInformationError
+from cjklib.util import replace_encode
 
 class StrokeChecker(object):
     ALLOWED_COMPONENT_STRUCTURE = [u'⿰', u'⿱', u'⿵', u'⿶', u'⿸', u'⿹', u'⿺',
@@ -104,8 +105,7 @@ class StrokeChecker(object):
         missingSingleCharacters.extend(lowProductivityComponentChars)
 
         print 'Missing single characters:',
-        print ''.join(missingSingleCharacters).encode(output_encoding,
-            'replace')
+        print replace_encode(''.join(missingSingleCharacters), output_encoding)
 
         # remove characters that we already placed in "single"
         _missingSingleCharacters = set(missingSingleCharacters)
@@ -132,13 +132,11 @@ class StrokeChecker(object):
         print 'Missing components: %d' % (len(inDomainComponentList) \
             + len(outDomainComponentList))
         print 'Missing in-domain components:',
-        print ', '.join(['%s (%s)' % (component, ''.join(chars)) \
-            for component, chars in inDomainComponentList])\
-            .encode(output_encoding, 'replace')
+        print replace_encode(', '.join(['%s (%s)' % (component, ''.join(chars)) \
+            for component, chars in inDomainComponentList]), output_encoding)
         print 'Missing out-domain components:',
-        print ', '.join(['%s (%s)' % (component, ''.join(chars)) \
-            for component, chars in outDomainComponentList])\
-            .encode(output_encoding, 'replace')
+        print replace_encode(', '.join(['%s (%s)' % (component, ''.join(chars)) \
+            for component, chars in outDomainComponentList]), output_encoding)
 
     def checkStrokeOrder(self, char, glyph=None):
         try:

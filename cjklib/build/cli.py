@@ -185,8 +185,7 @@ format --BuilderName-option or --TableName-option, e.g.
                     #column = len(subsequentPrefix)
             outputLines.append(output)
 
-        print "\n".join(outputLines).encode(cls.output_encoding,
-            'replace')
+        print replace_encode("\n".join(outputLines), cls.output_encoding)
 
     @classmethod
     def getBuilderConfigSettings(cls):

@@ -30,7 +30,7 @@ from sqlalchemy.exc import OperationalError
 
 from cjklib import dbconnector
 from cjklib import exception
-from cjklib.util import locateProjectFile
+from cjklib.util import locateProjectFile, replace_encode
 
 class DatabaseBuilder:
     """
@@ -813,5 +813,4 @@ def warn(message):
     :type message: str
     :param message: message to print
     """
-    print >> sys.stderr, message.encode(locale.getpreferredencoding(),
-        'replace')
+    print >> sys.stderr, replace_encode(message, locale.getpreferredencoding())

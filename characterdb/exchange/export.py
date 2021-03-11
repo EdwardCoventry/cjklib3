@@ -31,6 +31,7 @@ import codecs
 import sys
 import re
 import logging
+from cjklib.util import get_encode
 
 QUERY_URL = ("http://characterdb.cjklib.org/wiki/Special:Ask/"
              "%(query)s/%(properties)s/format=csv/sep=,/headers=hide/"
@@ -161,7 +162,7 @@ Available data sets:"""
         sys.exit(1)
 
     for a in getDataSetIterator(sys.argv[1].lower()):
-        print ','.join(('"%s"' % cell) for cell in a).encode('utf8')
+        print get_encode(','.join(('"%s"' % cell) for cell in a), 'utf8')
 
 
 if __name__ == "__main__":

@@ -28,6 +28,7 @@ from cjklib import reading
 from cjklib import exception
 from cjklib import dbconnector
 from cjklib import util
+import warnings
 
 class CharacterLookup(object):
     u"""
@@ -1199,7 +1200,6 @@ class CharacterLookup(object):
                             strokes = [order.replace(' ', '-').split('-')
                                 for order in so]
                             if strokes != [['S', 'HZ', 'H']]:
-                                import warnings
                                 warnings.warn(
                                     "Invalid decomposition entry %r" % subTree)
                                 return None, index
@@ -1215,7 +1215,6 @@ class CharacterLookup(object):
                             strokes = [order.replace(' ', '-').split('-')
                                 for order in so]
                             if strokes not in ([['H', 'SZ']], [['H', 'SW']]):
-                                import warnings
                                 warnings.warn(
                                     "Invalid decomposition entry %r" % subTree)
                                 return None, index

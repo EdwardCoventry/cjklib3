@@ -55,6 +55,7 @@ from cjklib.dictionary import getDictionary
 from cjklib.reading import ReadingFactory
 from cjklib import characterlookup
 from cjklib import exception
+from cjklib.util import get_encode
 
 DICTIONARY_READING = {'HanDeDict': ('Pinyin', {'toneMarkType': 'numbers'}),
     'CEDICT': ('Pinyin', {'toneMarkType': 'numbers', 'yVowel': 'u:'})}
@@ -148,9 +149,9 @@ def checkCharacterReading(dictionary, readingName, readingOptions={},
             operator = getReadingOperator(readingName, readingOptions)
             entities = operator.decompose(entry.Reading)
         except exception.DecompositionError:
-            print ("WARNING: can't parse line '%s', '%s', '%s'"
+            print get_encode(("WARNING: can't parse line '%s', '%s', '%s'"
                 % (entry.HeadwordTraditional, entry.HeadwordSimplified,
-                    entry.Reading)).encode(default_encoding)
+                    entry.Reading)), default_encoding)
             continue
 
         entitiesFiltered = []
@@ -161,9 +162,9 @@ def checkCharacterReading(dictionary, readingName, readingOptions={},
 
         if (len(entitiesFiltered) != len(entry.HeadwordTraditional)) \
             or (len(entitiesFiltered) != len(entry.HeadwordSimplified)):
-            print ("WARNING: can't parse line '%s', '%s', '%s'"
+            print get_encode(("WARNING: can't parse line '%s', '%s', '%s'"
                 % (entry.HeadwordTraditional, entry.HeadwordSimplified,
-                    entry.Reading)).encode(default_encoding)
+                    entry.Reading)), default_encoding)
             continue
 
         for i, entity in enumerate(entitiesFiltered):
@@ -182,9 +183,9 @@ def checkCharacterReading(dictionary, readingName, readingOptions={},
 
                         if readingList and not hasReading(entity, readingList,
                             readingName, ignoreFifthTone):
-                            print (char + " " + entity + ", known readings: " \
+                            print get_encode((char + " " + entity + ", known readings: " \
                                 + ', '.join(readingList) + "; for headword '" \
-                                + headword + "'").encode(default_encoding)
+                                + headword + "'"), default_encoding)
                     except exception.NoInformationError:
                         pass
             else:
@@ -194,24 +195,22 @@ def checkCharacterReading(dictionary, readingName, readingOptions={},
                 if entry.HeadwordTraditional[i] != entity \
                     and (entry.HeadwordTraditional[i] not in NON_PINYIN_MAPPING \
                     or NON_PINYIN_MAPPING[entry.HeadwordTraditional[i]] != entity):
-                    print ("WARNING: invalid mapping of entity '" \
+                    print get_encode(("WARNING: invalid mapping of entity '" \
                         + entry.HeadwordTraditional[i] + "' to '" + entity \
-                        + "'; for headword '" + headword + "'")\
-                        .encode(default_encoding)
+                        + "'; for headword '" + headword + "'"), default_encoding)
                 elif entry.HeadwordSimplified[i] != entity \
                     and (entry.HeadwordSimplified[i] not in NON_PINYIN_MAPPING \
                     or NON_PINYIN_MAPPING[entry.HeadwordSimplified[i]] != entity):
-                    print ("WARNING: invalid mapping of entity '" \
+                    print get_encode(("WARNING: invalid mapping of entity '" \
                         + entry.HeadwordSimplified[i] + "' to '" + entity \
-                        + "'; for headword '" + headword + "'")\
-                        .encode(default_encoding)
+                        + "'; for headword '" + headword + "'"), default_encoding)
 
 def checkCharacterVariants(dictionary):
     for entry in iterDictionary(dictionary):
         if len(entry.HeadwordTraditional) != len(entry.HeadwordSimplified):
-            print ("WARNING: different string length '%s', '%s', '%s'"
+            print get_encode(("WARNING: different string length '%s', '%s', '%s'"
                 % (entry.HeadwordTraditional, entry.HeadwordSimplified,
-                    entry.Reading)).encode(default_encoding)
+                    entry.Reading)), default_encoding)
             continue
 
         if entry.HeadwordTraditional == entry.HeadwordSimplified:
@@ -222,9 +221,8 @@ def checkCharacterVariants(dictionary):
             if entry.HeadwordSimplified[idx] not in mapping:
                 headword = "%s/%s" % (entry.HeadwordTraditional,
                     entry.HeadwordSimplified)
-                print (char + ", known mappings: " + ', '.join(mapping) \
-                    + "; for headword '" + headword + "'").encode(
-                        default_encoding)
+                print get_encode((char + ", known mappings: " + ', '.join(mapping) \
+                    + "; for headword '" + headword + "'"), default_encoding)
 
 def usage():
     """
