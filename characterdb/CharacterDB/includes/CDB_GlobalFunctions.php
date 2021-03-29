@@ -46,7 +46,7 @@ function cdbfSetupExtension() {
 	);
 
 	if ( $sfgFormPrinter ) {
-		include_once($cdbgIP . '/includes/CDB_FormInputs.inc');
+		include_once($cdbgIP . '/includes/CDB_FormInputs.inc.php');
 		$sfgFormPrinter->setInputTypeHook('decomposition', 'decompositionHTML', array());
 	}
 

@@ -5,9 +5,9 @@
  * @author Christoph Burgmer
  */
 global $cdbgIP;
-include_once($cdbgIP . '/includes/unicode.inc');
-include_once($cdbgIP . '/includes/CDB_StrokeOrder.inc');
-include_once($cdbgIP . '/includes/CDB_Decomposition.inc');
+include_once($cdbgIP . '/includes/unicode.inc.php');
+include_once($cdbgIP . '/includes/CDB_StrokeOrder.inc.php');
+include_once($cdbgIP . '/includes/CDB_Decomposition.inc.php');
 
 /**
  * Static class to collect all functions related to parsing wiki text in
