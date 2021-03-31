@@ -29,6 +29,7 @@ __all__ = [
     "CharacterKanWaRadicalBuilder", "CharacterJapaneseRadicalBuilder",
     "CharacterKoreanRadicalBuilder", "CharacterVariantBuilder",
     "UnihanCharacterSetBuilder", "IICoreSetBuilder", "GB2312SetBuilder",
+    "TGH2013SetBuilder", "UnihanCore2020SetBuilder",
     "BIG5SetBuilder", "HKSCSSetBuilder", "BIG5HKSCSSetBuilder",
     "JISX0208SetBuilder", "JISX0213SetBuilder", "JISX0208_0213SetBuilder",
     "GlyphInformationSetBuilder",
@@ -38,6 +39,7 @@ __all__ = [
     "CharacterJapaneseOnBuilder", "CharacterHangulBuilder",
     "CharacterVietnameseBuilder", "CharacterXHPCReadingBuilder",
     "CharacterDiacriticPinyinBuilder", "CharacterXHCReadingBuilder",
+    'CharacterTGHReadingBuilder',
     "CharacterHDZReadingBuilder", "CharacterPinyinAdditionalBuilder",
     "CharacterPinyinBuilder",
     # CSV file based
@@ -345,7 +347,7 @@ class UnihanGenerator:
     ENTRY_REGEX = re.compile(ur"U\+([0-9A-F]+)\s+(\w+)\s+(.+)\s*$")
 
     UNIHAN_FILE_MEMBERS = ['Unihan_DictionaryIndices.txt',
-        'Unihan_DictionaryLikeData.txt', 'Unihan_NormativeProperties.txt',
+        'Unihan_DictionaryLikeData.txt', 'Unihan_IRGSources.txt',
         'Unihan_NumericValues.txt', 'Unihan_OtherMappings.txt',
         'Unihan_RadicalStrokeCounts.txt', 'Unihan_Readings.txt',
         'Unihan_Variants.txt']
@@ -544,25 +546,28 @@ class UnihanBuilder(EntryGeneratorBuilder):
         'kFrequency': Integer(),
         # stroke count & radicals
         'kTotalStrokes': Integer(),
-        'kRSJapanese': Text(), 'kRSKanWa': Text(), 'kRSKangXi': Text(),
-        'kRSKorean': Text(),
+        'kRSKangXi': Text(),
         # encoding mappings
+        'kTGH': String(4), 'kTGHZ2013': Text(),
         'kGB0': String(4), 'kBigFive': String(4), 'kHKSCS': String(4),
         'kJis0': String(4), 'kJIS0213': String(7), 'kIICore': String(3),
+        'kUnihanCore2020': String(2),
         # variant mappings
         'kZVariant': Text(), 'kSimplifiedVariant': Text(),
         'kTraditionalVariant': Text(), 'kSemanticVariant': Text(),
         'kSpecializedSemanticVariant': Text(), 'kCompatibilityVariant': Text(),
+        'kSpoofingVariant': Text(),
         }
 
     PRIMARY_KEYS = [CHARACTER_COLUMN]
 
     INCLUDE_KEYS = ['kCompatibilityVariant', 'kCantonese', 'kFrequency',
         'kHangul', 'kHanyuPinlu', 'kJapaneseKun', 'kJapaneseOn', 'kMandarin',
-        'kRSJapanese', 'kRSKanWa', 'kRSKangXi', 'kRSKorean', 'kSemanticVariant',
+        'kRSKangXi', 'kSemanticVariant', 'kSpoofingVariant',
         'kSimplifiedVariant', 'kSpecializedSemanticVariant', 'kTotalStrokes',
         'kTraditionalVariant', 'kVietnamese', 'kXHC1983', 'kZVariant',
         'kIICore', 'kGB0', 'kBigFive', 'kHKSCS', 'kHanyuPinyin', 'kJis0',
+        'kUnihanCore2020', 'kTGH', 'kTGHZ2013',
         'kJIS0213']
     """Keys included in a slim version if explicitly specified."""
 
@@ -1003,33 +1008,6 @@ class CharacterKangxiRadicalBuilder(CharacterRadicalBuilder):
     COLUMN_SOURCE = 'kRSKangXi'
 
 
-class CharacterKanWaRadicalBuilder(CharacterRadicalBuilder):
-    """
-    Builds the character Dai Kan-Wa jiten radical mapping table from the Unihan
-    database.
-    """
-    PROVIDES = 'CharacterKanWaRadical'
-    COLUMN_SOURCE = 'kRSKanWa'
-
-
-class CharacterJapaneseRadicalBuilder(CharacterRadicalBuilder):
-    """
-    Builds the character Japanese radical mapping table from the Unihan
-    database.
-    """
-    PROVIDES = 'CharacterJapaneseRadical'
-    COLUMN_SOURCE = 'kRSJapanese'
-
-
-class CharacterKoreanRadicalBuilder(CharacterRadicalBuilder):
-    """
-    Builds the character Korean radical mapping table from the Unihan
-    database.
-    """
-    PROVIDES = 'CharacterKoreanRadical'
-    COLUMN_SOURCE = 'kRSKorean'
-
-
 class CharacterVariantBuilder(EntryGeneratorBuilder):
     """
     Builds a character variant mapping table from the Unihan database. By
@@ -1058,6 +1036,7 @@ class CharacterVariantBuilder(EntryGeneratorBuilder):
             'P': (SEMANTIC_REGEX, SEMANTIC_FIND_REGEX),
             'T': (MULT_HEX_INDEX_REGEX, MULT_HEX_INDEX_FIND_REGEX),
             #'Z': (ZVARIANT_REGEX, ZVARIANT_REGEX)} # < 5.2.0?
+            'F': (HEX_INDEX_REGEX, HEX_INDEX_REGEX),
             'Z': (SEMANTIC_REGEX, SEMANTIC_FIND_REGEX)}
         """
         Mapping of entry types to regular expression describing the entry's
@@ -1112,6 +1091,7 @@ class CharacterVariantBuilder(EntryGeneratorBuilder):
     COLUMN_SOURCE_ABBREV = {'kCompatibilityVariant': 'C',
         'kSemanticVariant': 'M', 'kSimplifiedVariant': 'S',
         'kSpecializedSemanticVariant': 'P', 'kTraditionalVariant': 'T',
+        'kSpoofingVariant': 'F',
         'kZVariant': 'Z'}
     """
     Unihan table columns providing content for the table together with their
@@ -1210,6 +1190,27 @@ class IICoreSetBuilder(UnihanCharacterSetBuilder):
     """
     PROVIDES = 'IICoreSet'
     COLUMN_SOURCE = 'kIICore'
+
+
+class UnihanCore2020SetBuilder(UnihanCharacterSetBuilder):
+    u"""
+    Builds a simple list of all characters in *UnihanCore2020*
+    (Unicode *International Ideograph Core)*.
+
+    see description: https://www.unicode.org/reports/tr38/#kUnihanCore2020
+    """
+    PROVIDES = 'UnihanCore2020Set'
+    COLUMN_SOURCE = 'kUnihanCore2020'
+
+
+class TGH2013SetBuilder(UnihanCharacterSetBuilder):
+    """
+    Builds a simple list of all characters in *《通用规范汉字表》 for the Chinese
+    standard GB13000.1-93 (ISO/IEC 10646-1:1993 / Unicode 1.1).
+    p.s. GB13000-2010 ~ ISO/IEC 10646:2003 / Unicode 4.0
+    """
+    PROVIDES = 'TGH2013Set'
+    COLUMN_SOURCE = 'kTGH'
 
 
 class GB2312SetBuilder(UnihanCharacterSetBuilder):
@@ -1561,6 +1562,14 @@ class CharacterHDZReadingBuilder(CharacterDiacriticPinyinBuilder):
     COLUMN_SOURCE = 'kHanyuPinyin'
 
 
+class CharacterTGHReadingBuilder(CharacterDiacriticPinyinBuilder):
+    """
+    Builds the Tōngyòng Guīfàn Hànzì Zìdiǎn Pinyin mapping table using the Unihan database.
+    """
+    PROVIDES = 'CharacterTGHPinyin'
+    COLUMN_SOURCE = 'kTGHZ2013'
+
+
 class CharacterPinyinAdditionalBuilder(EntryGeneratorBuilder):
     """
     Provides a mapping of character to Pinyin with additional data not found
@@ -1588,6 +1597,7 @@ class CharacterPinyinBuilder(EntryGeneratorBuilder):
     """
     PROVIDES = 'CharacterPinyin'
     DEPENDS = ['CharacterXHPCPinyin', 'CharacterXHCPinyin',
+        'CharacterTGHPinyin',
         'CharacterHDZPinyin', 'CharacterAdditionalPinyin']
         # 'CharacterUnihanPinyin'
 
