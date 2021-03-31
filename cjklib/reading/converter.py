@@ -38,6 +38,7 @@ __all__ = [
 import re
 import copy
 import types
+from functools import cmp_to_key
 
 from sqlalchemy import select
 from sqlalchemy.sql import and_
@@ -1604,7 +1605,7 @@ class PinyinBrailleConverter(DialectSupportReadingConverter):
 
         braillePunctuation = list(set(self.PUNCTUATION_SIGNS_MAPPING.values()))
         # longer marks first in regex
-        braillePunctuation.sort(lambda x, y: len(y) - len(x))
+        braillePunctuation.sort(key=cmp_to_key(lambda x, y: len(y) - len(x)))
         self._braillePunctuationRegex = re.compile(ur'(' \
             + '|'.join([re.escape(p) for p in braillePunctuation]) + '|.+?)')
 
