@@ -770,7 +770,7 @@ else:
                 return value
 
 if sys.version_info >= (2, 6):
-    from collections import MutableMapping
+    from typing import MutableMapping
 
     class OrderedDict(dict, MutableMapping):
 
