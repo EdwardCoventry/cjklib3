@@ -25,7 +25,6 @@ import os
 import logging
 import glob
 import operator
-from itertools import imap
 
 from sqlalchemy import MetaData, Table, engine_from_config
 from sqlalchemy.sql import text
@@ -40,6 +39,9 @@ _dbconnectInst = None
 
 _dbconnectInstSettings = None
 # Connection configuration for cached instance
+
+def imap(*args, **kwargs):
+    return list(map(*args, **kwargs))
 
 def getDBConnector(configuration=None, projectName='cjklib'):
     """
