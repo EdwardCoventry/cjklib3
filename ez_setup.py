@@ -216,9 +216,10 @@ def main(argv, version=DEFAULT_VERSION):
                 os.unlink(egg)
     else:
         if setuptools.__version__ == '0.0.1':
-            print >>sys.stderr, (
-            "You have an obsolete version of setuptools installed.  Please\n"
-            "remove it from your system entirely before rerunning this script."
+            print(
+                "You have an obsolete version of setuptools installed. Please\n"
+                "remove it from your system entirely before rerunning this script.",
+                file=sys.stderr
             )
             sys.exit(2)
 
@@ -238,8 +239,8 @@ def main(argv, version=DEFAULT_VERSION):
             from setuptools.command.easy_install import main
             main(argv)
         else:
-            print "Setuptools version",version,"or greater has been installed."
-            print '(Run "ez_setup.py -U setuptools" to reinstall or upgrade.)'
+            print("Setuptools version",version,"or greater has been installed.")
+            print('(Run "ez_setup.py -U setuptools" to reinstall or upgrade.)')
 
 def update_md5(filenames):
     """Update our built-in md5 registry"""
@@ -262,7 +263,7 @@ def update_md5(filenames):
 
     match = re.search("\nmd5_data = {\n([^}]+)}", src)
     if not match:
-        print >>sys.stderr, "Internal error!"
+        print("Internal error!", file=sys.stderr)
         sys.exit(2)
 
     src = src[:match.start(1)] + repl + src[match.end(1):]
