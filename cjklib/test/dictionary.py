@@ -65,17 +65,17 @@ class DictionaryMetaTest(DictionaryTest):
         # test if dictionary is accepted
         self.db.engine = EngineMock(originalEngine, mockTables=[self.table])
 
-        self.assert_(self.dictionaryClass.available(self.db))
+        self.assertTrue(self.dictionaryClass.available(self.db))
         dictionary = getDictionary(self.DICTIONARY, dbConnectInst=self.db)
-        self.assert_(self.dictionaryClass in getAvailableDictionaries(self.db))
+        self.assertTrue(self.dictionaryClass in getAvailableDictionaries(self.db))
 
         # test if character domain is rejected
         self.db.engine = EngineMock(originalEngine, mockNonTables=[self.table])
 
-        self.assert_(not self.dictionaryClass.available(self.db))
+        self.assertTrue(not self.dictionaryClass.available(self.db))
         self.assertRaises(ValueError, getDictionary, self.DICTIONARY,
             dbConnectInst=self.db)
-        self.assert_(self.dictionaryClass not in getAvailableDictionaries(
+        self.assertTrue(self.dictionaryClass not in getAvailableDictionaries(
             self.db))
 
 
@@ -126,10 +126,10 @@ class DictionaryResultTest(DictionaryTest):
     def resultIndexMap(self):
         content = self.INSTALL_CONTENT[:]
 
-        content = map(list, content)
+        content = list(map(list, content))
         for strategy in self.dictionary._formatStrategies:
-            content = map(strategy.format, content)
-        content = map(tuple, content)
+            content = list(map(strategy.format, content))
+        content = list(map(tuple, content))
 
         return dict((row, idx) for idx, row in enumerate(content))
 
@@ -145,7 +145,7 @@ class DictionaryResultTest(DictionaryTest):
             for request, targetResultIndices in requests:
                 results = method(request, **options)
                 resultIndices = [self.resultIndexMap[tuple(e)] for e in results]
-                self.assertEquals(set(resultIndices), set(targetResultIndices),
+                self.assertEqual(set(resultIndices), set(targetResultIndices),
                         ("Mismatch for method %s and string %s (options %s)\n"
                         % (repr(methodName), repr(request), repr(options))
                         + "Should be\n%s\nbut is\n%s\n"
@@ -176,7 +176,7 @@ class DictionaryAccessTest(FullDictionaryTest):
     ACCESS_METHODS = ('getFor', 'getForHeadword', 'getForReading',
         'getForTranslation')
 
-    TEST_STRINGS = (u'跼', u'東京', u'とうきょう', u"Xi'an", 'New York', 'term')
+    TEST_STRINGS = ('跼', '東京', 'とうきょう', "Xi'an", 'New York', 'term')
 
     def testAccess(self):
         """Test access methods ``getFor...``."""
@@ -196,21 +196,21 @@ class EDICTDictionaryResultTest(DictionaryResultTest, unittest.TestCase):
     DICTIONARY = 'EDICT'
 
     INSTALL_CONTENT = [
-        (u'東京', u'とうきょう', u'/(n) Tokyo (current capital of Japan)/(P)/'),
-        (u'東京語', u'とうきょうご', u'/(n) Tokyo dialect (esp. historical)/'),
-        (u'東京都', u'とうきょうと', u'/(n) Tokyo Metropolitan area/'),
-        (u'頭胸部', u'とうきょうぶ', u'/(n) cephalothorax/'),
+        ('東京', 'とうきょう', '/(n) Tokyo (current capital of Japan)/(P)/'),
+        ('東京語', 'とうきょうご', '/(n) Tokyo dialect (esp. historical)/'),
+        ('東京都', 'とうきょうと', '/(n) Tokyo Metropolitan area/'),
+        ('頭胸部', 'とうきょうぶ', '/(n) cephalothorax/'),
         #(u'', u'', u''),
         ]
 
     ACCESS_RESULTS = [
-        ('getForHeadword', (), [(u'東京', [0])]),
-        ('getFor', (), [(u'とうきょう_', [1, 2, 3])]),
-        ('getForHeadword', (), [(u'Tokyo', [])]),
-        ('getForHeadword', (), [(u'東%', [0, 1, 2])]),
-        ('getFor', (), [(u'Tokyo', [0])]),
-        ('getFor', (), [(u'_Tokyo', [])]),
-        ('getForTranslation', (), [(u'tokyo%', [0, 1, 2])]),
+        ('getForHeadword', (), [('東京', [0])]),
+        ('getFor', (), [('とうきょう_', [1, 2, 3])]),
+        ('getForHeadword', (), [('Tokyo', [])]),
+        ('getForHeadword', (), [('東%', [0, 1, 2])]),
+        ('getFor', (), [('Tokyo', [0])]),
+        ('getFor', (), [('_Tokyo', [])]),
+        ('getForTranslation', (), [('tokyo%', [0, 1, 2])]),
     ]
 
 
@@ -224,45 +224,45 @@ class CEDICTDictionaryResultTest(DictionaryResultTest, unittest.TestCase):
     DICTIONARY = 'CEDICT'
 
     INSTALL_CONTENT = [
-        (u'知道', u'知道', u'zhi1 dao5', u'/to know/to be aware of/'),
-        (u'執導', u'执导', u'zhi2 dao3', u'/to direct (a film, play etc)/'),
-        (u'直搗', u'直捣', u'zhi2 dao3', u'/to storm/to attack directly/'),
-        (u'直到', u'直到', u'zhi2 dao4', u'/until/'),
-        (u'指導', u'指导', u'zhi3 dao3', u'/to guide/to give directions/to direct/to coach/guidance/tuition/CL:個|个[ge4]/'),
-        (u'制導', u'制导', u'zhi4 dao3', u'/to control (the course of sth)/to guide (a missile)/'),
-        (u'指導教授', u'指导教授', u'zhi3 dao3 jiao4 shou4', u'/adviser/advising professor/'),
-        (u'指導課', u'指导课', u'zhi3 dao3 ke4', u'/tutorial/period of tuition for one or two students/'),
-        (u'個', u'个', u'ge4', u'/individual/this/that/size/classifier for people or objects in general/'),
-        (u'西安', u'西安', u'Xi1 an1', u"/Xi'an city, subprovincial city and capital of Shaanxi 陝西省|陕西省[Shan3 xi1 sheng3] in northwest China/see 西安區|西安区[Xi1 an1 qu1]/"),
-        (u'仙', u'仙', u'xian1', u'/immortal/'),
-        (u'Ｃ盤', u'Ｃ盘', u'C pan2', u'/C drive or default startup drive (computing)/'),
-        (u'ＵＳＢ手指', u'ＵＳＢ手指', u'U S B shou3 zhi3', u'/USB flash drive/'),
-        (u'\U000289c0\U000289c0', u'\U000289c0\U000289c0', u'bo1 bo1', u'/Bohrium Bohrium/'),
-        (u'\U000289c0', u'\U000289c0', u'bo1', u'/Bohrium/'),
+        ('知道', '知道', 'zhi1 dao5', '/to know/to be aware of/'),
+        ('執導', '执导', 'zhi2 dao3', '/to direct (a film, play etc)/'),
+        ('直搗', '直捣', 'zhi2 dao3', '/to storm/to attack directly/'),
+        ('直到', '直到', 'zhi2 dao4', '/until/'),
+        ('指導', '指导', 'zhi3 dao3', '/to guide/to give directions/to direct/to coach/guidance/tuition/CL:個|个[ge4]/'),
+        ('制導', '制导', 'zhi4 dao3', '/to control (the course of sth)/to guide (a missile)/'),
+        ('指導教授', '指导教授', 'zhi3 dao3 jiao4 shou4', '/adviser/advising professor/'),
+        ('指導課', '指导课', 'zhi3 dao3 ke4', '/tutorial/period of tuition for one or two students/'),
+        ('個', '个', 'ge4', '/individual/this/that/size/classifier for people or objects in general/'),
+        ('西安', '西安', 'Xi1 an1', "/Xi'an city, subprovincial city and capital of Shaanxi 陝西省|陕西省[Shan3 xi1 sheng3] in northwest China/see 西安區|西安区[Xi1 an1 qu1]/"),
+        ('仙', '仙', 'xian1', '/immortal/'),
+        ('Ｃ盤', 'Ｃ盘', 'C pan2', '/C drive or default startup drive (computing)/'),
+        ('ＵＳＢ手指', 'ＵＳＢ手指', 'U S B shou3 zhi3', '/USB flash drive/'),
+        ('\U000289c0\U000289c0', '\U000289c0\U000289c0', 'bo1 bo1', '/Bohrium Bohrium/'),
+        ('\U000289c0', '\U000289c0', 'bo1', '/Bohrium/'),
         #(u'', u'', u'', u''),
         ]
 
     ACCESS_RESULTS = [
         ('getFor', (('toneMarkType', 'numbers'),),
-            [(u'zhidao', [0, 1, 2, 3, 4, 5])]),
-        ('getFor', (('toneMarkType', 'numbers'),), [(u'zhi2dao', [1, 2, 3])]),
-        ('getFor', (), [(u'to %', [0, 1, 2, 4, 5])]),
-        ('getForTranslation', (), [(u'to guide', [4, 5])]),
+            [('zhidao', [0, 1, 2, 3, 4, 5])]),
+        ('getFor', (('toneMarkType', 'numbers'),), [('zhi2dao', [1, 2, 3])]),
+        ('getFor', (), [('to %', [0, 1, 2, 4, 5])]),
+        ('getForTranslation', (), [('to guide', [4, 5])]),
         ('getForReading', (('toneMarkType', 'numbers'),),
-            [(u'zhi导', [1, 4, 5])]),
+            [('zhi导', [1, 4, 5])]),
         ('getForReading', (('toneMarkType', 'numbers'),),
-            [(u'zhi导%', [1, 4, 5, 6, 7])]),
-        ('getFor', (), [(u'個', [8])]),
-        ('getFor', (('toneMarkType', 'numbers'),), [(u'xian1', [9, 10])]),
-        ('getFor', (('toneMarkType', 'numbers'),), [(u'C pan', [11])]),
-        ('getFor', (('toneMarkType', 'numbers'),), [(u'Ｃpan', [11])]),
-        ('getFor', (('toneMarkType', 'numbers'),), [(u'Ｃ pan', [11])]),
-        ('getFor', (), [(u'Ｃ盘', [11])]),
-        ('getFor', (), [(u'C盘', [11])]),
+            [('zhi导%', [1, 4, 5, 6, 7])]),
+        ('getFor', (), [('個', [8])]),
+        ('getFor', (('toneMarkType', 'numbers'),), [('xian1', [9, 10])]),
+        ('getFor', (('toneMarkType', 'numbers'),), [('C pan', [11])]),
+        ('getFor', (('toneMarkType', 'numbers'),), [('Ｃpan', [11])]),
+        ('getFor', (('toneMarkType', 'numbers'),), [('Ｃ pan', [11])]),
+        ('getFor', (), [('Ｃ盘', [11])]),
+        ('getFor', (), [('C盘', [11])]),
         ('getForReading', (('toneMarkType', 'numbers'),),
-            [(u'USB shou指', [12])]),
-        ('getFor', (('toneMarkType', 'numbers'),), [(u'bo', [14])]),
-        ('getFor', (('toneMarkType', 'numbers'),), [(u'\U000289c0bo1', [13])]),
+            [('USB shou指', [12])]),
+        ('getFor', (('toneMarkType', 'numbers'),), [('bo', [14])]),
+        ('getFor', (('toneMarkType', 'numbers'),), [('\U000289c0bo1', [13])]),
         ]
 
 
@@ -283,38 +283,38 @@ class HanDeDictDictionaryResultTest(DictionaryResultTest, unittest.TestCase):
     DICTIONARY = 'HanDeDict'
 
     INSTALL_CONTENT = [
-        (u'對不起', u'对不起', u'dui4 bu5 qi3', u'/Entschuldigung (u.E.) (S)/sorry (u.E.)/'),
-        (u'自由大學', u'自由大学', 'zi4 you2 da4 xue2', u'/Freie Universität, FU (meist FU Berlin) (u.E.) (Eig)/'),
-        (u'西柏林', u'西柏林', u'xi1 bo2 lin2', u'/West-Berlin (u.E.) (Eig, Geo)/'),
-        (u'柏林', u'柏林', u'bo2 lin2', u'/Berlin (u.E.) (Eig, Geo)/'),
-        (u'北', u'北', u'bei3', u'/Norden (S)/nördlich (Adj)/nordwärts, nach Norden, gen Norden (Adv)/Nord-; Bsp.: 北風 北风 -- Nordwind/'),
-        (u'朔風', u'朔风', u'shuo4 feng1', u'/Nordwind (u.E.) (S)/'),
-        (u'IC卡', u'IC卡', u'I C ka3', u'/Chipkarte (S)/'),
-        (u'USB電纜', u'USB电缆', u'U S B dian4 lan3', u'/USB-Kabel (u.E.) (S)/'),
-        (u'\U000289c0\U000289c0', u'\U000289c0\U000289c0', u'bo1 bo1', u'/Bohrium Bohrium/'),
-        (u'\U000289c0', u'\U000289c0', u'bo1', u'/Bohrium/'),
+        ('對不起', '对不起', 'dui4 bu5 qi3', '/Entschuldigung (u.E.) (S)/sorry (u.E.)/'),
+        ('自由大學', '自由大学', 'zi4 you2 da4 xue2', '/Freie Universität, FU (meist FU Berlin) (u.E.) (Eig)/'),
+        ('西柏林', '西柏林', 'xi1 bo2 lin2', '/West-Berlin (u.E.) (Eig, Geo)/'),
+        ('柏林', '柏林', 'bo2 lin2', '/Berlin (u.E.) (Eig, Geo)/'),
+        ('北', '北', 'bei3', '/Norden (S)/nördlich (Adj)/nordwärts, nach Norden, gen Norden (Adv)/Nord-; Bsp.: 北風 北风 -- Nordwind/'),
+        ('朔風', '朔风', 'shuo4 feng1', '/Nordwind (u.E.) (S)/'),
+        ('IC卡', 'IC卡', 'I C ka3', '/Chipkarte (S)/'),
+        ('USB電纜', 'USB电缆', 'U S B dian4 lan3', '/USB-Kabel (u.E.) (S)/'),
+        ('\U000289c0\U000289c0', '\U000289c0\U000289c0', 'bo1 bo1', '/Bohrium Bohrium/'),
+        ('\U000289c0', '\U000289c0', 'bo1', '/Bohrium/'),
         #(u'', u'', u'', u''),
         ]
 
     ACCESS_RESULTS = [
-        ('getFor', (), [(u'对不起', [0])]),
-        ('getFor', (), [(u'對不起', [0])]),
-        ('getFor', (), [(u'对_起', [0])]),
-        ('getFor', (), [(u'duì bu qǐ', [0])]),
-        ('getFor', (), [(u'duì_qǐ', [0])]),
+        ('getFor', (), [('对不起', [0])]),
+        ('getFor', (), [('對不起', [0])]),
+        ('getFor', (), [('对_起', [0])]),
+        ('getFor', (), [('duì bu qǐ', [0])]),
+        ('getFor', (), [('duì_qǐ', [0])]),
         ('getForReading', (('toneMarkType', 'numbers'),),
-            [(u'dui4bu5qi3', [0])]),
-        ('getFor', (), [(u'Sorry', [0])]),
-        ('getForTranslation', (), [(u'Entschuldigung', [0])]),
-        ('getForTranslation', (), [(u'Berlin', [3])]),
-        ('getForTranslation', (), [(u'%Berlin', [2, 3])]),
-        ('getFor', (), [(u'Nordwind', [5])]),
-        ('getFor', (), [(u'%Nordwind%', [4, 5])]),
-        ('getForReading', (('toneMarkType', 'numbers'),), [(u'IC ka', [6])]),
+            [('dui4bu5qi3', [0])]),
+        ('getFor', (), [('Sorry', [0])]),
+        ('getForTranslation', (), [('Entschuldigung', [0])]),
+        ('getForTranslation', (), [('Berlin', [3])]),
+        ('getForTranslation', (), [('%Berlin', [2, 3])]),
+        ('getFor', (), [('Nordwind', [5])]),
+        ('getFor', (), [('%Nordwind%', [4, 5])]),
+        ('getForReading', (('toneMarkType', 'numbers'),), [('IC ka', [6])]),
         ('getForReading', (('toneMarkType', 'numbers'),),
-            [(u'USB dian纜', [7])]),
-        ('getFor', (('toneMarkType', 'numbers'),), [(u'bo', [9])]),
-        ('getFor', (('toneMarkType', 'numbers'),), [(u'\U000289c0bo1', [8])]),
+            [('USB dian纜', [7])]),
+        ('getFor', (('toneMarkType', 'numbers'),), [('bo', [9])]),
+        ('getFor', (('toneMarkType', 'numbers'),), [('\U000289c0bo1', [8])]),
         ]
 
 
@@ -328,22 +328,22 @@ class CFDICTDictionaryResultTest(DictionaryResultTest, unittest.TestCase):
     DICTIONARY = 'CFDICT'
 
     INSTALL_CONTENT = [
-        (u'對不起', u'对不起', u'dui4 bu5 qi3', u'/Excusez-moi!/'),
+        ('對不起', '对不起', 'dui4 bu5 qi3', '/Excusez-moi!/'),
         #(u'', u'', u'', u''),
         ]
 
     ACCESS_RESULTS = [
-        ('getFor', (), [(u'对不起', [0])]),
-        ('getFor', (), [(u'對不起', [0])]),
-        ('getFor', (), [(u'对_起', [0])]),
-        ('getFor', (), [(u'duì bu qǐ', [0])]),
-        ('getFor', (), [(u'duì_qǐ', [0])]),
+        ('getFor', (), [('对不起', [0])]),
+        ('getFor', (), [('對不起', [0])]),
+        ('getFor', (), [('对_起', [0])]),
+        ('getFor', (), [('duì bu qǐ', [0])]),
+        ('getFor', (), [('duì_qǐ', [0])]),
         ('getForReading', (('toneMarkType', 'numbers'),),
-            [(u'dui4bu5qi3', [0])]),
-        ('getFor', (), [(u'excusez-moi', [0])]),
-        ('getForTranslation', (), [(u'Excusez-moi', [0])]),
-        ('getForTranslation', (), [(u'excusez-moi!', [0])]),
-        ('getForTranslation', (), [(u'%-moi', [0])]),
+            [('dui4bu5qi3', [0])]),
+        ('getFor', (), [('excusez-moi', [0])]),
+        ('getForTranslation', (), [('Excusez-moi', [0])]),
+        ('getForTranslation', (), [('excusez-moi!', [0])]),
+        ('getForTranslation', (), [('%-moi', [0])]),
         ]
 
 
@@ -367,23 +367,23 @@ class EscapeParameterTest(ParameterTest, unittest.TestCase):
     PARAMETER_DESC = 'escape'
 
     INSTALL_CONTENT = [
-        (u'東京', u'とうきょう', u'/(n) Tokyo (current capital of Japan)/(P)/'),
-        (u'東京語', u'とうきょうご', u'/(n) Tokyo dialect (esp. historical)/'),
-        (u'東京都', u'とうきょうと', u'/(n) Tokyo Metropolitan area/'),
-        (u'頭胸部', u'とうきょうぶ', u'/(n) cephalothorax/'),
+        ('東京', 'とうきょう', '/(n) Tokyo (current capital of Japan)/(P)/'),
+        ('東京語', 'とうきょうご', '/(n) Tokyo dialect (esp. historical)/'),
+        ('東京都', 'とうきょうと', '/(n) Tokyo Metropolitan area/'),
+        ('頭胸部', 'とうきょうぶ', '/(n) cephalothorax/'),
         #(u'', u'', u''),
         ]
 
     ACCESS_RESULTS = [
-        ('getForHeadword', (), [(u'東京', [0])]),
-        ('getFor', (), [(u'とうきょう_', [1, 2, 3])]),
-        ('getForHeadword', (), [(u'Tokyo', [])]),
-        ('getForHeadword', (), [(u'東%', [0, 1, 2])]),
-        ('getFor', (), [(u'Tokyo', [0])]),
-        ('getForTranslation', (), [(u'Tokyyo', [0])]),
-        ('getFor', (), [(u'_Tokyo', [])]),
-        ('getForTranslation', (), [(u'tokyo%', [0, 1, 2])]),
-        ('getForTranslation', (), [(u'tokyyo%', [0, 1, 2])]),
+        ('getForHeadword', (), [('東京', [0])]),
+        ('getFor', (), [('とうきょう_', [1, 2, 3])]),
+        ('getForHeadword', (), [('Tokyo', [])]),
+        ('getForHeadword', (), [('東%', [0, 1, 2])]),
+        ('getFor', (), [('Tokyo', [0])]),
+        ('getForTranslation', (), [('Tokyyo', [0])]),
+        ('getFor', (), [('_Tokyo', [])]),
+        ('getForTranslation', (), [('tokyo%', [0, 1, 2])]),
+        ('getForTranslation', (), [('tokyyo%', [0, 1, 2])]),
     ]
 
     DICTIONARY_OPTIONS = {
@@ -400,18 +400,18 @@ class CaseInsensitiveParameterTest(ParameterTest, unittest.TestCase):
     PARAMETER_DESC = 'caseInsensitive'
 
     INSTALL_CONTENT = [
-        (u'東京', u'とうきょう', u'/(n) Tokyo (current capital of Japan)/(P)/'),
-        (u'東京語', u'とうきょうご', u'/(n) Tokyo dialect (esp. historical)/'),
-        (u'東京都', u'とうきょうと', u'/(n) Tokyo Metropolitan area/'),
-        (u'頭胸部', u'とうきょうぶ', u'/(n) cephalothorax/'),
+        ('東京', 'とうきょう', '/(n) Tokyo (current capital of Japan)/(P)/'),
+        ('東京語', 'とうきょうご', '/(n) Tokyo dialect (esp. historical)/'),
+        ('東京都', 'とうきょうと', '/(n) Tokyo Metropolitan area/'),
+        ('頭胸部', 'とうきょうぶ', '/(n) cephalothorax/'),
         #(u'', u'', u''),
         ]
 
     ACCESS_RESULTS = [
-        ('getFor', (), [(u'Tokyo', [0])]),
-        ('getFor', (), [(u'tokyo', [])]),
-        ('getForTranslation', (), [(u'tokyo%', [])]),
-        ('getForTranslation', (), [(u'Tokyo%', [0, 1, 2])]),
+        ('getFor', (), [('Tokyo', [0])]),
+        ('getFor', (), [('tokyo', [])]),
+        ('getForTranslation', (), [('tokyo%', [])]),
+        ('getForTranslation', (), [('Tokyo%', [0, 1, 2])]),
     ]
 
     DICTIONARY_OPTIONS = {
@@ -428,21 +428,21 @@ class WildcardParameterTest(ParameterTest, unittest.TestCase):
     PARAMETER_DESC = 'singleCharacter/multipleCharacters'
 
     INSTALL_CONTENT = [
-        (u'東京', u'とうきょう', u'/(n) Tokyo% (current capital of Japan)/(P)/'),
-        (u'東京', u'とうきょう', u'/(n) Tokyo_ (current capital of Japan)/(P)/'),
-        (u'東京語', u'とうきょうご', u'/(n) Tokyo dialect (esp. historical)/'),
-        (u'東京都', u'とうきょうと', u'/(n) Tokyo Metropolitan area/'),
-        (u'頭胸部', u'とうきょうぶ', u'/(n) cephalothorax/'),
+        ('東京', 'とうきょう', '/(n) Tokyo% (current capital of Japan)/(P)/'),
+        ('東京', 'とうきょう', '/(n) Tokyo_ (current capital of Japan)/(P)/'),
+        ('東京語', 'とうきょうご', '/(n) Tokyo dialect (esp. historical)/'),
+        ('東京都', 'とうきょうと', '/(n) Tokyo Metropolitan area/'),
+        ('頭胸部', 'とうきょうぶ', '/(n) cephalothorax/'),
         #(u'', u'', u''),
         ]
 
     ACCESS_RESULTS = [
-        ('getFor', (), [(u'Tokyo', [])]),
-        ('getForTranslation', (), [(u'Tokyo%', [0])]),
-        ('getForTranslation', (), [(u'tokyo%', [0])]),
-        ('getForTranslation', (), [(u'Tokyo*', [0, 1, 2, 3])]),
-        ('getForTranslation', (), [(u'Tokyo?', [0, 1])]),
-        ('getForTranslation', (), [(u'Tokyo_', [1])]),
+        ('getFor', (), [('Tokyo', [])]),
+        ('getForTranslation', (), [('Tokyo%', [0])]),
+        ('getForTranslation', (), [('tokyo%', [0])]),
+        ('getForTranslation', (), [('Tokyo*', [0, 1, 2, 3])]),
+        ('getForTranslation', (), [('Tokyo?', [0, 1])]),
+        ('getForTranslation', (), [('Tokyo_', [1])]),
     ]
 
     DICTIONARY_OPTIONS = {

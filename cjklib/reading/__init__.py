@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with cjklib.  If not, see <http://www.gnu.org/licenses/>.
 
-u"""
+"""
 Character reading based functions (transliterations, romanizations, ...).
 """
 
@@ -29,7 +29,7 @@ from cjklib.reading import operator as readingoperator
 from cjklib.reading import converter as readingconverter
 
 class ReadingFactory(object):
-    u"""
+    """
     Provides an abstract factory for creating
     :class:`ReadingOperators <cjklib.reading.operator.ReadingOperator>` and
     :class:`ReadingConverters <cjklib.reading.converter.ReadingConverter>`
@@ -71,8 +71,8 @@ class ReadingFactory(object):
         """
         # get all non-abstract classes that inherit from ReadingOperator
         readingOperatorClasses = [clss for clss \
-            in readingoperator.__dict__.values() \
-            if type(clss) == types.TypeType \
+            in list(readingoperator.__dict__.values()) \
+            if type(clss) == type \
                 and issubclass(clss, readingoperator.ReadingOperator) \
                 and clss.READING_NAME]
 
@@ -91,8 +91,8 @@ class ReadingFactory(object):
         """
         # get all non-abstract classes that inherit from ReadingConverter
         readingConverterClasses = [clss \
-            for clss in readingconverter.__dict__.values() \
-            if type(clss) == types.TypeType \
+            for clss in list(readingconverter.__dict__.values()) \
+            if type(clss) == type \
             and issubclass(clss, readingconverter.ReadingConverter) \
             and clss.CONVERSION_DIRECTIONS]
 
@@ -258,7 +258,7 @@ class ReadingFactory(object):
         :return: a list of readings a
             :class:`~cjklib.reading.operator.ReadingOperator` is available for
         """
-        return self._sharedState['readingOperatorClasses'].keys()
+        return list(self._sharedState['readingOperatorClasses'].keys())
 
     def getReadingOperatorClass(self, readingN):
         """
@@ -635,7 +635,7 @@ class ReadingFactory(object):
             newDict = {}
             for key in data:
                 newDict[key] = ReadingFactory._getHashableCopy(data[key])
-            return frozenset(newDict.items())
+            return frozenset(list(newDict.items()))
         else:
             return data
 

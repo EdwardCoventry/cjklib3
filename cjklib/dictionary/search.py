@@ -70,12 +70,12 @@ def _escapeWildcards(string, escape='\\'):
     # insert escape
     return _wildcardRegexCache[escape].sub(r'%s\1' % re.escape(escape), string)
 
-_FULL_WIDTH_MAP = dict((ord(halfWidth), unichr(ord(halfWidth) + 65248))
+_FULL_WIDTH_MAP = dict((ord(halfWidth), chr(ord(halfWidth) + 65248))
     for halfWidth in (string.ascii_uppercase + string.ascii_lowercase))
 """Mapping of halfwidth characters to fullwidth."""
 
 def _mapToFullwidth(string):
-    u"""Maps halfwidth characters to fullwidth, e.g. ``U`` to ``Ｕ``."""
+    """Maps halfwidth characters to fullwidth, e.g. ``U`` to ``Ｕ``."""
     if isinstance(string, str):
         return string
     else:
@@ -334,7 +334,7 @@ class _WildcardBase(object):
         """Joins reading entities, taking care of wildcards."""
         entityList = []
         for entity in self._parseWildcardString(searchStr):
-            if not isinstance(entity, basestring):
+            if not isinstance(entity, str):
                 entity = entity.SQL_LIKE_STATEMENT
             else:
                 entity = _escapeWildcards(entity, escape=self.escape)
@@ -345,7 +345,7 @@ class _WildcardBase(object):
     def _prepareWildcardRegex(self, searchStr):
         entityList = []
         for entity in self._parseWildcardString(searchStr):
-            if not isinstance(entity, basestring):
+            if not isinstance(entity, str):
                 entity = entity.REGEX_PATTERN
             else:
                 entity = re.escape(entity)
@@ -656,7 +656,7 @@ class SimpleReading(Exact):
                                 sourceOptions=options,
                                 targetOptions=\
                                     self._dictInstance.READING_OPTIONS))
-                    except exception.ConversionError, e:
+                    except exception.ConversionError as e:
                         # TODO get strict mode, fail on any error
                         pass
 
@@ -721,7 +721,7 @@ class _SimpleReadingWildcardBase(_WildcardBase):
         newEntities = []
         for entity in entities:
             if entity in (self.escape, self.singleCharacter,
-                self.multipleCharacters) or not isinstance(entity, basestring):
+                self.multipleCharacters) or not isinstance(entity, str):
                 newEntities.append(entity)
             else:
                 newEntities.extend([e for e in getCharacterList(entity)
@@ -766,7 +766,7 @@ class _SimpleReadingWildcardBase(_WildcardBase):
         """Joins reading entities, taking care of wildcards."""
         entityList = []
         for entity in entities:
-            if not isinstance(entity, basestring):
+            if not isinstance(entity, str):
                 entity = entity.SQL_LIKE_STATEMENT
             else:
                 entity = _escapeWildcards(entity, escape=self.escape)
@@ -782,7 +782,7 @@ class _SimpleReadingWildcardBase(_WildcardBase):
     def _getWildcardQuery(self, searchStr, **options):
         wildcardForms = self._getWildcardForms(searchStr, **options)
 
-        wildcardReadings = map(self._getWildcardReading, wildcardForms)
+        wildcardReadings = list(map(self._getWildcardReading, wildcardForms))
         return wildcardReadings
 
     def _getReadingEntities(self, reading):
@@ -797,7 +797,7 @@ class _SimpleReadingWildcardBase(_WildcardBase):
         against reading entities from a result.
         """
         def matches(searchEntity, entity):
-            if isinstance(searchEntity, basestring):
+            if isinstance(searchEntity, str):
                 return searchEntity == entity
             else:
                 return searchEntity.match(entity)
@@ -964,7 +964,7 @@ class _TonelessReadingWildcardBase(_SimpleReadingWildcardBase):
             for entities in decompEntities:
                 wildcardEntities = []
                 for entity in entities:
-                    if not isinstance(entity, basestring):
+                    if not isinstance(entity, str):
                         entity, plainEntity, tone = entity
                         if plainEntity is not None and tone is None:
                             entity = self._createTonalEntityWildcard(
@@ -982,14 +982,14 @@ class _TonelessReadingWildcardBase(_SimpleReadingWildcardBase):
 
     def _hasWildcardForms(self, searchStr, **options):
         wildcardForms = self._getWildcardForms(searchStr, **options)
-        return any(any((not isinstance(entity, basestring))
+        return any(any((not isinstance(entity, str))
             for entity in entities) for entities in wildcardForms)
 
     def _getSimpleQuery(self, searchStr, **options):
         #assert not self._hasWildcardForms(searchStr, **options)
         wildcardForms = self._getWildcardForms(searchStr, **options)
 
-        simpleReadings = map(' '.join, wildcardForms)
+        simpleReadings = list(map(' '.join, wildcardForms))
         return simpleReadings
 
     def _getSimpleMatchFunction(self, searchStr, **options):
@@ -1007,7 +1007,7 @@ class _TonelessReadingWildcardBase(_SimpleReadingWildcardBase):
 
 class TonelessWildcardReading(SimpleReading,
     _TonelessReadingWildcardBase):
-    u"""
+    """
     Reading based search strategy with support for missing tonal information and
     wildcards.
 
@@ -1153,7 +1153,7 @@ class _MixedReadingWildcardBase(_SimpleReadingWildcardBase):
         # return pairs for headword and reading
         newEntities = []
         for entity in entities:
-            if isinstance(entity, basestring):
+            if isinstance(entity, str):
                 # single entity, assume belonging to headword
                 if self._headwordFullwidthCharacters:
                     # map to fullwidth if applicable
@@ -1237,7 +1237,7 @@ class _MixedReadingWildcardBase(_SimpleReadingWildcardBase):
 
             # match against all pairs
             for searchEntities in searchPairs:
-                entities = zip(headwordChars, readingEntities)
+                entities = list(zip(headwordChars, readingEntities))
                 if self._depthFirstSearch(searchEntities, entities):
                     return True
 
@@ -1368,7 +1368,7 @@ class _MixedTonelessReadingWildcardBase(_MixedReadingWildcardBase,
                 searchEntities = []
                 hasReadingEntity = hasHeadwordEntity = False
                 for entity in entities:
-                    if not isinstance(entity, basestring):
+                    if not isinstance(entity, str):
                         hasReadingEntity = True
 
                         entity, plainEntity, tone = entity

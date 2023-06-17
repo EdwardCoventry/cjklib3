@@ -81,7 +81,7 @@ from cjklib import dbconnector
 
 # Several example search requests, spanning headwords, readings and translations
 SEARCH_REQUESTS = ['Beijing', '%Beijing%', 'Bei3jing1', 'Tokyo', 'Tiananmen',
-                   'to run', 'dui_qi', u'南京', u'TÜTE', u'とうきょう', u'%國hua',
+                   'to run', 'dui_qi', '南京', 'TÜTE', 'とうきょう', '%國hua',
                    'zhishi', 'knowledge']
 
 def runRequest(dictInstance, requestList, method='getFor'):
@@ -93,7 +93,7 @@ def runTests(tests, databases, registerUnicode, iteration=10):
 
     timing = {}
     for no in tests:
-        print "Running test %d (reading from %s)..." % (no, databases[no])
+        print("Running test %d (reading from %s)..." % (no, databases[no]))
 
         connection = {'sqlalchemy.url': 'sqlite:///%s' % databases[no],
                       'attach': ['cjklib'],
@@ -107,7 +107,7 @@ def runTests(tests, databases, registerUnicode, iteration=10):
         if not dictionaries:
             raise ValueError("No dictionaries found")
 
-        print "Found dictionaries '%s'" % "', '".join(dictionaries)
+        print("Found dictionaries '%s'" % "', '".join(dictionaries))
 
         runTime = {}
         for dictName in dictionaries:
@@ -149,25 +149,25 @@ def runTests(tests, databases, registerUnicode, iteration=10):
 
 def printResults(timing):
     # check that all results use the same dictionaries
-    assert timing and all((timing.values()[0].keys() == runTime.keys())
-                          for runTime in timing.values())
+    assert timing and all((list(timing.values())[0].keys() == list(runTime.keys()))
+                          for runTime in list(timing.values()))
 
-    methods = sorted(timing.values()[0].values()[0].keys())
+    methods = sorted(list(timing.values())[0].values()[0].keys())
     # check that all used methods are the same
     assert timing and all(all((methods == sorted(methodTime.keys()))
-                              for methodTime in runTime.values())
-                          for runTime in timing.values())
+                              for methodTime in list(runTime.values()))
+                          for runTime in list(timing.values()))
 
-    print '   ' + '\t'.join(methods)
+    print('   ' + '\t'.join(methods))
     for testNo in sorted(timing.keys()):
         runTime = timing[testNo]
 
         results = []
         for method in methods:
             results.append(sum(methodTime[method]
-                               for methodTime in runTime.values()))
+                               for methodTime in list(runTime.values())))
 
-        print "%d: %s" % (testNo, '\t'.join(("%f" % t) for t in results))
+        print("%d: %s" % (testNo, '\t'.join(("%f" % t) for t in results)))
 
 def buildParser():
     usage = "%prog [options]\n%prog reindex DB_FILE [--registerUnicode]"
@@ -221,7 +221,7 @@ def recreateIndex(database, registerUnicode=False):
 
     for dictName in ['CEDICT', 'CEDICTGR', 'HanDeDict', 'CFDICT']:
         if dictName in dictionaries:
-            print "Recreating index for '%s'" % dictName
+            print("Recreating index for '%s'" % dictName)
             try:
                 db.execute(text("DROP INDEX %s__Reading" % dictName))
             except OperationalError:
@@ -244,7 +244,7 @@ def main():
         parser.error("wrong number of arguments")
 
     if opts.runAll:
-        tests = range(1, 6)
+        tests = list(range(1, 6))
     else:
         tests = []
         for no in range(1, 6):

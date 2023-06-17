@@ -63,45 +63,45 @@ def main():
                 r'([1234567890ABCDEF]{4});\s+([1234567890ABCDEF]{4,5})\s+#',
                 line)
             if matchObj:
-                radicalForm = unichr(int(matchObj.group(1), 16))
-                equivalentForm = unichr(int(matchObj.group(2), 16))
+                radicalForm = chr(int(matchObj.group(1), 16))
+                equivalentForm = chr(int(matchObj.group(2), 16))
                 if (radicalForm, equivalentForm) in databaseTable:
                     # entry included in database
                     if databaseTable[(radicalForm, equivalentForm)] != 'TCJKV':
                         # locale of entry is narrower, i.e. subset of TCJKV
-                        print ("Narrowed locale for '" + radicalForm \
+                        print(("Narrowed locale for '" + radicalForm \
                             + "' (" + matchObj.group(1).lower() + "), '" \
                             + equivalentForm + "' (" \
                             + matchObj.group(2).lower() + "), locale " \
                             + databaseTable[(radicalForm, equivalentForm)])\
-                            .encode(default_encoding)
+                            .encode(default_encoding))
                         narrowLocaleCount = narrowLocaleCount + 1
                     else:
                         one2oneEntryCount = one2oneEntryCount + 1
                     del databaseTable[(radicalForm, equivalentForm)]
                 else:
-                    print ("No entry for '" + radicalForm \
+                    print(("No entry for '" + radicalForm \
                         + "' (" + matchObj.group(1).lower() + "), '" \
                         + equivalentForm + "' (" + matchObj.group(2).lower() \
-                        + ")").encode(default_encoding)
+                        + ")").encode(default_encoding))
                     noEntryCount = noEntryCount + 1
             else:
-                print ("error reading line: '" + line + "'")\
-                    .encode(default_encoding)
+                print(("error reading line: '" + line + "'")\
+                    .encode(default_encoding))
 
     # database entries not included in table
     for radicalForm, equivalentForm in databaseTable:
-        print ("Database entry not included in table: '" + radicalForm \
+        print(("Database entry not included in table: '" + radicalForm \
             + "' (" + hex(ord(radicalForm)).replace('0x', '') + "), '" \
             + equivalentForm + "' (" \
             + hex(ord(equivalentForm)).replace('0x', '') +"), locale " \
             + databaseTable[(radicalForm, equivalentForm)])\
-            .encode(default_encoding)
+            .encode(default_encoding))
 
-    print "Total " + str(fileEntryCount) + " entries, " \
+    print("Total " + str(fileEntryCount) + " entries, " \
         + str(one2oneEntryCount) + " fully included in database, " \
         + str(noEntryCount) + " without entry, " \
-        + str(narrowLocaleCount) + " with narrowed locale"
+        + str(narrowLocaleCount) + " with narrowed locale")
 
 if __name__ == "__main__":
     main()

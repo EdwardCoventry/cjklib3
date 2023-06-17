@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with cjklib.  If not, see <http://www.gnu.org/licenses/>.
 
-u"""
+"""
 Installs dictionaries at runtime.
 
 Example:
@@ -50,11 +50,11 @@ import re
 import os
 import types
 import locale
-import urllib
-import urlparse
+import urllib.request, urllib.parse, urllib.error
+import urllib.parse
 from datetime import datetime, date, time
 from optparse import OptionParser, OptionGroup, Values
-import ConfigParser
+import configparser
 
 from sqlalchemy import select
 from sqlalchemy.engine.url import make_url
@@ -98,8 +98,8 @@ def warn(message, endline=True):
     :type message: str
     :param message: message to print
     """
-    print replace_encode(message, locale.getpreferredencoding()),
-    if endline: print
+    print(replace_encode(message, locale.getpreferredencoding()), end=' ')
+    if endline: print()
 
 #{ Access methods
 
@@ -115,8 +115,8 @@ def getDownloaderClasses():
     dictionaryModule = __import__("cjklib.dictionary.install")
     # get all classes that inherit from DownloaderBase
     return set([clss \
-        for clss in dictionaryModule.dictionary.install.__dict__.values() \
-        if type(clss) == types.TypeType \
+        for clss in list(dictionaryModule.dictionary.install.__dict__.values()) \
+        if type(clss) == type \
         and issubclass(clss,
             dictionaryModule.dictionary.install.DownloaderBase) \
         and clss.PROVIDES])
@@ -154,7 +154,7 @@ def getDownloader(dictionaryName, **options):
     return downloaderCls(**options)
 
 
-class UserAgentURLOpener(urllib.FancyURLopener):
+class UserAgentURLOpener(urllib.request.FancyURLopener):
     version="Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)"
 
 #}
@@ -185,7 +185,7 @@ class DownloaderBase(object):
 
         if not self.quiet: warn("Sending HEAD request to %s..." % link,
             endline=False)
-        response = urllib.urlopen(link)
+        response = urllib.request.urlopen(link)
         lastModified = response.info().getheader('Last-Modified')
         if not self.quiet: warn("Done")
         if lastModified:
@@ -213,7 +213,7 @@ class DownloaderBase(object):
     def _download(self, targetName=None, targetPath=None, temporary=False):
         link = self.getDownloadLink()
 
-        _, _, onlinePath, _, _ = urlparse.urlsplit(link)
+        _, _, onlinePath, _, _ = urllib.parse.urlsplit(link)
         originalFileName = os.path.basename(onlinePath)
 
         if temporary:
@@ -226,7 +226,7 @@ class DownloaderBase(object):
             fileName = originalFileName
 
         # Fake browser to cheat bad webservers
-        urllib._urlopener = UserAgentURLOpener()
+        urllib.request._urlopener = UserAgentURLOpener()
 
         if not self.quiet:
             version = self.getVersion()
@@ -235,10 +235,10 @@ class DownloaderBase(object):
             else:
                 warn('Unable to determine version')
             warn("Downloading %s..." % link)
-            path, _ = urllib.urlretrieve(link, fileName, progress)
+            path, _ = urllib.request.urlretrieve(link, fileName, progress)
             warn("Saved as %s" % path)
         else:
-            path, _ = urllib.urlretrieve(link, fileName)
+            path, _ = urllib.request.urlretrieve(link, fileName)
 
         return path
 
@@ -246,7 +246,7 @@ class DownloaderBase(object):
 class EDICTDownloader(DownloaderBase):
     """Downloader for the EDICT dictionary."""
     PROVIDES = 'EDICT'
-    DOWNLOAD_LINK = u'http://ftp.monash.edu.au/pub/nihongo/edict.gz'
+    DOWNLOAD_LINK = 'http://ftp.monash.edu.au/pub/nihongo/edict.gz'
 
     def getDownloadLink(self):
         return self.DOWNLOAD_LINK
@@ -255,7 +255,7 @@ class EDICTDownloader(DownloaderBase):
 class CEDICTGRDownloader(DownloaderBase):
     """Downloader for the Gwoyeu Romatzyh version of the CEDICT dictionary."""
     PROVIDES = 'CEDICTGR'
-    DOWNLOAD_LINK = u'http://home.iprimus.com.au/richwarm/gr/cedictgr.zip'
+    DOWNLOAD_LINK = 'http://home.iprimus.com.au/richwarm/gr/cedictgr.zip'
 
     def getDownloadLink(self):
         return self.DOWNLOAD_LINK
@@ -275,7 +275,7 @@ class PageDownloaderBase(DownloaderBase):
     def getDownloadPage(self):
         if not self.quiet: warn("Getting download page %s..."
             % self.DEFAULT_DOWNLOAD_PAGE, endline=False)
-        f = urllib.urlopen(self.DEFAULT_DOWNLOAD_PAGE)
+        f = urllib.request.urlopen(self.DEFAULT_DOWNLOAD_PAGE)
         downloadPage = bytes_decode(f.read(), 'utf-8')
         f.close()
         if not self.quiet: warn("done")
@@ -290,7 +290,7 @@ class PageDownloaderBase(DownloaderBase):
                 % self.DEFAULT_DOWNLOAD_PAGE)
 
         baseUrl = matchObj.group(1)
-        return urlparse.urljoin(self.DEFAULT_DOWNLOAD_PAGE, baseUrl)
+        return urllib.parse.urljoin(self.DEFAULT_DOWNLOAD_PAGE, baseUrl)
 
     @cachedmethod
     def getVersion(self):
@@ -303,10 +303,10 @@ class CEDICTDownloader(PageDownloaderBase):
     """Downloader for the CEDICT dictionary."""
     PROVIDES = 'CEDICT'
     DEFAULT_DOWNLOAD_PAGE \
-        = u'http://www.mdbg.net/chindict/chindict.php?page=cc-cedict'
+        = 'http://www.mdbg.net/chindict/chindict.php?page=cc-cedict'
     DOWNLOAD_REGEX = re.compile(
-        u'<a href="(export/cedict/cedict_1_0_ts_utf-8_mdbg.txt.gz)">')
-    DATE_REGEX = re.compile(u'Latest release: <strong>([^<]+)</strong>')
+        '<a href="(export/cedict/cedict_1_0_ts_utf-8_mdbg.txt.gz)">')
+    DATE_REGEX = re.compile('Latest release: <strong>([^<]+)</strong>')
     DATE_FMT = '%Y-%m-%d %H:%M:%S %Z'
 
 
@@ -314,10 +314,10 @@ class HanDeDictDownloader(PageDownloaderBase):
     """Downloader for the HanDeDict dictionary."""
     PROVIDES = 'HanDeDict'
     DEFAULT_DOWNLOAD_PAGE \
-        = u'http://handedict.zydeo.net/en/download'
+        = 'http://handedict.zydeo.net/en/download'
     DOWNLOAD_REGEX = re.compile(
-        u'<a href="(api/export/download)">')
-    DATE_REGEX = re.compile(u'<a href="handedict/handedict-(\d+).tar.bz2">')
+        '<a href="(api/export/download)">')
+    DATE_REGEX = re.compile('<a href="handedict/handedict-(\d+).tar.bz2">')
     DATE_FMT = '%Y%m%d'
 
 
@@ -325,7 +325,7 @@ class CFDICTDownloader(DownloaderBase):
     """Downloader for the CFDICT dictionary."""
     PROVIDES = 'CFDICT'
     #DOWNLOAD_LINK = u'http://www.chine-informations.com/chinois/open/CFDICT/cfdict.zip'
-    DOWNLOAD_LINK = u'https://chine.in/mandarin/dictionnaire/CFDICT/download.php'
+    DOWNLOAD_LINK = 'https://chine.in/mandarin/dictionnaire/CFDICT/download.php'
 
     def getDownloadLink(self):
         return self.DOWNLOAD_LINK
@@ -523,7 +523,7 @@ Example: \"%prog --local CEDICT\"."""
         for dictionary in args:
             try:
                 installer.install(dictionary, **options)
-            except OperationalError, e:
+            except OperationalError as e:
                 if not opts.quiet:
                     warn("Error writing to database: %s" % e)
                     if not opts.local:
@@ -545,8 +545,8 @@ Example: \"%prog --local CEDICT\"."""
         """
         configOptions = getConfigSettings('Builder')
         # don't convert to lowercase
-        ConfigParser.RawConfigParser.optionxform = lambda self, x: x
-        config = ConfigParser.RawConfigParser(configOptions)
+        configparser.RawConfigParser.optionxform = lambda self, x: x
+        config = configparser.RawConfigParser(configOptions)
 
         dictionaryTables = [clss.PROVIDES for clss in getDownloaderClasses()]
 
@@ -567,16 +567,16 @@ Example: \"%prog --local CEDICT\"."""
                     '--%s-%s' % (builder.PROVIDES, option)]:
                     if config.has_option(None, opt):
                         if optionType == 'bool':
-                            value = config.getboolean(ConfigParser.DEFAULTSECT,
+                            value = config.getboolean(configparser.DEFAULTSECT,
                                 opt)
                         elif optionType == 'int':
-                            value = config.getint(ConfigParser.DEFAULTSECT,
+                            value = config.getint(configparser.DEFAULTSECT,
                                 opt)
                         elif optionType == 'float':
-                            value = config.getfloat(ConfigParser.DEFAULTSECT,
+                            value = config.getfloat(configparser.DEFAULTSECT,
                                 opt)
                         else:
-                            value = config.get(ConfigParser.DEFAULTSECT, opt)
+                            value = config.get(configparser.DEFAULTSECT, opt)
 
                         options[opt] = value
 
@@ -684,7 +684,7 @@ along with cjklib.  If not, see <http://www.gnu.org/licenses/>.""" \
                     'metavar': 'metavar', 'choices': 'choices',
                         'description': 'help'}
                 options = dict([(includeOptions[key], value) for key, value \
-                    in metadata.items() if key in includeOptions])
+                    in list(metadata.items()) if key in includeOptions])
 
                 if 'metavar' not in options:
                     if 'type' in options and options['type'] == 'bool':
@@ -732,7 +732,7 @@ def main():
         if not CommandLineInstaller().run():
             sys.exit(1)
     except KeyboardInterrupt:
-        print >> sys.stderr, "Keyboard interrupt."
+        print("Keyboard interrupt.", file=sys.stderr)
         sys.exit(1)
 
 if __name__ == "__main__":

@@ -57,52 +57,52 @@ class InitialFinalIterator:
         self.initialFinalIterator = initialFinalIterator
 
 class PinyinYeIterator(InitialFinalIterator):
-    u"""
+    """
     Converts Pinyin syllable I{ye} to I{yê} (points out pronunciation [ɛ]).
     """
     def __iter__(self):
         for initial, final, syllable in self.initialFinalIterator:
-            if final == u'e' and initial == u'y':
-                yield(u'y', u'ê', syllable)
+            if final == 'e' and initial == 'y':
+                yield('y', 'ê', syllable)
             else:
                 yield(initial, final, syllable)
 
 class PinyinRemoveSpecialEIterator(InitialFinalIterator):
-    u"""
+    """
     Removes special syllable I{ê}. This is useful when it collides with I{e} in
     the case where it points out exceptional pronunciation [ɛ].
     """
     def __iter__(self):
         for initial, final, syllable in self.initialFinalIterator:
-            if final == u'ê' and initial == u'':
-                yield(u'', u'', syllable)
+            if final == 'ê' and initial == '':
+                yield('', '', syllable)
             else:
                 yield(initial, final, syllable)
 
 class PinyinEVowelIterator(InitialFinalIterator):
-    u"""
+    """
     Adds a second form I{ê} for I{e} (points out exceptional pronunciation [ɛ]).
     """
     def __iter__(self):
         for initial, final, syllable in self.initialFinalIterator:
-            if final == u'e' and initial == u'':
-                yield(u'', u'e', syllable)
-                yield(u'', u'ê', syllable)
+            if final == 'e' and initial == '':
+                yield('', 'e', syllable)
+                yield('', 'ê', syllable)
             else:
                 yield(initial, final, syllable)
 
 class PinyinIExtendedVowelIterator(InitialFinalIterator):
-    u"""
+    """
     Converts Pinyin finals for I{'zi'}, I{'ci'}, I{'si'}, I{'zhi'}, I{'chi'},
     I{'shi'} and I{ri} to I{ɿ} and I{ʅ} to separate them from finals
     pronounced equal to I{yi}.
     """
     def __iter__(self):
         for initial, final, syllable in self.initialFinalIterator:
-            if final == u'i' and initial in [u'z', u'c', u's']:
-                yield(initial, u'ɿ', syllable)
-            elif final == u'i' and initial in [u'zh', u'ch', u'sh', u'r']:
-                yield(initial, u'ʅ', syllable)
+            if final == 'i' and initial in ['z', 'c', 's']:
+                yield(initial, 'ɿ', syllable)
+            elif final == 'i' and initial in ['zh', 'ch', 'sh', 'r']:
+                yield(initial, 'ʅ', syllable)
             else:
                 yield(initial, final, syllable)
 
@@ -114,28 +114,28 @@ class PinyinIVowelIterator(InitialFinalIterator):
     """
     def __iter__(self):
         for initial, final, syllable in self.initialFinalIterator:
-            if final == u'i' and initial in [u'z', u'c', u's', u'zh', u'ch',
-                u'sh', u'r']:
-                yield(initial, u'-i', syllable)
+            if final == 'i' and initial in ['z', 'c', 's', 'zh', 'ch',
+                'sh', 'r']:
+                yield(initial, '-i', syllable)
             else:
                 yield(initial, final, syllable)
 
 class PinyinVVowelIterator(InitialFinalIterator):
-    u"""
+    """
     Converts Pinyin finals which coda includes the I{ü} (IPA [y]) vowel but is
     written I{u} to a representation with I{ü}.
     """
     def __iter__(self):
         for initial, final, syllable in self.initialFinalIterator:
-            if final in [u'u', u'ue', u'uan', u'un'] \
-                and initial in  [u'y', u'j', u'q', u'x']:
-                final = u'ü' + final[1:]
+            if final in ['u', 'ue', 'uan', 'un'] \
+                and initial in  ['y', 'j', 'q', 'x']:
+                final = 'ü' + final[1:]
                 yield(initial, final, syllable)
             else:
                 yield(initial, final, syllable)
 
 class PinyinOEFinalIterator(InitialFinalIterator):
-    u"""
+    """
     Merges finals I{o} and I{e} together to final I{o/e}, omitting zero initial
     I{o} and all other syllables with final I{o} with initial not in I{b}, I{p},
     I{m}, I{f}. In return syllables with initials I{b}, I{p}, I{m}, I{f} and
@@ -143,8 +143,8 @@ class PinyinOEFinalIterator(InitialFinalIterator):
     """
     def __iter__(self):
         for initial, final, syllable in self.initialFinalIterator:
-            if (final == u'o' and initial in ['b', 'p', 'm', 'f']) \
-                or (final == u'e' and initial not in ['b', 'p', 'm', 'f']):
+            if (final == 'o' and initial in ['b', 'p', 'm', 'f']) \
+                or (final == 'e' and initial not in ['b', 'p', 'm', 'f']):
                 yield(initial, 'o/e', syllable)
             else:
                 yield(initial, final, syllable)
@@ -155,29 +155,29 @@ class PinyinUnpronouncedInitialsIterator(InitialFinalIterator):
     """
     def __iter__(self):
         for initial, final, syllable in self.initialFinalIterator:
-            if initial in [u'y', u'w'] and (final[0] in [u'i', u'u', u'ü']):
-                yield(u'', final, syllable)
-            elif initial == u'y' and final == u'ou':
-                yield(u'', u'iu', syllable)
-            elif initial == u'w' and final == u'en':
-                yield(u'', u'un', syllable)
-            elif initial == u'w' and final == u'ei':
-                yield(u'', u'ui', syllable)
-            elif initial == u'y':
-                yield(u'', u'i' + final, syllable)
-            elif initial == u'w':
-                yield(u'', u'u' + final, syllable)
+            if initial in ['y', 'w'] and (final[0] in ['i', 'u', 'ü']):
+                yield('', final, syllable)
+            elif initial == 'y' and final == 'ou':
+                yield('', 'iu', syllable)
+            elif initial == 'w' and final == 'en':
+                yield('', 'un', syllable)
+            elif initial == 'w' and final == 'ei':
+                yield('', 'ui', syllable)
+            elif initial == 'y':
+                yield('', 'i' + final, syllable)
+            elif initial == 'w':
+                yield('', 'u' + final, syllable)
             else:
                 yield(initial, final, syllable)
 
 class RemoveSyllabicDiacriticIterator(InitialFinalIterator):
-    u"""
+    """
     Removes a syllabic indicator in form of the combining diacritic U+0329.
     """
     def __iter__(self):
         for initial, final, syllable in self.initialFinalIterator:
             if final == '':
-                yield(initial.replace(u'\u0329', ''), final, syllable)
+                yield(initial.replace('\u0329', ''), final, syllable)
             else:
                 yield(initial, final, syllable)
 
@@ -185,130 +185,130 @@ class SyllableTableBuilder:
     """
     Builds a table of syllables with initials and finals on the axis.
     """
-    INITIAL_MAPPING = {'Pinyin': [u'b', u'p', u'm', u'f', u'd', u't', u'n',
-            u'l', u'z', u'c', u's', u'zh', u'ch', u'sh', u'r', u'j', u'q', u'x',
-            u'g', u'k', u'h', u'w', u'y', u''],
-        'Jyutping': [u'', u'b', u'p', u'm', u'f', u'd', u't', u'n', u'l', u'g',
-            u'k', u'ng', u'h', u'gw', u'kw', u'w', u'z', u'c', u's', u'j'],
-        'ShanghaineseIPA': [u'ŋ', u'b', u'd', u'ɲ', u'ɕ', u'ʥ', u'ʑ', u'ɦ',
-            u'ʦ', u'ʦʰ', u'ʨʰ', u'ʨ', u'f', u'g', u'h', u'k', u'kʰ', u'l',
-            u'm', u'm\u0329', u'n', u'p', u'pʰ', u's', u't', u'tʰ', u'v', u'z',
-            u'']}
-    FINAL_MAPPING = {'Pinyin': [u'a', u'ao', u'ai', u'an', u'ang', u'o', u'ou',
-            u'ong', u'u', u'ü', u'ua', u'uai', u'uan', u'uang', u'ue', u'üe',
-            u'un', u'uo', u'ui', u'e', u'er', u'ei', u'en', u'eng', u'i', u'ia',
-            u'iao', u'iu', u'ie', u'ian', u'in', u'iang', u'ing', u'iong', u'n',
-            u'ng', u'm', u'ê'],
-        'Jyutping': [u'i', u'ip', u'it', u'ik', u'im', u'in', u'ing', u'iu',
-            u'yu', u'yut', u'yun', u'u', u'up', u'ut', u'uk', u'um', u'un',
-            u'ung', u'ui', u'e', u'ep', u'et', u'ek', u'em', u'en', u'eng',
-            u'ei', u'eu', u'eot', u'eon', u'eoi', u'oe', u'oet', u'oek',
-            u'oeng', u'oei', u'o', u'ot', u'ok', u'om', u'on', u'ong', u'oi',
-            u'ou', u'ap', u'at', u'ak', u'am', u'an', u'ang', u'ai', u'au',
-            u'aa', u'aap', u'aat', u'aak', u'aam', u'aan', u'aang', u'aai',
-            u'aau', u'm', u'ng'],
-        'ShanghaineseIPA': [u'', u'a', u'ã', u'aˀ', u'ø', u'ɿ', u'ɤ', u'ɑ',
-            u'ɔ', u'ə', u'ɛ', u'əŋ', u'ɑˀ', u'ɔˀ', u'əˀ', u'ɑ̃', u'əl',
-            u'en', u'ən', u'i', u'ia', u'iɤ', u'iɑ', u'iɔ',
-            u'iɪˀ', u'iɑˀ', u'iɑ̃', u'in', u'ioŋ', u'ioˀ', u'o', u'oŋ',
-            u'oˀ', u'u', u'uɑ', u'uɛ', u'uən', u'uɑˀ', u'uəˀ',
-            u'uɑ̃', u'y', u'yø', u'yɪˀ', u'yəˀ', u'yn']}
+    INITIAL_MAPPING = {'Pinyin': ['b', 'p', 'm', 'f', 'd', 't', 'n',
+            'l', 'z', 'c', 's', 'zh', 'ch', 'sh', 'r', 'j', 'q', 'x',
+            'g', 'k', 'h', 'w', 'y', ''],
+        'Jyutping': ['', 'b', 'p', 'm', 'f', 'd', 't', 'n', 'l', 'g',
+            'k', 'ng', 'h', 'gw', 'kw', 'w', 'z', 'c', 's', 'j'],
+        'ShanghaineseIPA': ['ŋ', 'b', 'd', 'ɲ', 'ɕ', 'ʥ', 'ʑ', 'ɦ',
+            'ʦ', 'ʦʰ', 'ʨʰ', 'ʨ', 'f', 'g', 'h', 'k', 'kʰ', 'l',
+            'm', 'm\u0329', 'n', 'p', 'pʰ', 's', 't', 'tʰ', 'v', 'z',
+            '']}
+    FINAL_MAPPING = {'Pinyin': ['a', 'ao', 'ai', 'an', 'ang', 'o', 'ou',
+            'ong', 'u', 'ü', 'ua', 'uai', 'uan', 'uang', 'ue', 'üe',
+            'un', 'uo', 'ui', 'e', 'er', 'ei', 'en', 'eng', 'i', 'ia',
+            'iao', 'iu', 'ie', 'ian', 'in', 'iang', 'ing', 'iong', 'n',
+            'ng', 'm', 'ê'],
+        'Jyutping': ['i', 'ip', 'it', 'ik', 'im', 'in', 'ing', 'iu',
+            'yu', 'yut', 'yun', 'u', 'up', 'ut', 'uk', 'um', 'un',
+            'ung', 'ui', 'e', 'ep', 'et', 'ek', 'em', 'en', 'eng',
+            'ei', 'eu', 'eot', 'eon', 'eoi', 'oe', 'oet', 'oek',
+            'oeng', 'oei', 'o', 'ot', 'ok', 'om', 'on', 'ong', 'oi',
+            'ou', 'ap', 'at', 'ak', 'am', 'an', 'ang', 'ai', 'au',
+            'aa', 'aap', 'aat', 'aak', 'aam', 'aan', 'aang', 'aai',
+            'aau', 'm', 'ng'],
+        'ShanghaineseIPA': ['', 'a', 'ã', 'aˀ', 'ø', 'ɿ', 'ɤ', 'ɑ',
+            'ɔ', 'ə', 'ɛ', 'əŋ', 'ɑˀ', 'ɔˀ', 'əˀ', 'ɑ̃', 'əl',
+            'en', 'ən', 'i', 'ia', 'iɤ', 'iɑ', 'iɔ',
+            'iɪˀ', 'iɑˀ', 'iɑ̃', 'in', 'ioŋ', 'ioˀ', 'o', 'oŋ',
+            'oˀ', 'u', 'uɑ', 'uɛ', 'uən', 'uɑˀ', 'uəˀ',
+            'uɑ̃', 'y', 'yø', 'yɪˀ', 'yəˀ', 'yn']}
 
-    SCHEME_MAPPING = {'ISO 7098': ('Pinyin', [u'', u'y', u'w', u'b', u'p', u'm',
-            u'f', u'd', u't', u'n', u'l', u'z', u'c', u's', u'zh', u'ch', u'sh',
-            u'r', u'j', u'q', u'x', u'g', u'k', u'h'],
-            [u'a', u'o', u'e' , u'ê', u'-i', u'er', u'ai', u'ei', u'ao', u'ou',
-            u'an', u'en', u'ang', u'eng', u'ong', u'i', u'ia', u'iao', u'ie',
-            u'iu', u'ian', u'in', u'iang', u'ing', u'iong', u'u', u'ua', u'uo',
-            u'uai', u'ui', u'uan', u'un', u'uang', u'ü', u'üe', u'üan', u'ün'],
+    SCHEME_MAPPING = {'ISO 7098': ('Pinyin', ['', 'y', 'w', 'b', 'p', 'm',
+            'f', 'd', 't', 'n', 'l', 'z', 'c', 's', 'zh', 'ch', 'sh',
+            'r', 'j', 'q', 'x', 'g', 'k', 'h'],
+            ['a', 'o', 'e' , 'ê', '-i', 'er', 'ai', 'ei', 'ao', 'ou',
+            'an', 'en', 'ang', 'eng', 'ong', 'i', 'ia', 'iao', 'ie',
+            'iu', 'ian', 'in', 'iang', 'ing', 'iong', 'u', 'ua', 'uo',
+            'uai', 'ui', 'uan', 'un', 'uang', 'ü', 'üe', 'üan', 'ün'],
             [PinyinRemoveSpecialEIterator, PinyinYeIterator,
             PinyinEVowelIterator, PinyinIVowelIterator, PinyinVVowelIterator]),
-        'Praktisches Chinesisch': ('Pinyin', [u'', u'b', u'p', u'm', u'f', u'd',
-            u't', u'n', u'l', u'z', u'c', u's', u'zh', u'ch', u'sh', u'r', u'j',
-            u'q', u'x', u'g', u'k', u'h'],
-            [u'a', u'o', u'e' , u'ê', u'-i', u'er', u'ai', u'ei', u'ao', u'ou',
-            u'an', u'en', u'ang', u'eng', u'ong', u'i', u'ia', u'iao', u'ie',
-            u'iu', u'ian', u'in', u'iang', u'ing', u'iong', u'u', u'ua', u'uo',
-            u'uai', u'ui', u'uan', u'un', u'uang', u'ueng', u'ü', u'üe', u'üan',
-            u'ün'],
+        'Praktisches Chinesisch': ('Pinyin', ['', 'b', 'p', 'm', 'f', 'd',
+            't', 'n', 'l', 'z', 'c', 's', 'zh', 'ch', 'sh', 'r', 'j',
+            'q', 'x', 'g', 'k', 'h'],
+            ['a', 'o', 'e' , 'ê', '-i', 'er', 'ai', 'ei', 'ao', 'ou',
+            'an', 'en', 'ang', 'eng', 'ong', 'i', 'ia', 'iao', 'ie',
+            'iu', 'ian', 'in', 'iang', 'ing', 'iong', 'u', 'ua', 'uo',
+            'uai', 'ui', 'uan', 'un', 'uang', 'ueng', 'ü', 'üe', 'üan',
+            'ün'],
             [PinyinRemoveSpecialEIterator, PinyinEVowelIterator,
             PinyinIVowelIterator, PinyinVVowelIterator,
             PinyinUnpronouncedInitialsIterator]),
-        'Pinyin.info': ('Pinyin', [u'b', u'p', u'm', u'f', u'd',
-            u't', u'n', u'l', u'g', u'k', u'h', u'z', u'c', u's', u'zh', u'ch',
-            u'sh', u'r', u'j', u'q', u'x', u'', ],
-            [u'a', u'o', u'e', u'ai', u'ei', u'ao', u'ou', u'an', u'ang', u'en',
-            u'eng', u'ong', u'u', u'ua', u'uo', u'uai', u'ui', u'uan', u'uang',
-            u'un', u'ueng', u'i', u'ia', u'ie', u'iao', u'iu', u'ian', u'in',
-            u'ing', u'iang', u'iong', u'ü', u'üe', u'üan', u'ün'],
+        'Pinyin.info': ('Pinyin', ['b', 'p', 'm', 'f', 'd',
+            't', 'n', 'l', 'g', 'k', 'h', 'z', 'c', 's', 'zh', 'ch',
+            'sh', 'r', 'j', 'q', 'x', '', ],
+            ['a', 'o', 'e', 'ai', 'ei', 'ao', 'ou', 'an', 'ang', 'en',
+            'eng', 'ong', 'u', 'ua', 'uo', 'uai', 'ui', 'uan', 'uang',
+            'un', 'ueng', 'i', 'ia', 'ie', 'iao', 'iu', 'ian', 'in',
+            'ing', 'iang', 'iong', 'ü', 'üe', 'üan', 'ün'],
             [PinyinVVowelIterator, PinyinUnpronouncedInitialsIterator]),
-        'Pinyin dewiki': ('Pinyin', [u'b', u'p', u'm', u'f', u'd', u't', u'n',
-            u'l', u'z', u'c', u's', u'zh', u'ch', u'sh', u'r', u'j', u'q', u'x',
-            u'g', u'k', u'h', u'w', u'y', u''],
-            [u'a', u'ao', u'ai', u'an', u'ang', u'o', u'ou', u'ong', u'u', u'ü',
-            u'ua', u'uai', u'uan', u'uang', u'ue', u'üe', u'un', u'uo', u'ui',
-            u'e', u'er', u'ei', u'en', u'eng', u'i', u'ia', u'iao', u'iu',
-            u'ie', u'ian', u'in', u'iang', u'ing', u'iong'],
+        'Pinyin dewiki': ('Pinyin', ['b', 'p', 'm', 'f', 'd', 't', 'n',
+            'l', 'z', 'c', 's', 'zh', 'ch', 'sh', 'r', 'j', 'q', 'x',
+            'g', 'k', 'h', 'w', 'y', ''],
+            ['a', 'ao', 'ai', 'an', 'ang', 'o', 'ou', 'ong', 'u', 'ü',
+            'ua', 'uai', 'uan', 'uang', 'ue', 'üe', 'un', 'uo', 'ui',
+            'e', 'er', 'ei', 'en', 'eng', 'i', 'ia', 'iao', 'iu',
+            'ie', 'ian', 'in', 'iang', 'ing', 'iong'],
             []),
-        'PinyinExtendedScheme': ('Pinyin', [u'', u'b', u'p', u'm', u'f', u'd',
-            u't', u'n', u'l', u'z', u'c', u's', u'zh', u'ch', u'sh', u'r', u'j',
-            u'q', u'x', u'g', u'k', u'h'],
-            [u'a', u'o', u'e' , u'ê', u'ɿ', u'ʅ', u'er', u'ai', u'ei', u'ao',
-            u'ou', u'an', u'en', u'ang', u'eng', u'ong', u'i', u'ia', u'iao',
-            u'ie', u'iu', u'iai', u'ian', u'in', u'iang', u'ing', u'io',
-            u'iong', u'u', u'ua', u'uo', u'uai', u'ui', u'uan', u'un', u'uang',
-            u'ueng', u'ü', u'üe', u'üan', u'ün', u'm', u'n', u'ng'],
+        'PinyinExtendedScheme': ('Pinyin', ['', 'b', 'p', 'm', 'f', 'd',
+            't', 'n', 'l', 'z', 'c', 's', 'zh', 'ch', 'sh', 'r', 'j',
+            'q', 'x', 'g', 'k', 'h'],
+            ['a', 'o', 'e' , 'ê', 'ɿ', 'ʅ', 'er', 'ai', 'ei', 'ao',
+            'ou', 'an', 'en', 'ang', 'eng', 'ong', 'i', 'ia', 'iao',
+            'ie', 'iu', 'iai', 'ian', 'in', 'iang', 'ing', 'io',
+            'iong', 'u', 'ua', 'uo', 'uai', 'ui', 'uan', 'un', 'uang',
+            'ueng', 'ü', 'üe', 'üan', 'ün', 'm', 'n', 'ng'],
             [PinyinIExtendedVowelIterator, PinyinVVowelIterator,
             PinyinUnpronouncedInitialsIterator]),
-        'Introduction1972': ('Pinyin', [u'', u'b', u'p', u'm', u'f', u'z',
-            u'c', u's', u'd', u't', u'n', u'l', u'zh', u'ch', u'sh', u'r', u'j',
-            u'q', u'x', u'g', u'k', u'h'],
-            [u'a', u'ai', u'an', u'ang', u'ao', u'o/e' , u'ei', u'en', u'eng',
-            u'ou', u'er', u'ɿ', u'ʅ', u'i', u'ia', u'ian', u'iang', u'iao',
-            u'ie', u'in', u'ing', u'iu', u'u', u'ua', u'uai', u'uan', u'uang',
-            u'uo', u'ui', u'un', u'ong', u'ü', u'üan', u'üe', u'ün', u'iong'],
+        'Introduction1972': ('Pinyin', ['', 'b', 'p', 'm', 'f', 'z',
+            'c', 's', 'd', 't', 'n', 'l', 'zh', 'ch', 'sh', 'r', 'j',
+            'q', 'x', 'g', 'k', 'h'],
+            ['a', 'ai', 'an', 'ang', 'ao', 'o/e' , 'ei', 'en', 'eng',
+            'ou', 'er', 'ɿ', 'ʅ', 'i', 'ia', 'ian', 'iang', 'iao',
+            'ie', 'in', 'ing', 'iu', 'u', 'ua', 'uai', 'uan', 'uang',
+            'uo', 'ui', 'un', 'ong', 'ü', 'üan', 'üe', 'ün', 'iong'],
             [PinyinIExtendedVowelIterator, PinyinVVowelIterator,
             PinyinUnpronouncedInitialsIterator, PinyinOEFinalIterator]),
-        'CUHK': ('Jyutping', [u'', u'b', u'p', u'm', u'f', u'd', u't', u'n',
-            u'l', u'g', u'k', u'ng', u'h', u'gw', u'kw', u'w', u'z', u'c', u's',
-            u'j'],
-            [u'i', u'ip', u'it', u'ik', u'im', u'in', u'ing', u'iu', u'yu',
-            u'yut', u'yun', u'u', u'up', u'ut', u'uk', u'um', u'un', u'ung',
-            u'ui', u'e', u'ep', u'et', u'ek', u'em', u'en', u'eng', u'ei',
-            u'eu', u'eot', u'eon', u'eoi', u'oe', u'oet', u'oek', u'oeng', u'o',
-            u'ot', u'ok', u'on', u'ong', u'oi', u'ou', u'ap', u'at', u'ak',
-            u'am', u'an', u'ang', u'ai', u'au', u'aa', u'aap', u'aat', u'aak',
-            u'aam', u'aan', u'aang', u'aai', u'aau', u'm', u'ng'],
+        'CUHK': ('Jyutping', ['', 'b', 'p', 'm', 'f', 'd', 't', 'n',
+            'l', 'g', 'k', 'ng', 'h', 'gw', 'kw', 'w', 'z', 'c', 's',
+            'j'],
+            ['i', 'ip', 'it', 'ik', 'im', 'in', 'ing', 'iu', 'yu',
+            'yut', 'yun', 'u', 'up', 'ut', 'uk', 'um', 'un', 'ung',
+            'ui', 'e', 'ep', 'et', 'ek', 'em', 'en', 'eng', 'ei',
+            'eu', 'eot', 'eon', 'eoi', 'oe', 'oet', 'oek', 'oeng', 'o',
+            'ot', 'ok', 'on', 'ong', 'oi', 'ou', 'ap', 'at', 'ak',
+            'am', 'an', 'ang', 'ai', 'au', 'aa', 'aap', 'aat', 'aak',
+            'aam', 'aan', 'aang', 'aai', 'aau', 'm', 'ng'],
             []),
-        'CUHK extended': ('Jyutping', [u'', u'b', u'p', u'm', u'f', u'd', u't',
-            u'n', u'l', u'g', u'k', u'ng', u'h', u'gw', u'kw', u'w', u'z', u'c',
-            u's', u'j'],
-            [u'i', u'ip', u'it', u'ik', u'im', u'in', u'ing', u'iu', u'yu',
-            u'yut', u'yun', u'u', u'up', u'ut', u'uk', u'um', u'un', u'ung',
-            u'ui', u'e', u'ep', u'et', u'ek', u'em', u'en', u'eng', u'ei',
-            u'eu', u'eot', u'eon', u'eoi', u'oe', u'oet', u'oek', u'oeng',
-            u'oei', u'o', u'ot', u'ok', u'om', u'on', u'ong', u'oi', u'ou',
-            u'ap', u'at', u'ak', u'am', u'an', u'ang', u'ai', u'au', u'aa',
-            u'aap', u'aat', u'aak', u'aam', u'aan', u'aang', u'aai', u'aau',
-            u'm', u'ng'],
+        'CUHK extended': ('Jyutping', ['', 'b', 'p', 'm', 'f', 'd', 't',
+            'n', 'l', 'g', 'k', 'ng', 'h', 'gw', 'kw', 'w', 'z', 'c',
+            's', 'j'],
+            ['i', 'ip', 'it', 'ik', 'im', 'in', 'ing', 'iu', 'yu',
+            'yut', 'yun', 'u', 'up', 'ut', 'uk', 'um', 'un', 'ung',
+            'ui', 'e', 'ep', 'et', 'ek', 'em', 'en', 'eng', 'ei',
+            'eu', 'eot', 'eon', 'eoi', 'oe', 'oet', 'oek', 'oeng',
+            'oei', 'o', 'ot', 'ok', 'om', 'on', 'ong', 'oi', 'ou',
+            'ap', 'at', 'ak', 'am', 'an', 'ang', 'ai', 'au', 'aa',
+            'aap', 'aat', 'aak', 'aam', 'aan', 'aang', 'aai', 'aau',
+            'm', 'ng'],
             []),
         'FullShanghainese': ('ShanghaineseIPA', ['',
-            u'ɦ', u'h',
-            u'ŋ', u'k', u'kʰ', u'g',
-            u'ɲ', u'ʨ', u'ʨʰ', u'ʥ', u'ɕ', u'ʑ',
-            u'm', u'b', u'p', u'pʰ',
-            u'l',
-            u'n', u't', u'tʰ', u'd', u'ʦ', u'ʦʰ', u's', u'z',
-            u'f', u'v'],
-            [u'', u'ɑ', u'ɑ̃', u'ã', u'ɑˀ',
-            u'ɛ', u'əˀ', u'ən', u'əl', u'ɿ', u'ɤ',
-            u'i', u'iɑ', u'iɑ̃', u'iɑˀ', u'iɤ', u'iɔ', u'iɪˀ', u'in',
-            u'ioˀ', u'ioŋ',
-            u'o', u'oˀ', u'oŋ', u'ø', u'ɔ', u'ɔˀ',
-            u'u', u'uɑ̃', u'uɑ', u'uɑˀ', u'uɛ', u'uəˀ', u'uən',
-            u'y', u'yn', u'yø', u'yɪˀ', u'yəˀ'],
+            'ɦ', 'h',
+            'ŋ', 'k', 'kʰ', 'g',
+            'ɲ', 'ʨ', 'ʨʰ', 'ʥ', 'ɕ', 'ʑ',
+            'm', 'b', 'p', 'pʰ',
+            'l',
+            'n', 't', 'tʰ', 'd', 'ʦ', 'ʦʰ', 's', 'z',
+            'f', 'v'],
+            ['', 'ɑ', 'ɑ̃', 'ã', 'ɑˀ',
+            'ɛ', 'əˀ', 'ən', 'əl', 'ɿ', 'ɤ',
+            'i', 'iɑ', 'iɑ̃', 'iɑˀ', 'iɤ', 'iɔ', 'iɪˀ', 'in',
+            'ioˀ', 'ioŋ',
+            'o', 'oˀ', 'oŋ', 'ø', 'ɔ', 'ɔˀ',
+            'u', 'uɑ̃', 'uɑ', 'uɑˀ', 'uɛ', 'uəˀ', 'uən',
+            'y', 'yn', 'yø', 'yɪˀ', 'yəˀ'],
             [RemoveSyllabicDiacriticIterator])}
-    u"""
+    """
     Predefined schemes based on:
         - ISO 7098, the Pinyin syllable table given in Annex A.
         - Praktisches Chinesisch, Band I, Kommerzieller Verlag, Beijing 2001,
@@ -424,7 +424,7 @@ class SyllableTableBuilder:
         @type ruleList: list of functions
         @param ruleList: rules to process the syllables from database
         """
-        if self.SCHEME_MAPPING.has_key(schemeName):
+        if schemeName in self.SCHEME_MAPPING:
             raise ValueError("Scheme '" + schemeName + "' already exists")
         self.SCHEME_MAPPING[schemeName] = (romanisation, initialList, finalList,
             ruleList)

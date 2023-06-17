@@ -50,7 +50,7 @@ class CjklibGenerator(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         if not hasattr(self, '_decompositions'):
             self._decompositions = self._getDecompositionEntriesDict()
 
@@ -91,20 +91,20 @@ class FileGenerator(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         if not hasattr(self, '_fileIterator'):
             if not self.quiet:
-                print >> sys.stderr, "FILE: reading '%s'" % self.filePath
+                print("FILE: reading '%s'" % self.filePath, file=sys.stderr)
             fileHandle = codecs.open(self.filePath, 'r', default_encoding)
             self._fileIterator = UnicodeCSVFileIterator(fileHandle)
 
         while True:
-            char, decompString, glyph, _, flags = self._fileIterator.next()
+            char, decompString, glyph, _, flags = next(self._fileIterator)
             if len(char) > 1:
                 # pseudo char
                 if not char.startswith('#'):
-                    print >> sys.stderr, ("FILE: Error parsing entry '%s', %s"
-                        % (char, glyph)).encode(default_encoding)
+                    print(("FILE: Error parsing entry '%s', %s"
+                        % (char, glyph)).encode(default_encoding), file=sys.stderr)
                     continue
                 else:
                     char = int(char[1:])
@@ -127,7 +127,7 @@ class ChiseEntryGenerator(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         entry = self._getNextEntry()
         if entry is None:
             raise StopIteration()
@@ -135,7 +135,7 @@ class ChiseEntryGenerator(object):
             char, decompString = entry
             # TODO support CHISE private character entries
             # remove CHISE private character entries
-            decompString = re.sub("&[^;]+;", u'？', decompString)
+            decompString = re.sub("&[^;]+;", '？', decompString)
 
             decomposition = []
             for c in decompString:
@@ -157,7 +157,7 @@ class ChiseEntryGenerator(object):
                 try:
                     filePath = self._findFile([fileName])
                     if not self.quiet:
-                        print >> sys.stderr, "CHISE: reading '%s'" % filePath
+                        print("CHISE: reading '%s'" % filePath, file=sys.stderr)
                     self._curFile = codecs.open(filePath, 'r', 'utf8')
                 except IOError:
                     pass
@@ -166,16 +166,15 @@ class ChiseEntryGenerator(object):
                 return None
 
             try:
-                line = self._curFile.next()
+                line = next(self._curFile)
                 if not (line.startswith('#') or line.startswith(';; -*-')):
                     matchObj = self.ENTRY_REGEX.match(line)
                     if matchObj:
                         return matchObj.groups()
                     else:
                         if not self.quiet:
-                            print >> sys.stderr, \
-                                ("CHISE: Error parsing line '%s'" % line)\
-                                    .encode(default_encoding)
+                            print(("CHISE: Error parsing line '%s'" % line)\
+                                    .encode(default_encoding), file=sys.stderr)
             except StopIteration:
                 self._curFile = None
 
@@ -209,39 +208,39 @@ class GroovySetGenerator(object):
     """Iterates over the "groovy" character list."""
 
     DESCRIPTION_MAP = {
-        'PlainAcross': u'⿰',
-        'TouchAcross': u'⿰', # same as 'PlainAcross', but components touch
-        'PlainDown': u'⿱',
-        'TouchDown': u'⿱', # same as 'PlainDown', but components touch
-        'Within': u'⿻',
-        'Lock': u'⿻',
-        'BetweenAcross': u'⿻', # more specific than 'Within', e.g. 辩
-        'BetweenDown': u'⿻', # more specific than 'Within', e.g. 裒,衣,臼
-        'NeedleAcross': u'⿻', # more specific than 'Within', e.g. 卅,川,一
-        'NeedleDown': u'⿻', # more specific than 'Within', e.g. 中,口,丨
-        'FullSurround': u'⿴',
-        'TopSurround': u'⿵',
-        'BottomSurround': u'⿶',
-        'LeftSurround': u'⿷',
-        'ToprightSurround': u'⿹',
-        'TopleftSurround': u'⿸',
-        'BottomleftSurround': u'⿺',
+        'PlainAcross': '⿰',
+        'TouchAcross': '⿰', # same as 'PlainAcross', but components touch
+        'PlainDown': '⿱',
+        'TouchDown': '⿱', # same as 'PlainDown', but components touch
+        'Within': '⿻',
+        'Lock': '⿻',
+        'BetweenAcross': '⿻', # more specific than 'Within', e.g. 辩
+        'BetweenDown': '⿻', # more specific than 'Within', e.g. 裒,衣,臼
+        'NeedleAcross': '⿻', # more specific than 'Within', e.g. 卅,川,一
+        'NeedleDown': '⿻', # more specific than 'Within', e.g. 中,口,丨
+        'FullSurround': '⿴',
+        'TopSurround': '⿵',
+        'BottomSurround': '⿶',
+        'LeftSurround': '⿷',
+        'ToprightSurround': '⿹',
+        'TopleftSurround': '⿸',
+        'BottomleftSurround': '⿺',
         }
 
     DESCRIPTION_RULE = {
-        'StrokeModified': lambda a, b: [[u'⿻', a, u'？']],
-        'ToprightSurroundMold': lambda a, b: [[u'⿹', a, u'？'],
-            [u'⿹', u'？', b]],
-        'MoldAcross': lambda a, b: [[u'⿰', a, u'？'], [u'⿰', u'？', b]],
-        'MoldDown': lambda a, b: [[u'⿱', a, u'？'], [u'⿱', u'？', b]],
-        'SnapDown': lambda a, b: [[u'⿱', a, u'？'], [u'⿱', u'？', b]],
-        'RepeatMoldDown': lambda a, b: [[u'⿱', a, u'？'], [u'⿱', u'？', a]],
-        'RepeatAcross': lambda a, b: [[u'⿰', a, a]],
-        'RepeatThreeAcross': lambda a, b: [[u'⿲', a, a, a]],
-        'RepeatDown': lambda a, b: [[u'⿱', a, a]],
-        'RepeatTriangle': lambda a, b: [[u'⿱', a, u'⿰', a, a]],
-        'RepeatSquare': lambda a, b: [[u'⿱', u'⿰', a, a, u'⿰', a, a]],
-        'RepeatTopSurround': lambda a, b: [[u'⿵', a, a]],
+        'StrokeModified': lambda a, b: [['⿻', a, '？']],
+        'ToprightSurroundMold': lambda a, b: [['⿹', a, '？'],
+            ['⿹', '？', b]],
+        'MoldAcross': lambda a, b: [['⿰', a, '？'], ['⿰', '？', b]],
+        'MoldDown': lambda a, b: [['⿱', a, '？'], ['⿱', '？', b]],
+        'SnapDown': lambda a, b: [['⿱', a, '？'], ['⿱', '？', b]],
+        'RepeatMoldDown': lambda a, b: [['⿱', a, '？'], ['⿱', '？', a]],
+        'RepeatAcross': lambda a, b: [['⿰', a, a]],
+        'RepeatThreeAcross': lambda a, b: [['⿲', a, a, a]],
+        'RepeatDown': lambda a, b: [['⿱', a, a]],
+        'RepeatTriangle': lambda a, b: [['⿱', a, '⿰', a, a]],
+        'RepeatSquare': lambda a, b: [['⿱', '⿰', a, a, '⿰', a, a]],
+        'RepeatTopSurround': lambda a, b: [['⿵', a, a]],
         }
 
     IGNORE = set(['CornerJoin', 'Component', 'Diagonal', 'RadicalVersion',
@@ -261,7 +260,7 @@ class GroovySetGenerator(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         if not self._entrySet:
             self._entrySet = self._getNextEntries()
         char, decomposition = self._entrySet.pop()
@@ -291,25 +290,25 @@ class GroovySetGenerator(object):
                 # open file on first run
                 if not hasattr(self, '_file'):
                     if not self.quiet:
-                        print >> sys.stderr, ("Groovy: reading '%s'"
-                            % self.filePath)
+                        print(("Groovy: reading '%s'"
+                            % self.filePath), file=sys.stderr)
                     self._file = codecs.open(self.filePath, 'r', 'utf8')
 
                     # remove initial lines (should be LICENSE)
                     while True:
-                        line = self._file.next()
+                        line = next(self._file)
                         if re.match('([^,]{1,2},){3}[^,]+$',
                             line):
                             break
                 else:
-                    line = self._file.next()
+                    line = next(self._file)
 
                 if not line.strip():
                     continue
 
                 if line.count(',') != 3:
-                    print >> sys.stderr, ("Groovy: Error parsing line '%s'"
-                        % line).encode(default_encoding)
+                    print(("Groovy: Error parsing line '%s'"
+                        % line).encode(default_encoding), file=sys.stderr)
                     continue
 
                 char, componentA, componentB, description \
@@ -319,9 +318,9 @@ class GroovySetGenerator(object):
                     self._skipCount += 1
                     continue
                 componentA = checkPseudoCharacter(componentA)
-                if isPrivateUse(componentA): componentA = u'？'
+                if isPrivateUse(componentA): componentA = '？'
                 componentB = checkPseudoCharacter(componentB)
-                if isPrivateUse(componentB): componentB = u'？'
+                if isPrivateUse(componentB): componentB = '？'
 
                 entries = self._buildEntry(componentA, componentB, description)
                 if entries:
@@ -330,9 +329,9 @@ class GroovySetGenerator(object):
                     self._skipCount += 1
             except StopIteration:
                 if not self.quiet:
-                    print >> sys.stderr, ('Groovy: Unknown descriptions: %s'
-                        % ', '.join(self._unknownDescriptions))
-                    print >> sys.stderr, 'Groovy: Skipped: %d' % self._skipCount
+                    print(('Groovy: Unknown descriptions: %s'
+                        % ', '.join(self._unknownDescriptions)), file=sys.stderr)
+                    print('Groovy: Skipped: %d' % self._skipCount, file=sys.stderr)
 
                 raise
 
@@ -341,7 +340,7 @@ class GroovySetGenerator(object):
             # add glyph information
             decomposition = []
             for c in structure:
-                if type(c) == type(u'') and CharacterLookup.isIDSOperator(c):
+                if type(c) == type('') and CharacterLookup.isIDSOperator(c):
                     decomposition.append(c)
                 else:
                     decomposition.append((c, 0))
@@ -436,7 +435,7 @@ class DecompositionConverter(object):
         # get entries from cjklib (specific as glyphs)
         if self.includeCjklib:
             if not self.quiet:
-                print >> sys.stderr, "reading from cjklib"
+                print("reading from cjklib", file=sys.stderr)
 
             pseudoCharacterStartIndex = len(pseudoCharacters)
 
@@ -475,11 +474,11 @@ class DecompositionConverter(object):
                     flags, pseudoCharacterStartIndex)
 
         if not self.quiet and badEntries:
-            print >> sys.stderr, 'Found malformed entries:'
+            print('Found malformed entries:', file=sys.stderr)
             for corpus in badEntries:
-                print >> sys.stderr, corpus, (' '.join(
+                print(corpus, (' '.join(
                     [char for char, _ in badEntries[corpus]]))\
-                    .encode(default_encoding)
+                    .encode(default_encoding), file=sys.stderr)
 
         return decompositionEntries, flagEntries
 
@@ -518,11 +517,11 @@ class DecompositionConverter(object):
                         char = '#%d' % char
                     flagStr = ''.join(sorted(
                         flagEntries[char][glyph][decomposition]))
-                    print (
+                    print((
                         '"%(char)s","%(decomp)s",%(glyph)d,%(index)d,%(flags)s'
                             % {'char': char, 'decomp': decompStr,
                                 'glyph': glyph, 'index': idx,
-                                'flags': flagStr}).encode(default_encoding)
+                                'flags': flagStr}).encode(default_encoding))
 
     @staticmethod
     def isValidDecomposition(char, glyph, decomposition):
@@ -606,7 +605,7 @@ class DecompositionConverter(object):
                 return compareTrees(decompositionA[1:], decompositionB[1:])
 
             elif (type(decompositionA[0]) == type(())
-                and decompositionA[0][0] == u'？'):
+                and decompositionA[0][0] == '？'):
                 decompositionB = consumeComponent(decompositionB)
                 result = compareTrees(decompositionA[1:], decompositionB)
                 if result is None or result < 0:
@@ -616,7 +615,7 @@ class DecompositionConverter(object):
                     return +1
 
             elif (type(decompositionB[0]) == type(())
-                and decompositionB[0][0] == u'？'):
+                and decompositionB[0][0] == '？'):
                 decompositionA = consumeComponent(decompositionA)
                 result = compareTrees(decompositionA, decompositionB[1:])
                 if result is None or result > 0:
@@ -695,13 +694,13 @@ class DecompositionConverter(object):
                                 #   left
                                 idxB += 1
                         except ValueError:
-                            print >> sys.stderr, (
+                            print((
                                 "Error comparing decompositions %s and %s"
                                 % (CharacterLookup.decompositionToString(
                                     decompositions[idxA]),
                                     CharacterLookup.decompositionToString(
                                         decompositions[idxB])))\
-                                    .encode(default_encoding)
+                                    .encode(default_encoding), file=sys.stderr)
                             idxB += 1
                     else:
                         idxA += 1
@@ -772,11 +771,11 @@ class DecompositionConverter(object):
                             newFlagEntries[char][glyph][newDecomposition] \
                                 = flagEntries[char][glyph][decomposition]
                     elif not self.quiet:
-                        print >> sys.stderr, ("Unable to resolve decomposition"
+                        print(("Unable to resolve decomposition"
                             + " with pseudo character for '%s': " % char
                             + CharacterLookup.decompositionToString(
                                 decomposition))\
-                            .encode(default_encoding)
+                            .encode(default_encoding), file=sys.stderr)
 
         return newDecompositionsEntries, newFlagEntries
 

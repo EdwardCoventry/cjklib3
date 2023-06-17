@@ -48,7 +48,7 @@ class ReadingConverterTest(NeedsDatabaseTest):
         NeedsDatabaseTest.setUp(self)
         self.fromReading, self.toReading = self.CONVERSION_DIRECTION
 
-        for clss in self.getReadingConverterClasses().values():
+        for clss in list(self.getReadingConverterClasses().values()):
             if self.CONVERSION_DIRECTION in clss.CONVERSION_DIRECTIONS:
                 self.readingConverterClass = clss
                 break
@@ -80,8 +80,8 @@ class ReadingConverterTest(NeedsDatabaseTest):
 
         # get all non-abstract classes that inherit from ReadingConverter
         readingConverterClasses = dict([(clss.__name__, clss) \
-            for clss in converter.__dict__.values() \
-            if type(clss) in [types.TypeType, types.ClassType] \
+            for clss in list(converter.__dict__.values()) \
+            if type(clss) in [type, type] \
             and issubclass(clss, converter.ReadingConverter) \
             and clss.CONVERSION_DIRECTIONS])
 
@@ -113,16 +113,16 @@ class ReadingConverterConsistencyTest(ReadingConverterTest):
         """Test if only one ReadingConverter exists for each reading."""
         seen = False
 
-        for clss in self.getReadingConverterClasses().values():
+        for clss in list(self.getReadingConverterClasses().values()):
             if self.CONVERSION_DIRECTION in clss.CONVERSION_DIRECTIONS:
-                self.assert_(not seen,
+                self.assertTrue(not seen,
                     "Conversion %s to %s has more than one converter" \
                     % self.CONVERSION_DIRECTION)
                 seen = True
 
     def testInstantiation(self):
         """Test if given conversion can be instantiated"""
-        self.assert_(self.readingConverterClass != None,
+        self.assertTrue(self.readingConverterClass != None,
             "No reading converter class found" \
                 + ' (conversion %s to %s)' % self.CONVERSION_DIRECTION)
 
@@ -141,12 +141,12 @@ class ReadingConverterConsistencyTest(ReadingConverterTest):
         """
         defaultOptions = self.readingConverterClass.getDefaultOptions()
 
-        self.assertEquals(type(defaultOptions), type({}),
+        self.assertEqual(type(defaultOptions), type({}),
             "Default options %s is not of type dict" % repr(defaultOptions) \
             + ' (conversion %s to %s)' % self.CONVERSION_DIRECTION)
         # test if option names are well-formed
         for option in defaultOptions:
-            self.assertEquals(type(option), type(''),
+            self.assertEqual(type(option), type(''),
                 "Option %s is not of type str" % repr(option) \
                 + ' (conversion %s to %s)' % self.CONVERSION_DIRECTION)
 
@@ -157,7 +157,7 @@ class ReadingConverterConsistencyTest(ReadingConverterTest):
             forms.append({})
         for options in forms:
             for option in options:
-                self.assert_(option in defaultOptions,
+                self.assertTrue(option in defaultOptions,
                     "Test case option %s not found in default options" \
                         % repr(option) \
                     + ' (conversion %s to %s, options %s)' \
@@ -194,7 +194,7 @@ class ReadingConverterConsistencyTest(ReadingConverterTest):
         """
         def isOneCharEntity(entity):
             return len([c for c \
-                in unicodedata.normalize("NFD", unicode(entity)) \
+                in unicodedata.normalize("NFD", str(entity)) \
                 if 'a' <= c <= 'z']) == 1
 
         fromReadingClass = self.f.getReadingOperatorClass(self.fromReading)
@@ -220,7 +220,7 @@ class ReadingConverterConsistencyTest(ReadingConverterTest):
                 try:
                     toEntity = self.f.convert(entity, self.fromReading,
                         self.toReading, **options)
-                    self.assert_(toEntity.islower(),
+                    self.assertTrue(toEntity.islower(),
                         'Mismatch in letter case for conversion %s to %s' \
                             % (repr(entity), repr(toEntity)) \
                         + ' (conversion %s to %s, options %s)' \
@@ -234,7 +234,7 @@ class ReadingConverterConsistencyTest(ReadingConverterTest):
 
                     toEntity = self.f.convert(entity.upper(), self.fromReading,
                         self.toReading, **options)
-                    self.assert_(toEntity.isupper(),
+                    self.assertTrue(toEntity.isupper(),
                         'Mismatch in letter case for conversion %s to %s' \
                             % (repr(entity.upper()), repr(toEntity)) \
                         + ' (conversion %s to %s, options %s)' \
@@ -247,7 +247,7 @@ class ReadingConverterConsistencyTest(ReadingConverterTest):
                     toEntity = self.f.convert(entity.upper(), self.fromReading,
                         self.toReading, **ownOptions)
 
-                    self.assert_(toEntity.islower(),
+                    self.assertTrue(toEntity.islower(),
                         'Mismatch in conversion to lower case from %s to %s' \
                             % (repr(entity.upper()), repr(toEntity)) \
                         + ' (conversion %s to %s, options %s)' \
@@ -257,7 +257,7 @@ class ReadingConverterConsistencyTest(ReadingConverterTest):
                         self.fromReading, self.toReading, **options)
 
                     # trade-off for one-char entities: upper-case goes for title
-                    self.assert_(istitlecase(toEntities) \
+                    self.assertTrue(istitlecase(toEntities) \
                             or (toEntities.isupper() \
                                 and (isOneCharEntity(toEntities) \
                                     or isOneCharEntity(entity))),
@@ -325,7 +325,7 @@ class ReadingConverterConsistencyTest(ReadingConverterTest):
                             cleanDecomposition = decomposition
 
                         for toEntity in cleanDecomposition:
-                            self.assert_(
+                            self.assertTrue(
                                 self.f.isReadingEntity(toEntity, self.toReading,
                                     **targetDialect),
                                 "Conversion from %s to %s" \
@@ -355,7 +355,7 @@ class ReadingConverterTestCaseCheck(NeedsDatabaseTest, unittest.TestCase):
 
         for clss in self.f.getReadingConverterClasses():
             for direction in clss.CONVERSION_DIRECTIONS:
-                self.assert_(direction in testClassReadingNames,
+                self.assertTrue(direction in testClassReadingNames,
                     "Conversion from %s to %s" % direction \
                     + "has no ReadingOperatorConsistencyTest")
 
@@ -373,8 +373,8 @@ class ReadingConverterTestCaseCheck(NeedsDatabaseTest, unittest.TestCase):
         #   ReadingConverterConsistencyTest
         testModule = __import__("cjklib.test.readingconverter")
         testClasses = [clss for clss \
-            in testModule.test.readingconverter.__dict__.values() \
-            if type(clss) in [types.TypeType, types.ClassType] \
+            in list(testModule.test.readingconverter.__dict__.values()) \
+            if type(clss) in [type, type] \
             and issubclass(clss, ReadingConverterConsistencyTest) \
             and clss.CONVERSION_DIRECTION]
 
@@ -400,13 +400,13 @@ class ReadingConverterReferenceTest(ReadingConverterTest):
             for reference, target in references:
                 args = [reference, self.fromReading, self.toReading]
 
-                if type(target) in [types.TypeType, types.ClassType] \
+                if type(target) in [type, type] \
                     and issubclass(target, Exception):
                     self.assertRaises(target, self.f.convert, *args, **options)
                 else:
                     string = self.f.convert(*args, **options)
 
-                    self.assertEquals(string, target,
+                    self.assertEqual(string, target,
                         "Conversion for %s to %s failed: %s" \
                             % (repr(reference), repr(target), repr(string)) \
                         + ' (conversion %s to %s, options %s)' \
@@ -425,34 +425,34 @@ class CantoneseYaleDialectReferenceTest(ReadingConverterReferenceTest,
 
     CONVERSION_REFERENCES = [
         ({'sourceOptions': {}, 'targetOptions': {'toneMarkType': 'numbers'}}, [
-            (u'gwóngjāuwá', u'gwong2jau1wa2'),
-            (u'gwóngjàuwá', u'gwong2jau1wa2'),
-            (u'GWÓNGJĀUWÁ', u'GWONG2JAU1WA2'),
-            (u'sīsísisìhsíhsihsīksiksihk', u'si1si2si3si4si5si6sik1sik3sik6'),
-            (u'SÌSÍSISÌHSÍHSIHSĪKSIKSIHK', u'SI1SI2SI3SI4SI5SI6SIK1SIK3SIK6'),
+            ('gwóngjāuwá', 'gwong2jau1wa2'),
+            ('gwóngjàuwá', 'gwong2jau1wa2'),
+            ('GWÓNGJĀUWÁ', 'GWONG2JAU1WA2'),
+            ('sīsísisìhsíhsihsīksiksihk', 'si1si2si3si4si5si6sik1sik3sik6'),
+            ('SÌSÍSISÌHSÍHSIHSĪKSIKSIHK', 'SI1SI2SI3SI4SI5SI6SIK1SIK3SIK6'),
             ]),
         ({'sourceOptions': {'toneMarkType': 'numbers'}, 'targetOptions': {}}, [
-            (u'gwong2jau1wa2', u'gwóngjāuwá'),
-            (u'gwong2jauwa2', exception.ConversionError),
-            (u'GWONG2JAU1WA2', u'GWÓNGJĀUWÁ'),
-            (u'si1si2si3si4si5si6sik1sik3sik6', u'sīsísisìhsíhsihsīksiksihk'),
-            (u'SI1SI2SI3SI4SI5SI6SIK1SIK3SIK6', u'SĪSÍSISÌHSÍHSIHSĪKSIKSIHK'),
+            ('gwong2jau1wa2', 'gwóngjāuwá'),
+            ('gwong2jauwa2', exception.ConversionError),
+            ('GWONG2JAU1WA2', 'GWÓNGJĀUWÁ'),
+            ('si1si2si3si4si5si6sik1sik3sik6', 'sīsísisìhsíhsihsīksiksihk'),
+            ('SI1SI2SI3SI4SI5SI6SIK1SIK3SIK6', 'SĪSÍSISÌHSÍHSIHSĪKSIKSIHK'),
             ]),
         ({'sourceOptions': {'toneMarkType': 'numbers',
             'yaleFirstTone': '1stToneFalling'},
             'targetOptions': {}}, [
-            (u'gwong2jau1wa2', u'gwóngjàuwá'),
-            (u'si1si2si3si4si5si6sik1sik3sik6', u'sìsísisìhsíhsihsīksiksihk'),
-            (u'SI1SI2SI3SI4SI5SI6SIK1SIK3SIK6', u'SÌSÍSISÌHSÍHSIHSĪKSIKSIHK'),
+            ('gwong2jau1wa2', 'gwóngjàuwá'),
+            ('si1si2si3si4si5si6sik1sik3sik6', 'sìsísisìhsíhsihsīksiksihk'),
+            ('SI1SI2SI3SI4SI5SI6SIK1SIK3SIK6', 'SÌSÍSISÌHSÍHSIHSĪKSIKSIHK'),
             ]),
         ({'sourceOptions': {'strictDiacriticPlacement': True},
             'targetOptions': {'toneMarkType': 'numbers'}}, [
-            (u'gwóngjaùwá', u'gwóngjaùwá'),
+            ('gwóngjaùwá', 'gwóngjaùwá'),
             ]),
         ({'sourceOptions': {'strictSegmentation': True,
             'strictDiacriticPlacement': True},
             'targetOptions': {'toneMarkType': 'numbers'}}, [
-            (u'gwóngjaùwá', exception.DecompositionError),
+            ('gwóngjaùwá', exception.DecompositionError),
             ]),
         ]
 
@@ -487,9 +487,9 @@ class JyutpingYaleReferenceTest(ReadingConverterReferenceTest,
 
     CONVERSION_REFERENCES = [
         ({'sourceOptions': {}, 'targetOptions': {}}, [
-            (u'gwong2zau1waa2', u'gwóngjāuwá'),
-            (u'gwong2yau1waa2', exception.CompositionError),
-            (u'GWONG2ZAU1WAA2', u'GWÓNGJĀUWÁ'),
+            ('gwong2zau1waa2', 'gwóngjāuwá'),
+            ('gwong2yau1waa2', exception.CompositionError),
+            ('GWONG2ZAU1WAA2', 'GWÓNGJĀUWÁ'),
             ]),
         ]
 
@@ -506,9 +506,9 @@ class YaleJyutpingReferenceTest(ReadingConverterReferenceTest,
 
     CONVERSION_REFERENCES = [
         ({'sourceOptions': {}, 'targetOptions': {}}, [
-            (u'gwóngjāuwá', u'gwong2zau1waa2'),
-            (u'gwóngjàuwá', u'gwong2zau1waa2'),
-            (u'GWÓNGJĀUWÁ', u'GWONG2ZAU1WAA2'),
+            ('gwóngjāuwá', 'gwong2zau1waa2'),
+            ('gwóngjàuwá', 'gwong2zau1waa2'),
+            ('GWÓNGJĀUWÁ', 'GWONG2ZAU1WAA2'),
             ]),
         ]
 
@@ -536,25 +536,25 @@ class PinyinICUTest(NeedsDatabaseTest, unittest.TestCase):
             return
 
         for readingEntity in self.f.getReadingEntities('Pinyin'):
-            if readingEntity in (u'hn\u0304g', u'h\u0144g', u'h\u0148g',
-                u'h\u01f9g', u'n\u0304g', u'\u0144g', u'\u0148g',
-                u'\u01f9g'):
+            if readingEntity in ('hn\u0304g', 'h\u0144g', 'h\u0148g',
+                'h\u01f9g', 'n\u0304g', '\u0144g', '\u0148g',
+                '\u01f9g'):
                 continue
             targetEntity = self.f.convert(readingEntity, 'Pinyin', 'Pinyin',
                 targetOptions={'toneMarkType': 'numbers',
                     'missingToneMark': 'fifth'})
-            self.assertEquals(targetEntity,
+            self.assertEqual(targetEntity,
                 self.toNumeric.transliterate(readingEntity))
 
         for readingEntity in self.f.getReadingEntities('Pinyin',
             toneMarkType='numbers', missingToneMark='fifth'):
             if readingEntity in ('hng1', 'hng2', 'hng3', 'hng4', 'ng1', 'ng2',
-                'ng3', 'ng4', u'ê1', u'ê2', u'ê3', u'ê4'):
+                'ng3', 'ng4', 'ê1', 'ê2', 'ê3', 'ê4'):
                 continue
             targetEntity = self.f.convert(readingEntity, 'Pinyin', 'Pinyin',
                 sourceOptions={'toneMarkType': 'numbers',
                     'missingToneMark': 'fifth'})
-            self.assertEquals(targetEntity,
+            self.assertEqual(targetEntity,
                 self.fromNumeric.transliterate(readingEntity))
 
 
@@ -572,35 +572,35 @@ class PinyinDialectReferenceTest(ReadingConverterReferenceTest,
 
     CONVERSION_REFERENCES = [
         ({'sourceOptions': {}, 'targetOptions': {}}, [
-            (u'xīān', u"xī'ān"),
+            ('xīān', "xī'ān"),
             ]),
         ({'sourceOptions': {'toneMarkType': 'numbers'}, 'targetOptions': {}}, [
-            ('lao3shi1', u'lǎoshī'),
+            ('lao3shi1', 'lǎoshī'),
             ]),
         ({'sourceOptions': {'toneMarkType': 'numbers', 'yVowel': 'v'},
             'targetOptions': {}}, [
-            ('nv3hai2', u'nǚhái'),
-            ('NV3HAI2', u'NǙHÁI'),
+            ('nv3hai2', 'nǚhái'),
+            ('NV3HAI2', 'NǙHÁI'),
             ]),
         ({'sourceOptions': {'toneMarkType': 'numbers'},
             'targetOptions': {'shortenedLetters': True}}, [
-            ('lao3shi1', u'lǎoŝī'),
-            ('Zhi1shi5', u'Ẑīŝi'),
-            ('Bei3jing1', u'Běijīŋ'),
-            (u'nü3hai2', u'nǚhái'),
+            ('lao3shi1', 'lǎoŝī'),
+            ('Zhi1shi5', 'Ẑīŝi'),
+            ('Bei3jing1', 'Běijīŋ'),
+            ('nü3hai2', 'nǚhái'),
             ]),
         ({'sourceOptions': {'shortenedLetters': True},
             'targetOptions': {'toneMarkType': 'numbers'}}, [
-            (u'lǎoŝī', 'lao3shi1'),
-            (u'Ẑīŝi', 'Zhi1shi5'),
-            (u'Běijīŋ', 'Bei3jing1'),
-            (u'nǚhái', u'nü3hai2'),
-            (u'ĉaŋ', u'chang5'),
+            ('lǎoŝī', 'lao3shi1'),
+            ('Ẑīŝi', 'Zhi1shi5'),
+            ('Běijīŋ', 'Bei3jing1'),
+            ('nǚhái', 'nü3hai2'),
+            ('ĉaŋ', 'chang5'),
             ]),
-        ({'sourceOptions': {'pinyinDiacritics': (u'\u0304', u'\u0301',
-                u'\u0306', u'\u0300')},
+        ({'sourceOptions': {'pinyinDiacritics': ('\u0304', '\u0301',
+                '\u0306', '\u0300')},
             'targetOptions': {}}, [
-            (u'Wŏ peí nĭ qù Xīān.', u"Wǒ péi nǐ qù Xī'ān."),
+            ('Wŏ peí nĭ qù Xīān.', "Wǒ péi nǐ qù Xī'ān."),
             ]),
         ]
 
@@ -616,38 +616,38 @@ class WadeGilesDialectReferenceTest(ReadingConverterReferenceTest,
 
     CONVERSION_REFERENCES = [
         ({'sourceOptions': {'toneMarkType': 'numbers'}, 'targetOptions': {}}, [
-            (u"Ssŭ1ma3 Ch’ien1", u'Ssŭ¹-ma³ Ch’ien¹'),
+            ("Ssŭ1ma3 Ch’ien1", 'Ssŭ¹-ma³ Ch’ien¹'),
             ]),
         ({'sourceOptions': {'toneMarkType': 'numbers',
             'wadeGilesApostrophe': "'"}, 'targetOptions': {}}, [
-            (u"Ssŭ1ma3 Ch'ien1", u'Ssŭ¹-ma³ Ch’ien¹'),
+            ("Ssŭ1ma3 Ch'ien1", 'Ssŭ¹-ma³ Ch’ien¹'),
             ]),
-        ({'sourceOptions': {'zeroFinal': u'ǔ'}, 'targetOptions': {}}, [
-            (u"K’ung³-tzǔ³", u'K’ung³-tzŭ³'),
+        ({'sourceOptions': {'zeroFinal': 'ǔ'}, 'targetOptions': {}}, [
+            ("K’ung³-tzǔ³", 'K’ung³-tzŭ³'),
             ]),
-        ({'sourceOptions': {'zeroFinal': u'u'}, 'targetOptions': {}}, [
-            (u"K’ung³-tzu³", u'K’ung³-tzŭ³'),
+        ({'sourceOptions': {'zeroFinal': 'u'}, 'targetOptions': {}}, [
+            ("K’ung³-tzu³", 'K’ung³-tzŭ³'),
             ]),
-        ({'sourceOptions': {'diacriticE': u'e'}, 'targetOptions': {}}, [
-            (u'he¹', u'hê¹'),
+        ({'sourceOptions': {'diacriticE': 'e'}, 'targetOptions': {}}, [
+            ('he¹', 'hê¹'),
             ]),
         ({'sourceOptions': {}, 'targetOptions': {'case': 'lower'}}, [
-            (u'Kuo³-Yü²', u'kuo³-yü²'),
+            ('Kuo³-Yü²', 'kuo³-yü²'),
             ]),
-        ({'sourceOptions': {'umlautU': u'u'}, 'targetOptions': {}}, [
-            (u'hsu¹', u'hsü¹'),
-            (u'yu²', exception.AmbiguousConversionError),
-            (u'hsü¹', u'hsü¹'), # invalid entity
-            (u'hsü⁴-ch’u', exception.ConversionError),
+        ({'sourceOptions': {'umlautU': 'u'}, 'targetOptions': {}}, [
+            ('hsu¹', 'hsü¹'),
+            ('yu²', exception.AmbiguousConversionError),
+            ('hsü¹', 'hsü¹'), # invalid entity
+            ('hsü⁴-ch’u', exception.ConversionError),
             ]),
-        ({'sourceOptions': {'neutralToneMark': u'five'},
+        ({'sourceOptions': {'neutralToneMark': 'five'},
             'targetOptions': {}}, [
-            (u'chih¹-tao⁵', u'chih¹-tao'),
-            (u'chih¹-tao', exception.ConversionError),
+            ('chih¹-tao⁵', 'chih¹-tao'),
+            ('chih¹-tao', exception.ConversionError),
             ]),
-        ({'sourceOptions': {'neutralToneMark': u'zero',
+        ({'sourceOptions': {'neutralToneMark': 'zero',
             'toneMarkType': 'numbers'}, 'targetOptions': {}}, [
-            (u'chih1-tao0', u'chih¹-tao'),
+            ('chih1-tao0', 'chih¹-tao'),
             ]),
         ]
 
@@ -665,21 +665,21 @@ class WadeGilesPinyinReferenceTest(ReadingConverterReferenceTest,
     CONVERSION_REFERENCES = [
         ({'sourceOptions': {'toneMarkType': 'numbers'},
             'targetOptions': {}}, [
-            (u'kuo', 'guo'),
-            (u'kuo³-yü²', u'kuo³-yü²'),
-            (u'kuo3-yü2', u'guǒyú'),
-            (u"ssŭ1ma3 ch’ien1", u'sīmǎ qiān'),
-            (u"Ssŭ1ma3 Ch’ien1", u'Sīmǎ Qiān'),
+            ('kuo', 'guo'),
+            ('kuo³-yü²', 'kuo³-yü²'),
+            ('kuo3-yü2', 'guǒyú'),
+            ("ssŭ1ma3 ch’ien1", 'sīmǎ qiān'),
+            ("Ssŭ1ma3 Ch’ien1", 'Sīmǎ Qiān'),
             ]),
         ({'sourceOptions': {}, 'targetOptions': {}}, [
-            (u'kuo³-yü²', u'guǒyú'),
-            (u'KUO³-YÜ²', u'GUǑYÚ'),
-            (u'ho', u'he'),
-            (u'hê', u'he'),
+            ('kuo³-yü²', 'guǒyú'),
+            ('KUO³-YÜ²', 'GUǑYÚ'),
+            ('ho', 'he'),
+            ('hê', 'he'),
             ]),
         ]
 
-    LOC_CONVERSION_TABLE = u"""
+    LOC_CONVERSION_TABLE = """
    a    a
    ai    ai
    an    an
@@ -1076,7 +1076,7 @@ class WadeGilesPinyinReferenceTest(ReadingConverterReferenceTest,
    yün    yun
    yung    yong
 """
-    u"""
+    """
     Conversion table from the  Library of Congress Pinyin Conversion Project -
     New Chinese Romanization Guidelines:
     http://www.loc.gov/catdir/pinyin/romcover.html, 28.05.1999
@@ -1092,7 +1092,7 @@ class WadeGilesPinyinReferenceTest(ReadingConverterReferenceTest,
         super(WadeGilesPinyinReferenceTest, self).setUp()
 
         # set up LOC table
-        wgOptions = {'wadeGilesApostrophe': u'`', 'toneMarkType': 'none',
+        wgOptions = {'wadeGilesApostrophe': '`', 'toneMarkType': 'none',
             'diacriticE': 'e', 'zeroFinal': 'u'}
         pinyinOptions = {'erhua': 'ignore', 'toneMarkType': 'none'}
         self.converter = self.f.createReadingConverter('WadeGiles',
@@ -1110,10 +1110,10 @@ class WadeGilesPinyinReferenceTest(ReadingConverterReferenceTest,
 
     def testLOCTableReferences(self):
         """Test if all LoC references are reached."""
-        for wgSyllable, target in self.syllableMapping.items():
+        for wgSyllable, target in list(self.syllableMapping.items()):
             try:
                 syllable = self.converter.convert(wgSyllable)
-                self.assertEquals(syllable, target,
+                self.assertEqual(syllable, target,
                     "Wrong conversion to Pinyin %s for Wade-Giles %s: %s" \
                         % (repr(target), repr(wgSyllable), repr(syllable)))
             except exception.ConversionError:
@@ -1132,8 +1132,8 @@ class PinyinWadeGilesReferenceTest(ReadingConverterReferenceTest,
 
     CONVERSION_REFERENCES = [
         ({'sourceOptions': {}, 'targetOptions': {'toneMarkType': 'numbers'}}, [
-            (u"tiān'ānmén", u't’ien1-an1-mên2'),
-            (u'he', exception.AmbiguousConversionError),
+            ("tiān'ānmén", 't’ien1-an1-mên2'),
+            ('he', exception.AmbiguousConversionError),
             ]),
         ]
 
@@ -1161,9 +1161,9 @@ class GRDialectConsistencyTest(ReadingConverterConsistencyTest,
             for otherform in abbreviatedForms:
                 if len(otherform) > 1 and otherform != form:
                     for left in range(1, len(form)):
-                        self.assert_(form[:left] != otherform[-left:])
+                        self.assertTrue(form[:left] != otherform[-left:])
                     for right in range(1, len(form)):
-                        self.assert_(form[right:] != otherform[:right])
+                        self.assertTrue(form[right:] != otherform[:right])
 
 
 # TODO
@@ -1174,22 +1174,22 @@ class GRDialectReferenceTest(ReadingConverterReferenceTest,
     CONVERSION_REFERENCES = [
         ({'sourceOptions': {'grSyllableSeparatorApostrophe': "'"},
             'targetOptions': {'grRhotacisedFinalApostrophe': "'"}}, [
-            (u"tian'anmen", u'tian’anmen'),
-            (u'jie’l', u"jie'l"),
-            (u'x', u'x'),
+            ("tian'anmen", 'tian’anmen'),
+            ('jie’l', "jie'l"),
+            ('x', 'x'),
             ]),
         ({'breakUpAbbreviated': 'on'}, [
-            (u"g", u'˳geh'),
-            (u"j", u'.je'),
-            (u"hairtz", u'hair.tzy'),
-            (u"tz", u'.tzy'),
-            (u"sherm.me", u'shern.me'),
-            (u"bu", u'bu'),
-            (u'buh jy.daw', u"buh jy.daw"),
-            (u'x', exception.ConversionError),
+            ("g", '˳geh'),
+            ("j", '.je'),
+            ("hairtz", 'hair.tzy'),
+            ("tz", '.tzy'),
+            ("sherm.me", 'shern.me'),
+            ("bu", 'bu'),
+            ('buh jy.daw', "buh jy.daw"),
+            ('x', exception.ConversionError),
             ]),
-        ({'sourceOptions': {'optionalNeutralToneMarker': u'ₒ'}}, [
-            (u"ₒgeh", u'˳geh'),
+        ({'sourceOptions': {'optionalNeutralToneMarker': 'ₒ'}}, [
+            ("ₒgeh", '˳geh'),
             ]),
         ]
 
@@ -1230,24 +1230,24 @@ class GRPinyinReferenceTest(ReadingConverterReferenceTest,
             #   added concrete tone specifiers to "de", "men", "jing", "bu",
             #   removed hyphen in i-goong, changed the Pinyin transcript to not
             #   show tone sandhis for 一, fixed punctuation errors in Pinyin
-            (u'"Hannshyue" .de mingcheng duey Jonggwo yeou idean buhtzuenjinq .de yihwey. Woo.men tingshuo yeou "Yinnduhshyue", "Aijyishyue", "Hannshyue", erl meiyeou tingshuo yeou "Shilahshyue", "Luomaashyue", genq meiyeou tingshuo yeou "Inggwoshyue", "Meeigwoshyue". "Hannshyue" jeyg mingcheng wanchyuan beaushyh Ou-Meei shyuejee duey nahshie yii.jing chernluen .de guulao-gwojia .de wenhuah .de ijoong chingkann .de tayduh.', u'"Hànxué" de míngchēng duì Zhōngguó yǒu yīdiǎn bùzūnjìng de yìwèi. Wǒmen tīngshuō yǒu "Yìndùxué", "Āijíxué", "Hànxué", ér méiyǒu tīngshuō yǒu "Xīlàxué", "Luómǎxué", gèng méiyǒu tīngshuō yǒu "Yīngguóxué", "Měiguóxué". "Hànxué" zhèige míngchēng wánquán biǎoshì Ōu-Měi xuézhě duì nàxiē yǐjing chénlún de gǔlǎo-guójiā de wénhuà de yīzhǒng qīngkàn de tàidù.'),
+            ('"Hannshyue" .de mingcheng duey Jonggwo yeou idean buhtzuenjinq .de yihwey. Woo.men tingshuo yeou "Yinnduhshyue", "Aijyishyue", "Hannshyue", erl meiyeou tingshuo yeou "Shilahshyue", "Luomaashyue", genq meiyeou tingshuo yeou "Inggwoshyue", "Meeigwoshyue". "Hannshyue" jeyg mingcheng wanchyuan beaushyh Ou-Meei shyuejee duey nahshie yii.jing chernluen .de guulao-gwojia .de wenhuah .de ijoong chingkann .de tayduh.', '"Hànxué" de míngchēng duì Zhōngguó yǒu yīdiǎn bùzūnjìng de yìwèi. Wǒmen tīngshuō yǒu "Yìndùxué", "Āijíxué", "Hànxué", ér méiyǒu tīngshuō yǒu "Xīlàxué", "Luómǎxué", gèng méiyǒu tīngshuō yǒu "Yīngguóxué", "Měiguóxué". "Hànxué" zhèige míngchēng wánquán biǎoshì Ōu-Měi xuézhě duì nàxiē yǐjing chénlún de gǔlǎo-guójiā de wénhuà de yīzhǒng qīngkàn de tàidù.'),
             ]),
         ({'sourceOptions': {}, 'targetOptions': {}}, [
-            (u'sheau jie’l', u'xiǎo jiēr'),
-            (u'jieel', exception.AmbiguousConversionError),
-            (u'buh jy.daw', u'bù zhīdao'), (u'buh jy˳daw', u'bù zhīdào'),
-            (u'woo de', u'wǒ dē'),
-            (u'hairtz', u'háizi'), (u'ig', u'yīgè'), (u'sherm', u'shénme'),
-            (u'sherm.me', u'shénme'), (u'tzeem.me', u'zěnme'),
-            (u'tzeem.me', u'zěnme'), (u'tzemm', u'zènme'),
-            (u'tzemm.me', u'zènme'), (u'jemm', u'zhènme'),
-            (u'jemm.me', u'zhènme'), (u'nemm', u'néme'), (u'nemm.me', u'néme'),
-            (u'.ne.me', u'neme'), (u'woom', u'wǒmen'),
-            (u"liibay’i", u'lǐbàiyī'), (u"san’g ren", u'sāngè rén'),
-            (u"shyr’ell", u"shí'èr"),
-            (u'shie.x', u'xiēxie'), (u'duey .le vx', u'duì le duì le'),
-            (u'duey  .le vx', u'duì  le duì  le'), (u'deengiv', u'děngyīděng'),
-            (u'feyshinvx', u'fèixīnfèixīn'),
+            ('sheau jie’l', 'xiǎo jiēr'),
+            ('jieel', exception.AmbiguousConversionError),
+            ('buh jy.daw', 'bù zhīdao'), ('buh jy˳daw', 'bù zhīdào'),
+            ('woo de', 'wǒ dē'),
+            ('hairtz', 'háizi'), ('ig', 'yīgè'), ('sherm', 'shénme'),
+            ('sherm.me', 'shénme'), ('tzeem.me', 'zěnme'),
+            ('tzeem.me', 'zěnme'), ('tzemm', 'zènme'),
+            ('tzemm.me', 'zènme'), ('jemm', 'zhènme'),
+            ('jemm.me', 'zhènme'), ('nemm', 'néme'), ('nemm.me', 'néme'),
+            ('.ne.me', 'neme'), ('woom', 'wǒmen'),
+            ("liibay’i", 'lǐbàiyī'), ("san’g ren", 'sāngè rén'),
+            ("shyr’ell", "shí'èr"),
+            ('shie.x', 'xiēxie'), ('duey .le vx', 'duì le duì le'),
+            ('duey  .le vx', 'duì  le duì  le'), ('deengiv', 'děngyīděng'),
+            ('feyshinvx', 'fèixīnfèixīn'),
             # TODO implement?
             #(u'j-h-eh', u'zhè'),
             ]),
@@ -1282,12 +1282,12 @@ class BraillePinyinReferenceTest(ReadingConverterReferenceTest,
 
     CONVERSION_REFERENCES = [
         ({'sourceOptions': {}, 'targetOptions': {'toneMarkType': 'numbers'}}, [
-            (u'⠍⠢⠆', exception.AmbiguousConversionError), # mo/me
-            (u'⠇⠢⠆', exception.AmbiguousConversionError), # lo/le
-            (u'⠢⠆', exception.AmbiguousConversionError),  # o/e
-            (u'⠛⠥', u'gu5'),
-            (u'⠛⠥⠁', u'gu1'),
-            (u'⠛⠬', u'ju5'),
+            ('⠍⠢⠆', exception.AmbiguousConversionError), # mo/me
+            ('⠇⠢⠆', exception.AmbiguousConversionError), # lo/le
+            ('⠢⠆', exception.AmbiguousConversionError),  # o/e
+            ('⠛⠥', 'gu5'),
+            ('⠛⠥⠁', 'gu1'),
+            ('⠛⠬', 'ju5'),
             ]),
         ]
 
@@ -1304,27 +1304,27 @@ class PinyinBrailleReferenceTest(ReadingConverterReferenceTest,
 
     CONVERSION_REFERENCES = [
         ({'sourceOptions': {'toneMarkType': 'numbers'}, 'targetOptions': {}}, [
-            ('lao3shi1', u'⠇⠖⠄⠱⠁'),
+            ('lao3shi1', '⠇⠖⠄⠱⠁'),
             ]),
         ({'sourceOptions': {}, 'targetOptions': {}}, [
-            (u'lǎoshī', u'⠇⠖⠄⠱⠁'),
+            ('lǎoshī', '⠇⠖⠄⠱⠁'),
             ('lao3shi1', 'lao3shi1'),
-            (u'mò', u'⠍⠢⠆'),
-            (u'mè', u'⠍⠢⠆'),
-            (u'gu', u'⠛⠥'),
+            ('mò', '⠍⠢⠆'),
+            ('mè', '⠍⠢⠆'),
+            ('gu', '⠛⠥'),
             ]),
         ({'sourceOptions': {'toneMarkType': 'numbers'}, 'targetOptions': {}}, [
-            (u'Qing ni deng yi1xia!', u'⠅⠡ ⠝⠊ ⠙⠼ ⠊⠁⠓⠫⠰⠂'),
-            (u'mangwen shushe', u'⠍⠦⠒ ⠱⠥⠱⠢'),
-            (u'shi4yong', u'⠱⠆⠹'),
-            (u'yi1xia', u'⠊⠁⠓⠫'),
-            (u'yi3xia', u'⠊⠄⠓⠫'),
-            (u'gu', u'⠛⠥'),
+            ('Qing ni deng yi1xia!', '⠅⠡ ⠝⠊ ⠙⠼ ⠊⠁⠓⠫⠰⠂'),
+            ('mangwen shushe', '⠍⠦⠒ ⠱⠥⠱⠢'),
+            ('shi4yong', '⠱⠆⠹'),
+            ('yi1xia', '⠊⠁⠓⠫'),
+            ('yi3xia', '⠊⠄⠓⠫'),
+            ('gu', '⠛⠥'),
             ]),
         ({'sourceOptions': {'toneMarkType': 'numbers'},
             'targetOptions': {'missingToneMark': 'fifth'}}, [
-            (u'gu', exception.ConversionError),
-            (u'gu5', u'⠛⠥'),
+            ('gu', exception.ConversionError),
+            ('gu5', '⠛⠥'),
             ]),
         ]
 
@@ -1346,8 +1346,8 @@ class PinyinIPAReferenceTest(ReadingConverterReferenceTest,
 
     CONVERSION_REFERENCES = [
         ({'sourceOptions': {'toneMarkType': 'numbers'}, 'targetOptions': {}}, [
-            ('lao3shi1', u'lau˨˩.ʂʅ˥˥'),
-            ('LAO3SHI1', u'lau˨˩.ʂʅ˥˥'),
+            ('lao3shi1', 'lau˨˩.ʂʅ˥˥'),
+            ('LAO3SHI1', 'lau˨˩.ʂʅ˥˥'),
             ]),
         ({'sourceOptions': {}, 'targetOptions': {}}, [
             ('lao3shi1', 'lao3shi1'),
@@ -1373,12 +1373,12 @@ class WadeGilesIPAReferenceTest(ReadingConverterReferenceTest,
     CONVERSION_REFERENCES = [
         ({'sourceOptions': {'toneMarkType': 'numbers'},
             'targetOptions': {}}, [
-            (u'kuo3-yü2', u'kuo˨˩.y˧˥'),
-            (u'LAO3-SHIH1', u'lau˨˩.ʂʅ˥˥'),
+            ('kuo3-yü2', 'kuo˨˩.y˧˥'),
+            ('LAO3-SHIH1', 'lau˨˩.ʂʅ˥˥'),
             ]),
         ({'sourceOptions': {}, 'targetOptions': {}}, [
-            (u'LAO3-SHIH1', 'LAO3-SHIH1'),
-            (u'LAO³-SHIH¹', u'lau˨˩.ʂʅ˥˥'),
+            ('LAO3-SHIH1', 'LAO3-SHIH1'),
+            ('LAO³-SHIH¹', 'lau˨˩.ʂʅ˥˥'),
             ]),
         ]
 
@@ -1550,10 +1550,10 @@ class ShanghaineseIPADialectReferenceTest(ReadingConverterReferenceTest,
     CONVERSION_REFERENCES = [
         ({'sourceOptions': {'toneMarkType': 'superscriptChaoDigits'},
             'targetOptions': {'toneMarkType': 'chaoDigits'}}, [
-            (u'ɦi⁵³ ɦɑ̃⁵³.ʦɤ lɛ⁵³ gəˀ¹²', u'ɦi53 ɦɑ̃53.ʦɤ lɛ53 gəˀ12'),
+            ('ɦi⁵³ ɦɑ̃⁵³.ʦɤ lɛ⁵³ gəˀ¹²', 'ɦi53 ɦɑ̃53.ʦɤ lɛ53 gəˀ12'),
             ]),
         ({'sourceOptions': {}, 'targetOptions': {'toneMarkType': 'chaoDigits'}},
             [
-            (u'ɦi˥˧ ɦɑ̃˥˧.ʦɤ lɛ˥˧ gəˀ˩˨', u'ɦi53 ɦɑ̃53.ʦɤ lɛ53 gəˀ12'),
+            ('ɦi˥˧ ɦɑ̃˥˧.ʦɤ lɛ˥˧ gəˀ˩˨', 'ɦi53 ɦɑ̃53.ʦɤ lɛ53 gəˀ12'),
             ]),
         ]

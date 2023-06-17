@@ -139,7 +139,7 @@ class NonReadingEntityWhitespace(Base):
     Removes spaces between non-reading entities, e.g. ``U S B diàn lǎn`` to
     ``USB diàn lǎn`` for CEDICT style dictionaries.
     """
-    FULL_WIDTH_MAP = dict((halfWidth, unichr(ord(halfWidth) + 65248))
+    FULL_WIDTH_MAP = dict((halfWidth, chr(ord(halfWidth) + 65248))
         for halfWidth in string.ascii_uppercase)
     """Mapping of halfwidth characters to fullwidth."""
 

@@ -34,8 +34,8 @@ from cjklib.exception import NoInformationError
 from cjklib.util import replace_encode
 
 class StrokeChecker(object):
-    ALLOWED_COMPONENT_STRUCTURE = [u'⿰', u'⿱', u'⿵', u'⿶', u'⿸', u'⿹', u'⿺',
-        u'⿲', u'⿳']
+    ALLOWED_COMPONENT_STRUCTURE = ['⿰', '⿱', '⿵', '⿶', '⿸', '⿹', '⿺',
+        '⿲', '⿳']
     """
     Component structures that allow derivation of stroke order from components.
     """
@@ -85,31 +85,31 @@ class StrokeChecker(object):
         output_encoding = sys.stdout.encoding or locale.getpreferredencoding() \
             or 'ascii'
 
-        print 'Total characters: %d' % charCount
-        print 'Characters with full stroke data: %d (%d%%)' % (charFullCount,
-            100 * charFullCount / charCount)
+        print('Total characters: %d' % charCount)
+        print('Characters with full stroke data: %d (%d%%)' % (charFullCount,
+            100 * charFullCount / charCount))
 
 
         # missing single characters
         # Extend by those with components, that have a component with low
         #   productivity.
         inDomainComponents = set(
-            self._cjk.filterDomainCharacters(missingCharsDict.keys()))
+            self._cjk.filterDomainCharacters(list(missingCharsDict.keys())))
 
         lowProductivityComponentChars = []
-        for component, chars in missingCharsDict.items():
+        for component, chars in list(missingCharsDict.items()):
             if component not in inDomainComponents \
                 and len(chars) < self.MIN_COMPONENT_PRODUCTIVITY:
                 lowProductivityComponentChars.extend(chars)
                 del missingCharsDict[component]
         missingSingleCharacters.extend(lowProductivityComponentChars)
 
-        print 'Missing single characters:',
-        print replace_encode(''.join(missingSingleCharacters), output_encoding)
+        print('Missing single characters:', end=' ')
+        print(replace_encode(''.join(missingSingleCharacters), output_encoding))
 
         # remove characters that we already placed in "single"
         _missingSingleCharacters = set(missingSingleCharacters)
-        for component, chars in missingCharsDict.items():
+        for component, chars in list(missingCharsDict.items()):
             missingCharsDict[component] = list(
                 set(chars) - _missingSingleCharacters)
             if not missingCharsDict[component]:
@@ -117,8 +117,8 @@ class StrokeChecker(object):
 
         # missing components
 
-        missingComponents = sorted(missingCharsDict.items(),
-            key=lambda (x,y): len(y))
+        missingComponents = sorted(list(missingCharsDict.items()),
+            key=lambda x_y: len(x_y[1]))
         missingComponents.reverse()
 
         inDomainComponentList = [(component, chars) \
@@ -129,14 +129,14 @@ class StrokeChecker(object):
             for component, chars in missingComponents \
             if component not in inDomainComponents and len(chars) > 1]
 
-        print 'Missing components: %d' % (len(inDomainComponentList) \
-            + len(outDomainComponentList))
-        print 'Missing in-domain components:',
-        print replace_encode(', '.join(['%s (%s)' % (component, ''.join(chars)) \
-            for component, chars in inDomainComponentList]), output_encoding)
-        print 'Missing out-domain components:',
-        print replace_encode(', '.join(['%s (%s)' % (component, ''.join(chars)) \
-            for component, chars in outDomainComponentList]), output_encoding)
+        print('Missing components: %d' % (len(inDomainComponentList) \
+            + len(outDomainComponentList)))
+        print('Missing in-domain components:', end=' ')
+        print(replace_encode(', '.join(['%s (%s)' % (component, ''.join(chars)) \
+            for component, chars in inDomainComponentList]), output_encoding))
+        print('Missing out-domain components:', end=' ')
+        print(replace_encode(', '.join(['%s (%s)' % (component, ''.join(chars)) \
+            for component, chars in outDomainComponentList]), output_encoding))
 
     def checkStrokeOrder(self, char, glyph=None):
         try:
@@ -197,7 +197,7 @@ class StrokeChecker(object):
             # no IDS operator but character
             char, glyph = decomposition[index]
             # if the character is unknown or there is none raise
-            if char == u'？':
+            if char == '？':
                 return False, index, []
             else:
                 # recursion

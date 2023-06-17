@@ -78,25 +78,25 @@ INITIAL_RULES = {('Jyutping', 'CantoneseYale'): {'': '', 'b': 'b', 'p': 'p',
         'm': 'm', 'f': 'f', 'd': 'd', 't': 't', 'l': 'l', 'n': 'n', 'z': 'j',
         'c': 'ch', 's': 's', 'g': 'g', 'k': 'k', 'h': 'h', 'ng': 'ng',
         'gw': 'gw', 'kw': 'kw', 'j': 'y', 'w': 'w'},
-    ('Pinyin', 'MandarinIPA'): {u'': u'', u'b': u'p', u'p': u'p‘', u'm': u'm',
-        u'f': u'f', u'd': u't', u't': u't‘', u'n': u'n', u'l': u'l',
-        u'z': u'ts', u'c': u'ts‘', u's': u's', u'zh': u'tʂ', u'ch': u'tʂ‘',
-        u'sh': u'ʂ', u'r': u'ʐ', u'j': u'tɕ', u'q': u'tɕ‘', u'x': u'ɕ',
-        u'g': u'k', u'k': u'k‘', u'h': u'x'},
-    ('Jyutping', 'CantoneseIPA'): {'': '', 'b': 'p', 'p': u'pʰ', 'd': 't',
-        't': u'tʰ', 'g': 'k', 'k': u'kʰ', 'gw': u'kʷ', 'kw': u'kʰʷ', 'm': 'm',
-        'n': 'n', 'ng': u'ŋ', 'f': 'f', 's': 's', 'h': 'h', 'z': 'ts',
-        'c': u'tsʰ', 'w': 'w', 'l': 'l', 'j': 'j'},
+    ('Pinyin', 'MandarinIPA'): {'': '', 'b': 'p', 'p': 'p‘', 'm': 'm',
+        'f': 'f', 'd': 't', 't': 't‘', 'n': 'n', 'l': 'l',
+        'z': 'ts', 'c': 'ts‘', 's': 's', 'zh': 'tʂ', 'ch': 'tʂ‘',
+        'sh': 'ʂ', 'r': 'ʐ', 'j': 'tɕ', 'q': 'tɕ‘', 'x': 'ɕ',
+        'g': 'k', 'k': 'k‘', 'h': 'x'},
+    ('Jyutping', 'CantoneseIPA'): {'': '', 'b': 'p', 'p': 'pʰ', 'd': 't',
+        't': 'tʰ', 'g': 'k', 'k': 'kʰ', 'gw': 'kʷ', 'kw': 'kʰʷ', 'm': 'm',
+        'n': 'n', 'ng': 'ŋ', 'f': 'f', 's': 's', 'h': 'h', 'z': 'ts',
+        'c': 'tsʰ', 'w': 'w', 'l': 'l', 'j': 'j'},
     ('Pinyin', 'GR'): {'': '', 'b': 'b', 'p': 'p', 'm': 'm', 'f': 'f', 'd': 'd',
         't': 't', 'n': 'n', 'l': 'l', 'g': 'g', 'k': 'k', 'h': 'h', 'j': 'j',
         'r': 'r', 's': 's', 'zh': 'j', 'q': 'ch', 'x': 'sh', 'z': 'tz',
         'c': 'ts', 'ch': 'ch', 'sh': 'sh'},
-    ('Pinyin', 'WadeGiles'): {'': '', 'b': 'p', 'p': u'p’', 'm': 'm', 'f': 'f',
-        'd': 't', 't': u't’', 'n': 'n', 'l': 'l', 'g': 'k', 'k': u'k’',
-        'h': 'h', 'j': 'ch', 'q': u'ch’', 'x': 'hs', 'zh': 'ch', 'ch': u'ch’',
-        'sh': 'sh', 'r': 'j', 'z': {u'-ŭ': 'ts', u'ŭ': 'tz'},
-        'c': {u'-ŭ': u'ts’', u'ŭ': u'tz’'},
-        's': {u'-ŭ': 's', u'ŭ': 'ss'}},
+    ('Pinyin', 'WadeGiles'): {'': '', 'b': 'p', 'p': 'p’', 'm': 'm', 'f': 'f',
+        'd': 't', 't': 't’', 'n': 'n', 'l': 'l', 'g': 'k', 'k': 'k’',
+        'h': 'h', 'j': 'ch', 'q': 'ch’', 'x': 'hs', 'zh': 'ch', 'ch': 'ch’',
+        'sh': 'sh', 'r': 'j', 'z': {'-ŭ': 'ts', 'ŭ': 'tz'},
+        'c': {'-ŭ': 'ts’', 'ŭ': 'tz’'},
+        's': {'-ŭ': 's', 'ŭ': 'ss'}},
     }
 """
 Mapping of syllable initials.
@@ -122,48 +122,48 @@ FINAL_RULES = {('Jyutping', 'CantoneseYale'): {'aa': ('a', ''),
         'un': ('u', 'n'), 'ut': ('u', 't'), 'ung': ('u', 'ng'),
         'uk': ('u', 'k'), 'yu': ('yu', ''), 'yun': ('yu', 'n'),
         'yut': ('yu', 't'), 'm': ('', 'm'), 'ng': ('', 'ng')},
-    ('Pinyin', 'MandarinIPA'): {u'a': u'a', u'o': u'o',
-        u'e': {'Default': u'ɤ', '5thTone': u'ə'}, u'ê': u'ɛ', u'er': u'ər',
-        u'ai': u'ai', u'ei': u'ei', u'ao': u'au', u'ou': u'ou', u'an': u'an',
-        u'en': u'ən', u'ang': u'aŋ', u'eng': u'əŋ', u'ong': u'uŋ', u'i': u'i',
-        u'ia': u'ia', u'iao': u'iau', u'ie': u'iɛ', u'iou': u'iəu',
-        u'ian': u'iɛn', u'in': u'in', u'iang': u'iɑŋ', u'ing': u'iŋ',
-        u'iong': u'yŋ', u'u': u'u', u'ua': u'ua', u'uo': u'uo', u'uai': u'uai',
-        u'uei': u'uei', u'uan': u'uan', u'uen': u'uən', u'uang': u'uaŋ',
-        u'ueng': u'uəŋ', u'ü': u'y', u'üe': u'yɛ', u'üan': u'yan', u'ün': u'yn',
-        u'ɿ': u'ɿ', u'ʅ': u'ʅ'},
-    ('Jyutping', 'CantoneseIPA'): {'i': u'iː', 'iu': u'iːw', 'im': u'iːm',
-        'in': u'iːn', 'ip': u'iːp̚', 'it': u'iːt̚', 'yu': u'yː', 'yun': u'yːn',
-        'yut': u'yːt̚', 'ei': u'ej', 'ing': u'eʲŋ', 'ik': u'eʲk̚', 'e': u'ɛː',
-        'eu': u'ɛːw', 'em': u'ɛːm', 'en': u'ɛːn', 'eng': u'ɛːŋ', 'ep': u'ɛːp̚',
-        'et': u'ɛːt̚', 'ek': u'ɛːk̚', 'oe': u'œː', 'oeng': u'œːŋ',
-        'oek': u'œːk̚', 'eoi': u'ɵy', 'eon': u'ɵn', 'eot': u'ɵt̚', 'ai': u'ɐj',
-        'au': u'ɐw', 'am': u'ɐm', 'an': u'ɐn', 'ang': u'ɐŋ', 'ap': u'ɐp̚',
-        'at': u'ɐt̚', 'ak': u'ɐk̚', 'aa': u'aː', 'aai': u'aːj', 'aau': u'aːw',
-        'aam': u'aːm', 'aan': u'aːn', 'aang': u'aːŋ', 'aap': u'aːp̚',
-        'aat': u'aːt̚', 'aak': u'aːk̚', 'u': u'uː', 'ui': u'uːj', 'un': u'uːn',
-        'ut': u'uːt̚', 'ou': u'ow', 'ung': u'oʷŋ', 'uk': u'oʷk̚', 'o': u'ɔː',
-        'oi': u'ɔːj', 'on': u'ɔːn', 'ong': u'ɔːŋ', 'ot': u'ɔːt̚', 'ok': u'ɔːk̚',
-        'm': u'm̩', 'ng': u'ŋ̩'},
-    ('Pinyin', 'GR'): {u'a': 'a', u'o': 'o', u'e': 'e', u'ai': 'ai',
-        u'ei': 'ei', u'ao': 'au', u'ou': 'ou', u'an': 'an', u'en': 'en',
-        u'ang': 'ang', u'eng': 'eng', u'ong': 'ong', u'er': 'el', u'i': 'i',
-        u'ia': 'ia', u'ie': 'ie', u'iai': 'iai', u'iao': 'iau', u'iou': 'iou',
-        u'ian': 'ian', u'in': 'in', u'iang': 'iang', u'ing': 'ing',
-        u'iong': 'iong', u'u': 'u', u'ua': 'ua', u'uo': 'uo', u'uai': 'uai',
-        u'uei': 'uei', u'uan': 'uan', u'uen': 'uen', u'uang': 'uang',
-        u'ü': 'iu', u'üe': 'iue', u'üan': 'iuan', u'ün': 'iun', u'ɿ': 'y',
-        u'ʅ': 'y', u'ueng': 'ueng'},
+    ('Pinyin', 'MandarinIPA'): {'a': 'a', 'o': 'o',
+        'e': {'Default': 'ɤ', '5thTone': 'ə'}, 'ê': 'ɛ', 'er': 'ər',
+        'ai': 'ai', 'ei': 'ei', 'ao': 'au', 'ou': 'ou', 'an': 'an',
+        'en': 'ən', 'ang': 'aŋ', 'eng': 'əŋ', 'ong': 'uŋ', 'i': 'i',
+        'ia': 'ia', 'iao': 'iau', 'ie': 'iɛ', 'iou': 'iəu',
+        'ian': 'iɛn', 'in': 'in', 'iang': 'iɑŋ', 'ing': 'iŋ',
+        'iong': 'yŋ', 'u': 'u', 'ua': 'ua', 'uo': 'uo', 'uai': 'uai',
+        'uei': 'uei', 'uan': 'uan', 'uen': 'uən', 'uang': 'uaŋ',
+        'ueng': 'uəŋ', 'ü': 'y', 'üe': 'yɛ', 'üan': 'yan', 'ün': 'yn',
+        'ɿ': 'ɿ', 'ʅ': 'ʅ'},
+    ('Jyutping', 'CantoneseIPA'): {'i': 'iː', 'iu': 'iːw', 'im': 'iːm',
+        'in': 'iːn', 'ip': 'iːp̚', 'it': 'iːt̚', 'yu': 'yː', 'yun': 'yːn',
+        'yut': 'yːt̚', 'ei': 'ej', 'ing': 'eʲŋ', 'ik': 'eʲk̚', 'e': 'ɛː',
+        'eu': 'ɛːw', 'em': 'ɛːm', 'en': 'ɛːn', 'eng': 'ɛːŋ', 'ep': 'ɛːp̚',
+        'et': 'ɛːt̚', 'ek': 'ɛːk̚', 'oe': 'œː', 'oeng': 'œːŋ',
+        'oek': 'œːk̚', 'eoi': 'ɵy', 'eon': 'ɵn', 'eot': 'ɵt̚', 'ai': 'ɐj',
+        'au': 'ɐw', 'am': 'ɐm', 'an': 'ɐn', 'ang': 'ɐŋ', 'ap': 'ɐp̚',
+        'at': 'ɐt̚', 'ak': 'ɐk̚', 'aa': 'aː', 'aai': 'aːj', 'aau': 'aːw',
+        'aam': 'aːm', 'aan': 'aːn', 'aang': 'aːŋ', 'aap': 'aːp̚',
+        'aat': 'aːt̚', 'aak': 'aːk̚', 'u': 'uː', 'ui': 'uːj', 'un': 'uːn',
+        'ut': 'uːt̚', 'ou': 'ow', 'ung': 'oʷŋ', 'uk': 'oʷk̚', 'o': 'ɔː',
+        'oi': 'ɔːj', 'on': 'ɔːn', 'ong': 'ɔːŋ', 'ot': 'ɔːt̚', 'ok': 'ɔːk̚',
+        'm': 'm̩', 'ng': 'ŋ̩'},
+    ('Pinyin', 'GR'): {'a': 'a', 'o': 'o', 'e': 'e', 'ai': 'ai',
+        'ei': 'ei', 'ao': 'au', 'ou': 'ou', 'an': 'an', 'en': 'en',
+        'ang': 'ang', 'eng': 'eng', 'ong': 'ong', 'er': 'el', 'i': 'i',
+        'ia': 'ia', 'ie': 'ie', 'iai': 'iai', 'iao': 'iau', 'iou': 'iou',
+        'ian': 'ian', 'in': 'in', 'iang': 'iang', 'ing': 'ing',
+        'iong': 'iong', 'u': 'u', 'ua': 'ua', 'uo': 'uo', 'uai': 'uai',
+        'uei': 'uei', 'uan': 'uan', 'uen': 'uen', 'uang': 'uang',
+        'ü': 'iu', 'üe': 'iue', 'üan': 'iuan', 'ün': 'iun', 'ɿ': 'y',
+        'ʅ': 'y', 'ueng': 'ueng'},
     ('Pinyin', 'WadeGiles'): {'a': 'a', 'ai': 'ai', 'an': 'an', 'ang': 'ang',
-        'ao': 'ao', 'e': {'all_1': u'ê', u'k/k’/h': 'o'},
-        u'ê': {'all_1': u'ê', 'all_2': 'o'}, 'ei': 'ei',
-        'en': u'ên', 'eng': u'êng', 'er': u'êrh', u'ʅ': 'ih', u'ɿ': u'ŭ',
+        'ao': 'ao', 'e': {'all_1': 'ê', 'k/k’/h': 'o'},
+        'ê': {'all_1': 'ê', 'all_2': 'o'}, 'ei': 'ei',
+        'en': 'ên', 'eng': 'êng', 'er': 'êrh', 'ʅ': 'ih', 'ɿ': 'ŭ',
         'i': 'i', 'ia': 'ia', 'ian': 'ien', 'iang': 'iang', 'iao': 'iao',
         'ie': 'ieh', 'in': 'in', 'ing': 'ing', 'iong': 'iung', 'iou': 'iu',
         'o': 'o', 'ong': 'ung', 'ou': 'ou', 'u': 'u', 'ua': 'ua', 'uai': 'uai',
-        'uan': 'uan', 'uang': 'uang', 'uei': {u'-k/k’/': 'ui', u'k/k’/': 'uei'},
-        'uen': 'un', 'uo': {u'k/k’/h/sh/': 'uo', u'-k/k’/h/sh/': 'o'},
-        u'ü': u'ü', u'üan': u'üan', u'üe': u'üeh', u'ün': u'ün'},
+        'uan': 'uan', 'uang': 'uang', 'uei': {'-k/k’/': 'ui', 'k/k’/': 'uei'},
+        'uen': 'un', 'uo': {'k/k’/h/sh/': 'uo', '-k/k’/h/sh/': 'o'},
+        'ü': 'ü', 'üan': 'üan', 'üe': 'üeh', 'ün': 'ün'},
     }
 """
 Mapping of syllable finals.
@@ -178,29 +178,29 @@ they might depend on the initial they combine with.
 EXTRA_SYLLABLES = {('Jyutping', 'CantoneseYale'): {'om': None, 'pet': None,
         'deu': None, 'lem': None, 'loet': None, 'loei': None, 'gep': None,
         'kep': None},
-    ('Pinyin', 'MandarinIPA'): {u'yai': None, u'yo': None, u'm': None,
-        u'n': None, u'ng': None, u'hm': None, u'hng': None},
+    ('Pinyin', 'MandarinIPA'): {'yai': None, 'yo': None, 'm': None,
+        'n': None, 'ng': None, 'hm': None, 'hng': None},
     ('Jyutping', 'CantoneseIPA'): {'loet': None, 'loei': None, 'om': None,
-        'zi': (u'tʃ', u'iː'), 'ci': (u'tʃʰ', u'iː'), 'zit': (u'tʃ', u'iːt̚'),
-        'cit': (u'tʃʰ', u'iːt̚'), 'ziu': (u'tʃ', u'iːw'),
-        'ciu': (u'tʃʰ', u'iːw'), 'zim': (u'tʃ', u'iːm'),
-        'cim': (u'tʃʰ', u'iːm'), 'zin': (u'tʃ', u'iːn'),
-        'cin': (u'tʃʰ', u'iːn'), 'zip': (u'tʃ', u'iːp̚'),
-        'cip': (u'tʃʰ', u'iːp̚'), 'syu': (u'ʃ', u'yː'), 'zyu': (u'tʃ', u'yː'),
-        'cyu': (u'tʃʰ', u'yː'), 'syun': (u'ʃ', u'yːn'), 'zyun': (u'tʃ', u'yːn'),
-        'cyun': (u'tʃʰ', u'yːn'), 'syut': (u'ʃ', u'yːt̚'),
-        'zyut': (u'tʃ', u'yːt̚'), 'cyut': (u'tʃʰ', u'yːt̚'),
-        'zoe': (u'tʃ', u'œː'), 'zoek': (u'tʃ', u'œːk̚'),
-        'coek': (u'tʃʰ', u'œːk̚'), 'zoeng': (u'tʃ', u'œːŋ'),
-        'coeng': (u'tʃʰ', u'œːŋ'), 'zeoi': (u'tʃ', u'ɵy'),
-        'ceoi': (u'tʃʰ', u'ɵy'), 'zeot': (u'tʃ', u'ɵt̚'),
-        'ceot': (u'tʃʰ', u'ɵt̚'), 'zeon': (u'tʃ', u'ɵn'),
-        'ceon': (u'tʃʰ', u'ɵn')},
-    ('Pinyin', 'GR'): {u'm': None, u'n': None, u'ng': None, u'hm': None,
-        u'hng': None, u'ê': None, 'yo': None},
-    ('Pinyin', 'WadeGiles'): {u'wen': ('', u'uên'), 'weng': ('', u'uêng'),
-        'yi': ({'exceptSemiVowel': '', 'all_1': ''}, u'i'),
-        u'm': None, u'n': None, u'ng': None, u'hm': None, u'hng': None,
+        'zi': ('tʃ', 'iː'), 'ci': ('tʃʰ', 'iː'), 'zit': ('tʃ', 'iːt̚'),
+        'cit': ('tʃʰ', 'iːt̚'), 'ziu': ('tʃ', 'iːw'),
+        'ciu': ('tʃʰ', 'iːw'), 'zim': ('tʃ', 'iːm'),
+        'cim': ('tʃʰ', 'iːm'), 'zin': ('tʃ', 'iːn'),
+        'cin': ('tʃʰ', 'iːn'), 'zip': ('tʃ', 'iːp̚'),
+        'cip': ('tʃʰ', 'iːp̚'), 'syu': ('ʃ', 'yː'), 'zyu': ('tʃ', 'yː'),
+        'cyu': ('tʃʰ', 'yː'), 'syun': ('ʃ', 'yːn'), 'zyun': ('tʃ', 'yːn'),
+        'cyun': ('tʃʰ', 'yːn'), 'syut': ('ʃ', 'yːt̚'),
+        'zyut': ('tʃ', 'yːt̚'), 'cyut': ('tʃʰ', 'yːt̚'),
+        'zoe': ('tʃ', 'œː'), 'zoek': ('tʃ', 'œːk̚'),
+        'coek': ('tʃʰ', 'œːk̚'), 'zoeng': ('tʃ', 'œːŋ'),
+        'coeng': ('tʃʰ', 'œːŋ'), 'zeoi': ('tʃ', 'ɵy'),
+        'ceoi': ('tʃʰ', 'ɵy'), 'zeot': ('tʃ', 'ɵt̚'),
+        'ceot': ('tʃʰ', 'ɵt̚'), 'zeon': ('tʃ', 'ɵn'),
+        'ceon': ('tʃʰ', 'ɵn')},
+    ('Pinyin', 'GR'): {'m': None, 'n': None, 'ng': None, 'hm': None,
+        'hng': None, 'ê': None, 'yo': None},
+    ('Pinyin', 'WadeGiles'): {'wen': ('', 'uên'), 'weng': ('', 'uêng'),
+        'yi': ({'exceptSemiVowel': '', 'all_1': ''}, 'i'),
+        'm': None, 'n': None, 'ng': None, 'hm': None, 'hng': None,
         'yai': None, 'yo': None},
     }
 """
@@ -246,9 +246,9 @@ def getWadeGilesSyllable(initial, final):
         return 'w' + final
     elif not initial and final.startswith('u'):
         return 'w' + final[1:]
-    elif not initial and final == u'ü':
+    elif not initial and final == 'ü':
         return 'y' + final
-    elif not initial and final.startswith(u'ü'):
+    elif not initial and final.startswith('ü'):
         return 'y' + final
     else:
         return initial + final
@@ -349,10 +349,10 @@ def main():
     if len(sys.argv) == 2:
         modus = sys.argv[1]
         if modus not in modi:
-            print "invalid modus, choose one out of: " + ", ".join(modi.keys())
+            print("invalid modus, choose one out of: " + ", ".join(list(modi.keys())))
             sys.exit(1)
     else:
-        print "give a modus, choose one out of: " + ", ".join(modi.keys())
+        print("give a modus, choose one out of: " + ", ".join(list(modi.keys())))
         sys.exit(1)
 
     fromReading, toReading, entryFunc, readingOpt = modi[modus]
@@ -379,11 +379,11 @@ def main():
             if initialRules[initial] != None and finialRules[final] != None:
                 # check for ambiguous mappings
                 if type(initialRules[initial]) == type({}):
-                    initialFeatures = initialRules[initial].keys()
+                    initialFeatures = list(initialRules[initial].keys())
                 else:
                     initialFeatures = [None]
                 if type(finialRules[final]) == type({}):
-                    finalFeatures = finialRules[final].keys()
+                    finalFeatures = list(finialRules[final].keys())
                 else:
                     finalFeatures = [None]
 
@@ -406,9 +406,9 @@ def main():
                         if entry != None:
                             entrySet.add(entry)
             else:
-                print >> sys.stderr, ("missing rule(s) for syllable '" \
+                print(("missing rule(s) for syllable '" \
                     + syllable + "' with initial/final '" + initial + "'/'" \
-                    + final + "'").encode(output_encoding)
+                    + final + "'").encode(output_encoding), file=sys.stderr)
 
     # print extra syllables
     for syllable in extraSyllables:
@@ -416,11 +416,11 @@ def main():
             initialRule, finalRule = extraSyllables[syllable]
             # check for ambiguous mappings
             if type(initialRule) == type({}):
-                initialFeatures = initialRule.keys()
+                initialFeatures = list(initialRule.keys())
             else:
                 initialFeatures = [None]
             if type(finalRule) == type({}):
-                finalFeatures = finalRule.keys()
+                finalFeatures = list(finalRule.keys())
             else:
                 finalFeatures = [None]
 
@@ -445,13 +445,13 @@ def main():
     notIncludedSyllables = [syllable for syllable in extraSyllables \
         if not extraSyllables[syllable]]
     if notIncludedSyllables:
-        print >> sys.stderr, ("Syllables not included in table: '" \
+        print(("Syllables not included in table: '" \
             + "', '".join(sorted(notIncludedSyllables)) + "'")\
-            .encode(output_encoding)
+            .encode(output_encoding), file=sys.stderr)
 
     entryList = list(entrySet)
     entryList.sort()
-    print "\n".join(entryList).encode(output_encoding)
+    print("\n".join(entryList).encode(output_encoding))
 
 if __name__ == "__main__":
     main()

@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with cjklib.  If not, see <http://www.gnu.org/licenses/>.
 
-u"""
+"""
 High level dictionary access.
 
 This module provides classes for easy access to well known CJK dictionaries.
@@ -40,7 +40,7 @@ __all__ = [
     ]
 
 import types
-from itertools import imap, ifilter
+
 
 from sqlalchemy import select, Table
 from sqlalchemy.sql import or_
@@ -68,8 +68,8 @@ def getDictionaryClasses():
     dictionaryModule = __import__("cjklib.dictionary")
     # get all classes that inherit from BaseDictionary
     return set([clss \
-        for clss in dictionaryModule.dictionary.__dict__.values() \
-        if type(clss) == types.TypeType \
+        for clss in list(dictionaryModule.dictionary.__dict__.values()) \
+        if type(clss) == type \
         and issubclass(clss, dictionaryModule.dictionary.BaseDictionary) \
         and clss.PROVIDES])
 
@@ -209,19 +209,19 @@ class BaseDictionary(object):
 
     def setColumnFormatStrategies(self, columnFormatStrategies):
         # None is passed to overwrite a default formating
-        for column in columnFormatStrategies.keys():
+        for column in list(columnFormatStrategies.keys()):
             if columnFormatStrategies[column] is None:
                 del columnFormatStrategies[column]
 
         self._columnFormatStrategies = columnFormatStrategies
         self._formatStrategies = []
         if columnFormatStrategies:
-            for strategy in columnFormatStrategies.values():
+            for strategy in list(columnFormatStrategies.values()):
                 if hasattr(strategy, 'setDictionaryInstance'):
                     strategy.setDictionaryInstance(self)
 
             fullRowStrategy = columnFormatStrategies.pop(None, None)
-            for column, strategy in columnFormatStrategies.items():
+            for column, strategy in list(columnFormatStrategies.items()):
                 columnIdx = self.COLUMNS.index(column)
 
                 self._formatStrategies.append(
@@ -317,7 +317,7 @@ class EDICTStyleDictionary(BaseDictionary):
                 orderBy = [orderBy]
 
             for col in orderBy:
-                if isinstance(col, basestring):
+                if isinstance(col, str):
                     orderByCols.append(dictionaryTable.c[col])
                 else:
                     orderByCols.append(col)
@@ -329,14 +329,14 @@ class EDICTStyleDictionary(BaseDictionary):
 
         # filter
         if filters:
-            results = ifilter(_getFilterFunction(filters), results)
+            results = filter(_getFilterFunction(filters), results)
 
         # format readings and translations
         if self.columnFormatStrategies:
-            results = imap(list, results)
+            results = map(list, results)
             for strategy in self._formatStrategies:
-                results = imap(strategy.format, results)
-            results = imap(tuple, results)
+                results = map(strategy.format, results)
+            results = map(tuple, results)
 
         # format results
         entries = self.entryFactory.getEntries(results)
@@ -506,7 +506,7 @@ class EDICT(EDICTStyleDictionary):
 
 
 class EDICTStyleEnhancedReadingDictionary(EDICTStyleDictionary):
-    u"""
+    """
     Access for EDICT-style dictionaries with enhanced reading support.
 
     The EDICTStyleEnhancedReadingDictionary dictionary class extends
@@ -550,7 +550,7 @@ class CEDICTGR(EDICTStyleEnhancedReadingDictionary):
 
 
 class CEDICT(EDICTStyleEnhancedReadingDictionary):
-    u"""
+    """
     CEDICT dictionary access.
 
     .. seealso:: :class:`~cjklib.build.builder.CEDICTBuilder`

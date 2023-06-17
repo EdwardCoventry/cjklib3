@@ -46,11 +46,11 @@ from cjklib.util import (getConfigSettings, toCodepoint, isValidSurrogate,
 
 # work around http://bugs.python.org/issue2517
 if sys.version_info < (2, 5):
-    getExceptionString = lambda e: unicode(e.args[0])
+    getExceptionString = lambda e: str(e.args[0])
 elif sys.version_info < (2, 6):
-    getExceptionString = lambda e: unicode(e.message)
+    getExceptionString = lambda e: str(e.message)
 else:
-    getExceptionString = lambda e: unicode(e)
+    getExceptionString = lambda e: str(e)
 
 class ExactMultiple(search.Exact):
     """Exact search strategy class matching any strings from a list."""
@@ -184,10 +184,10 @@ class CharacterInfo:
         language, _ = locale.getdefaultlocale()
 
         # get character locale
-        if self.LANGUAGE_CHAR_LOCALE_MAPPING.has_key(language):
+        if language in self.LANGUAGE_CHAR_LOCALE_MAPPING:
             return self.LANGUAGE_CHAR_LOCALE_MAPPING[language]
         elif len(language) >= 2 \
-            and self.LANGUAGE_CHAR_LOCALE_MAPPING.has_key(language[0:2]):
+            and language[0:2] in self.LANGUAGE_CHAR_LOCALE_MAPPING:
             # strip off geographic code
             return self.LANGUAGE_CHAR_LOCALE_MAPPING[language[0:2]]
         else:
@@ -204,10 +204,10 @@ class CharacterInfo:
         language, _ = locale.getdefaultlocale()
 
         # get reading
-        if self.CHAR_LOCALE_DEFAULT_READING.has_key(language):
+        if language in self.CHAR_LOCALE_DEFAULT_READING:
             return self.CHAR_LOCALE_DEFAULT_READING[language]
         elif len(language) >= 2 \
-            and self.CHAR_LOCALE_DEFAULT_READING.has_key(language[0:2]):
+            and language[0:2] in self.CHAR_LOCALE_DEFAULT_READING:
             # strip off geographic code
             return self.CHAR_LOCALE_DEFAULT_READING[language[0:2]]
         else:
@@ -263,7 +263,7 @@ class CharacterInfo:
 
     def getEquivalentCharTable(self, componentList,
         includeEquivalentRadicalForms=True):
-        u"""
+        """
         Gets a list structure of equivalent chars for the given list of
         characters.
 
@@ -286,9 +286,9 @@ class CharacterInfo:
         """
         # components for which we don't want to retrieve a equivalent character
         #   as it would resemble another radical form
-        excludeEquivalentMapping = set([u'⺄', u'⺆', u'⺇', u'⺈', u'⺊', u'⺌',
-            u'⺍', u'⺎', u'⺑', u'⺗', u'⺜', u'⺥', u'⺧', u'⺪', u'⺫', u'⺮',
-            u'⺳', u'⺴', u'⺶', u'⺷', u'⺻', u'⺼', u'⻏', u'⻕'])
+        excludeEquivalentMapping = set(['⺄', '⺆', '⺇', '⺈', '⺊', '⺌',
+            '⺍', '⺎', '⺑', '⺗', '⺜', '⺥', '⺧', '⺪', '⺫', '⺮',
+            '⺳', '⺴', '⺶', '⺷', '⺻', '⺼', '⻏', '⻕'])
 
         equivCharTable = []
         for component in componentList:
@@ -558,7 +558,7 @@ class CharacterInfo:
 
     def getCharactersForComponents(self, componentList,
         includeEquivalentRadicalForms=True):
-        u"""
+        """
         Gets all characters that contain the given components.
 
         If option ``includeEquivalentRadicalForms`` is set, all equivalent forms
@@ -733,7 +733,7 @@ class CharacterInfo:
                         glyph=glyph, includePartial=True)
                     if set(strokes) != set([None]):
                         for i in range(len(strokes)):
-                            if strokes[i] is None: strokes[i] = u'？'
+                            if strokes[i] is None: strokes[i] = '？'
                         infoDict['glyphs'][glyph]['stroke order'] = strokes
 
                         infoDict['glyphs'][glyph]['stroke order abbrev'] \
@@ -817,14 +817,14 @@ def getDecompositionForEntry(decomposition):
             maxLineLen = max(maxLineLen, len(line))
         # add spaces to right side of first line to shift next character
         stringList[0] = stringList[0] \
-            + "".join([u"　" for i in range(1, maxLineLen)])
+            + "".join(["　" for i in range(1, maxLineLen)])
     # process next character and add new lines into list
     if len(decomposition) > 1:
         for i, line in enumerate(getDecompositionForEntry(
             decomposition[1:])):
             # generate new lines if necessary
             if i >= len(stringList):
-                stringList.append(u"　")
+                stringList.append("　")
             stringList[i] = stringList[i] + line
     return stringList
 
@@ -832,7 +832,7 @@ def usage():
     """
     Prints the usage for this script.
     """
-    print """Usage: cjknife COMMAND
+    print("""Usage: cjknife COMMAND
 cjknife provides a set of functions for dealing with Chinese characters and
 their readings. This tool should provide quick access to the major functions of
 the cjklib library and at the same time demonstrate how the library can be used.
@@ -869,7 +869,7 @@ General commands:
   -x SEARCHSTR               searches the dictionary (wildcards '_' and '%')
   -y SEARCHSTR               searches the dictionary for headword substrings
   -w, --set-dictionary=DICTIONARY
-                             set dictionary"""
+                             set dictionary""")
 # TODO
   #-o, --by-strokes=STROKES   get all characters for a given stroke order
                                #(fuzzy search)
@@ -878,7 +878,7 @@ def version():
     """
     Prints the version of this script.
     """
-    print "cjknife " + str(cjklib.__version__) \
+    print("cjknife " + str(cjklib.__version__) \
         + """\nCopyright (C) 2006-2010 cjklib developers
 
 cjknife is part of cjklib.
@@ -895,7 +895,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with cjklib.  If not, see <http://www.gnu.org/licenses/>."""
+along with cjklib.  If not, see <http://www.gnu.org/licenses/>.""")
 
 # Alternative reading names lookup
 ALTERNATIVE_READING_NAMES = {'Hangul': ['hg'], 'Pinyin': ['py'],
@@ -962,7 +962,7 @@ def main():
 
     # start to check parameters
     if len(opts) == 0:
-        print "Use parameter -h for a short summary on supported functions"
+        print("Use parameter -h for a short summary on supported functions")
 
     for o, a in opts:
         a = get_unicode(a, default_encoding)
@@ -982,8 +982,8 @@ def main():
             if a.lower() in readingLookup:
                 sourceReading = readingLookup[a.lower()]
             else:
-                print >> sys.stderr, replace_encode(("Error: '%s' is not a valid reading" % a
-                    ), output_encoding)
+                print(replace_encode(("Error: '%s' is not a valid reading" % a
+                    ), output_encoding), file=sys.stderr)
                 sys.exit(1)
 
         # setting of target reading
@@ -991,8 +991,8 @@ def main():
             if a.lower() in readingLookup:
                 targetReading = readingLookup[a.lower()]
             else:
-                print >> sys.stderr, replace_encode(("Error: '%s' is not a valid reading" % a
-                    ), output_encoding)
+                print(replace_encode(("Error: '%s' is not a valid reading" % a
+                    ), output_encoding), file=sys.stderr)
                 sys.exit(1)
 
         # setting of locale
@@ -1000,8 +1000,8 @@ def main():
             if a.upper() in 'TCJKV':
                 charLocale = a.upper()
             else:
-                print >> sys.stderr, replace_encode(("Error: '%s' is not a valid locale" % a
-                    ), output_encoding)
+                print(replace_encode(("Error: '%s' is not a valid locale" % a
+                    ), output_encoding), file=sys.stderr)
                 sys.exit(1)
 
         # setting of locale
@@ -1015,8 +1015,8 @@ def main():
             if a.lower() in dictionaries:
                 dictionaryN = dictionaries[a.lower()]
             else:
-                print >> sys.stderr, replace_encode(("Error: '%s' is not a valid dictionary" %
-                    a), output_encoding)
+                print(replace_encode(("Error: '%s' is not a valid dictionary" %
+                    a), output_encoding), file=sys.stderr)
                 sys.exit(1)
 
         # setting of database
@@ -1034,15 +1034,15 @@ def main():
                 readingN=targetReading, dictionaryN=dictionaryN,
                 dictionaryDatabaseUrl=url)
         except ValueError:
-            print >> sys.stderr, (("Error: dictionary '%(dict)s' not available."
+            print((("Error: dictionary '%(dict)s' not available."
                 "\nInstall by running 'installcjkdict %(dict)s'")
-                    % {'dict': dictionaryN})
+                    % {'dict': dictionaryN}), file=sys.stderr)
             sys.exit(1)
         charLocale = charInfo.locale
         dictionaryN = charInfo.dictionary
         if not charInfo.setCharacterDomain(charDomain):
-            print >> sys.stderr, "Warning: Unknown character domain '%s'" \
-                % charDomain
+            print("Warning: Unknown character domain '%s'" \
+                % charDomain, file=sys.stderr)
 
         if not sourceReading:
             sourceReading = charInfo.reading
@@ -1056,16 +1056,16 @@ def main():
             if len(parameter) == 1 or isValidSurrogate(parameter):
                 infoDict = charInfo.getCharacterInformation(parameter)
 
-                print replace_encode(("Information for character " + infoDict['char'] + " (" \
+                print(replace_encode(("Information for character " + infoDict['char'] + " (" \
                     + infoDict['locale name'] + " locale, " \
-                    + infoDict['characterDomain'] + ' domain)'), output_encoding)
-                print "Unicode codepoint: " + infoDict['codepoint hex'] + " (" \
+                    + infoDict['characterDomain'] + ' domain)'), output_encoding))
+                print("Unicode codepoint: " + infoDict['codepoint hex'] + " (" \
                     + infoDict['codepoint dec'] + ", "+ infoDict['type'] \
-                    + " form)"
-                print "In character domains: " + ', '.join(infoDict['domains'])
+                    + " form)")
+                print("In character domains: " + ', '.join(infoDict['domains']))
                 if 'equivalent form' in infoDict:
-                    print replace_encode(("Equivalent character form: " \
-                        + infoDict['equivalent form']), output_encoding)
+                    print(replace_encode(("Equivalent character form: " \
+                        + infoDict['equivalent form']), output_encoding))
 
                 if infoDict['radical index']:
                     radicalForms = ""
@@ -1075,29 +1075,29 @@ def main():
                     if infoDict['radical variants']:
                         radicalForms = radicalForms + ", variants: " \
                             + ", ".join(infoDict['radical variants'])
-                    print replace_encode(("Radical index: " + str(infoDict['radical index']) \
-                        + radicalForms), output_encoding)
+                    print(replace_encode(("Radical index: " + str(infoDict['radical index']) \
+                        + radicalForms), output_encoding))
 
                 if 'stroke count' in infoDict:
                     strokeCount = str(infoDict['stroke count'])
                 else:
                     strokeCount = 'N/A'
-                print replace_encode(("Stroke count: " + strokeCount), output_encoding)
+                print(replace_encode(("Stroke count: " + strokeCount), output_encoding))
 
                 if infoDict['type'] == 'character':
-                    readingList = infoDict['readings'].keys()
+                    readingList = list(infoDict['readings'].keys())
                     readingList.sort()
                     for readingN in readingList:
-                        print replace_encode(("Phonetic data (" + readingN + "): " \
-                            + ", ".join(infoDict['readings'][readingN])), output_encoding)
+                        print(replace_encode(("Phonetic data (" + readingN + "): " \
+                            + ", ".join(infoDict['readings'][readingN])), output_encoding))
 
-                    variantList = infoDict['variants'].keys()
+                    variantList = list(infoDict['variants'].keys())
                     variantList.sort()
                     for variantType in variantList:
-                        print replace_encode((variantType + ': ' \
-                            + ', '.join(infoDict['variants'][variantType])), output_encoding)
+                        print(replace_encode((variantType + ': ' \
+                            + ', '.join(infoDict['variants'][variantType])), output_encoding))
 
-                glyphList = infoDict['glyphs'].keys()
+                glyphList = list(infoDict['glyphs'].keys())
                 glyphList.sort()
                 for glyph in glyphList:
                     if 'stroke count' in infoDict['glyphs'][glyph]:
@@ -1108,22 +1108,22 @@ def main():
                     default = ""
                     if glyph == infoDict['default glyph']:
                         default = "(*)"
-                    print "Glyph " + str(glyph) + default + ', stroke count: ' \
-                        + strokeCount
+                    print("Glyph " + str(glyph) + default + ', stroke count: ' \
+                        + strokeCount)
 
                     if 'decomposition' in infoDict['glyphs'][glyph]:
                         stringList = getDecompositionForList(
                             infoDict['glyphs'][glyph]['decomposition'])
-                        print replace_encode(("\n".join(stringList)), output_encoding)
+                        print(replace_encode(("\n".join(stringList)), output_encoding))
                     if 'stroke order' in infoDict['glyphs'][glyph]:
-                        print replace_encode(("Stroke order: " + ''.join(
+                        print(replace_encode(("Stroke order: " + ''.join(
                             infoDict['glyphs'][glyph]['stroke order']) + ' (' \
                             + infoDict['glyphs'][glyph]['stroke order abbrev'] \
-                            + ')'), output_encoding)
+                            + ')'), output_encoding))
             else:
                 # encoding errors can lead to a string > 1 char
-                print repr(parameter)
-                print "Error: bad parameter or encoding error"
+                print(repr(parameter))
+                print("Error: bad parameter or encoding error")
                 sys.exit(1)
 
         elif command in ("-q", "-r", "-f", "--get-reading", "--convert-form"):
@@ -1132,14 +1132,14 @@ def main():
             if command in ("-q", "-r", "--get-reading"):
                 try:
                     readingList = charInfo.getReadingForCharacters(charList)
-                    print replace_encode(getPrintableList(readingList, " "), output_encoding)
+                    print(replace_encode(getPrintableList(readingList, " "), output_encoding))
                 except exception.UnsupportedError:
-                    print "Error: no character mapping for this reading." \
+                    print("Error: no character mapping for this reading." \
                         + " Maybe the mapping in question has not been " \
-                        + "installed."
+                        + "installed.")
                     sys.exit(1)
                 except exception.ConversionError:
-                    print "Error: unable to convert to internal reading"
+                    print("Error: unable to convert to internal reading")
                     sys.exit(1)
 
             # conversion between simplified/traditional forms
@@ -1148,28 +1148,28 @@ def main():
                 traditional = getPrintableList(charInfo.getTraditional(
                     charList))
                 if not parameter in (simplified, traditional):
-                    print "Warning: input string has mixed simplified and " \
-                        + "traditional forms"
+                    print("Warning: input string has mixed simplified and " \
+                        + "traditional forms")
                 if simplified == traditional:
-                    print "Chinese simplified/Traditional: " \
-                        + replace_encode(simplified, output_encoding)
+                    print("Chinese simplified/Traditional: " \
+                        + replace_encode(simplified, output_encoding))
                 else:
-                    print "Simplified:  " \
-                        + replace_encode(simplified, output_encoding)
-                    print "Traditional: " + replace_encode(traditional, output_encoding)
+                    print("Simplified:  " \
+                        + replace_encode(simplified, output_encoding))
+                    print("Traditional: " + replace_encode(traditional, output_encoding))
 
         # character lookup by reading
         elif command in ("-a", "--by-reading"):
             try:
                 characterList = charInfo.getCharactersForReading(parameter,
                     sourceReading)
-                print replace_encode("".join(characterList), output_encoding)
+                print(replace_encode("".join(characterList), output_encoding))
             except exception.UnsupportedError:
-                print "Error: no character mapping for this reading." \
-                    + " Maybe the mapping in question has not been installed."
+                print("Error: no character mapping for this reading." \
+                    + " Maybe the mapping in question has not been installed.")
                 sys.exit(1)
             except exception.ConversionError:
-                print "Error: unable to convert to internal reading"
+                print("Error: unable to convert to internal reading")
                 sys.exit(1)
 
         # character lookup by Kangxi radical index
@@ -1178,17 +1178,17 @@ def main():
                 strokeCountDict = charInfo.getCharactersForKangxiRadicalIndex(
                     int(parameter))
                 for residualStrokeCount in sorted(strokeCountDict.keys()):
-                    print '+' + str(residualStrokeCount) + ': ' \
-                        + replace_encode(''.join(strokeCountDict[residualStrokeCount]), output_encoding)
+                    print('+' + str(residualStrokeCount) + ': ' \
+                        + replace_encode(''.join(strokeCountDict[residualStrokeCount]), output_encoding))
             except ValueError:
-                print "Error: bad parameter"
+                print("Error: bad parameter")
                 sys.exit(1)
 
         # character lookup by components
         elif command in ("-p", "--by-components"):
             componentList = getCharacterList(parameter)
             charList = charInfo.getCharactersForComponents(componentList)
-            print replace_encode(''.join(charList), output_encoding)
+            print(replace_encode(''.join(charList), output_encoding))
 
         # TODO
         ## character lookup by stroke order
@@ -1202,33 +1202,33 @@ def main():
         # reading conversion
         elif command in ("-m", "--convert-reading"):
             try:
-                print replace_encode(charInfo.convertReading(parameter, sourceReading,
-                    targetReading), output_encoding)
-            except exception.DecompositionError, m:
-                print "Error: invalid input string:", \
-                    replace_encode(getExceptionString(m), output_encoding)
+                print(replace_encode(charInfo.convertReading(parameter, sourceReading,
+                    targetReading), output_encoding))
+            except exception.DecompositionError as m:
+                print("Error: invalid input string:", \
+                    replace_encode(getExceptionString(m), output_encoding))
                 sys.exit(1)
-            except exception.CompositionError, m:
-                print "Error: can't compose target entities:", \
-                    replace_encode(getExceptionString(m), output_encoding)
+            except exception.CompositionError as m:
+                print("Error: can't compose target entities:", \
+                    replace_encode(getExceptionString(m), output_encoding))
                 sys.exit(1)
-            except exception.AmbiguousConversionError, m:
-                print "Error: input reading is ambiguous, can't convert:", \
-                    replace_encode(getExceptionString(m), output_encoding)
+            except exception.AmbiguousConversionError as m:
+                print("Error: input reading is ambiguous, can't convert:", \
+                    replace_encode(getExceptionString(m), output_encoding))
                 sys.exit(1)
-            except exception.ConversionError, m:
-                print "Error: can't convert input string:", \
-                    replace_encode(getExceptionString(m), output_encoding)
+            except exception.ConversionError as m:
+                print("Error: can't convert input string:", \
+                    replace_encode(getExceptionString(m), output_encoding))
                 sys.exit(1)
             except exception.UnsupportedError:
-                print "Error: conversion for given readings not supported"
+                print("Error: conversion for given readings not supported")
                 sys.exit(1)
 
         # dictionary search
         elif command == "-x":
             if not charInfo.hasDictionary():
-                print >> sys.stderr, ("Error: no dictionary available"
-                    "\nInstall one by running 'installcjkdict DICTIONARY_NAME'")
+                print(("Error: no dictionary available"
+                    "\nInstall one by running 'installcjkdict DICTIONARY_NAME'"), file=sys.stderr)
                 sys.exit(1)
 
             results = charInfo.searchDictionary(parameter, sourceReading)
@@ -1238,13 +1238,13 @@ def main():
                         % entry._asdict())
                 else:
                     string = "%(Headword)s %(Translation)s" % entry._asdict()
-                print replace_encode(string, output_encoding)
+                print(replace_encode(string, output_encoding))
 
         # dictionary search
         elif command == "-y":
             if not charInfo.hasDictionary():
-                print >> sys.stderr, ("Error: no dictionary available"
-                    "\nInstall one by running 'installcjkdict DICTIONARY_NAME'")
+                print(("Error: no dictionary available"
+                    "\nInstall one by running 'installcjkdict DICTIONARY_NAME'"), file=sys.stderr)
                 sys.exit(1)
 
             results = charInfo.searchHeadwords(parameter)
@@ -1254,7 +1254,7 @@ def main():
                         % entry._asdict())
                 else:
                     string = "%(Headword)s %(Translation)s" % entry._asdict()
-                print replace_encode(string, output_encoding)
+                print(replace_encode(string, output_encoding))
 
         # TODO deprecated
         elif command in ("-c", "-b", "-e"):
@@ -1270,7 +1270,7 @@ def main():
                 category=DeprecationWarning)
 
             if not charInfo.hasDictionary():
-                print "Error: no dictionary available"
+                print("Error: no dictionary available")
                 sys.exit(1)
 
             results = charInfo.searchDictionary(alternative, sourceReading)
@@ -1280,37 +1280,37 @@ def main():
                         % entry._asdict())
                 else:
                     string = "%(Headword)s %(Translation)s" % entry._asdict()
-                print replace_encode(string, output_encoding)
+                print(replace_encode(string, output_encoding))
 
         # listing of available options for parameter setting
         elif command in ("-L", "--list-options"):
             # locales
-            print "Current locale: " + charLocale + " (" \
-                + CharacterInfo.CHAR_LOCALE_NAME[charLocale] + ")"
-            print "Supported locales: " + ", ".join(
+            print("Current locale: " + charLocale + " (" \
+                + CharacterInfo.CHAR_LOCALE_NAME[charLocale] + ")")
+            print("Supported locales: " + ", ".join(
                 ["%s: %s" % entry for entry \
-                    in sorted(CharacterInfo.CHAR_LOCALE_NAME.items())])
+                    in sorted(CharacterInfo.CHAR_LOCALE_NAME.items())]))
             # character domain
-            print "Current character domain: " + charDomain
-            print "Available domains: " + ", ".join(
-                charInfo.characterLookup.getAvailableCharacterDomains())
+            print("Current character domain: " + charDomain)
+            print("Available domains: " + ", ".join(
+                charInfo.characterLookup.getAvailableCharacterDomains()))
             # readings
-            print "Current source reading: %s" % sourceReading
-            print "Current target reading: %s" % targetReading
+            print("Current source reading: %s" % sourceReading)
+            print("Current target reading: %s" % targetReading)
             readingsList = []
             for readingName in reading.ReadingFactory().getSupportedReadings():
-                if ALTERNATIVE_READING_NAMES.has_key(readingName):
+                if readingName in ALTERNATIVE_READING_NAMES:
                     readingsList.append(readingName + " (" \
                         + ", ".join(ALTERNATIVE_READING_NAMES[readingName]) \
                         + ")")
                 else:
                     readingsList.append(readingName)
-            print "Supported readings: " + ", ".join(readingsList)
+            print("Supported readings: " + ", ".join(readingsList))
             # dictionary
             if dictionaryN:
-                print "Current dictionary: %s" % dictionaryN
+                print("Current dictionary: %s" % dictionaryN)
             else:
-                print "Currently no dictionary set"
+                print("Currently no dictionary set")
 
             availableDictionaries = charInfo.getAvailableDictionaries()
             if availableDictionaries:
@@ -1323,17 +1323,17 @@ def main():
                             % (dictionaryName, dictObj.READING))
                     else:
                         dictionaryList.append(dictionaryName)
-                print "Available dictionaries: " + ", ".join(dictionaryList)
+                print("Available dictionaries: " + ", ".join(dictionaryList))
             else:
-                print "No dictionaries available"
+                print("No dictionaries available")
 
         else:
-            print "Error: command unknown"
+            print("Error: command unknown")
             usage()
             sys.exit(1)
 
     except KeyboardInterrupt:
-        print >> sys.stderr, "Keyboard interrupt."
+        print("Keyboard interrupt.", file=sys.stderr)
 
 if __name__ == "__main__":
     main()

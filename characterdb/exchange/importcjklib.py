@@ -82,7 +82,7 @@ class CharacterImporter(ImporterBase):
         # remove compatibility characters
         cjk = cls._characterLookup()
         hanScriptIterator = cjk.getDomainCharacterIterator()
-        return itertools.ifilter(lambda x: unicodedata.normalize('NFD', x) == x,
+        return filter(lambda x: unicodedata.normalize('NFD', x) == x,
                                  hanScriptIterator)
 
     def getRadical(self):
@@ -144,9 +144,9 @@ class GlyphImporter(ImporterBase):
             def __iter__(self):
                 return self
 
-            def next(self):
+            def __next__(self):
                 while not self.glyphQueue:
-                    self.curChar = self.characterIterator.next()
+                    self.curChar = next(self.characterIterator)
                     try:
                         glyphs = self._cjk.getCharacterGlyphs(self.curChar)
                         self.glyphQueue.extend(glyphs)
@@ -195,11 +195,11 @@ class GlyphImporter(ImporterBase):
         for decomp in decompositions:
             entries = []
             for entry in decomp:
-                if isinstance(entry, basestring):
+                if isinstance(entry, str):
                     entries.append(entry)
                 else:
                     char, _ = entry
-                    if char == u'？':
+                    if char == '？':
                         entries.append(char)
                     else:
                         entries.append('%s/%d' % entry)
@@ -263,25 +263,25 @@ class RadicalImporter(ImporterBase):
 def main():
     importModule = __import__("importcjklib")
     classes = dict((clss.TEMPLATE.lower(), clss)
-                   for clss in importModule.__dict__.values()
-                   if (type(clss) == types.TypeType
+                   for clss in list(importModule.__dict__.values())
+                   if (type(clss) == type
                        and issubclass(clss, importModule.ImporterBase)
                        and clss.TEMPLATE))
 
     if len(sys.argv) < 2:
-        print """usage: python importcjklib.py TEMPLATE [TITLE1 [TITLE2 ...]]
+        print("""usage: python importcjklib.py TEMPLATE [TITLE1 [TITLE2 ...]]
 Imports a data set from cjklib to characterdb.cjklib.org and prints the
 corresponding XML document to stdout.
 
-Available templates:"""
-        print "\n".join(('  ' + name) for name in classes.keys())
+Available templates:""")
+        print("\n".join(('  ' + name) for name in list(classes.keys())))
         sys.exit(1)
 
     template = sys.argv[1].lower()
     try:
         templateClass = classes[template]
     except KeyError:
-        print >> sys.stderr, "Unknown template %r" % template
+        print("Unknown template %r" % template, file=sys.stderr)
         sys.exit(1)
 
     if len(sys.argv) > 2:
@@ -289,10 +289,10 @@ Available templates:"""
     else:
         titleList = templateClass.titleIterator()
 
-    print "<Pages>"
+    print("<Pages>")
     for a in titleList:
-        print get_encode(templateClass(a).toXml(), 'utf8')
-    print "</Pages>"
+        print(get_encode(templateClass(a).toXml(), 'utf8'))
+    print("</Pages>")
 
 
 if __name__ == "__main__":

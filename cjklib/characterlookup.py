@@ -31,7 +31,7 @@ from cjklib import util
 import warnings
 
 class CharacterLookup(object):
-    u"""
+    """
     CharacterLookup provides access to lookup methods related to Han characters.
 
     .. todo::
@@ -454,7 +454,7 @@ class CharacterLookup(object):
     #{ Character glyph/variant lookup
 
     def getCharacterVariants(self, char, variantType):
-        u"""
+        """
         Gets the variant forms of the given type for the character.
 
         The type can be one out of:
@@ -687,7 +687,7 @@ class CharacterLookup(object):
             # Plan B, use stroke order (there might be less stroke order entries
             #   than stroke count entries)
             scDict = {}
-            for key, strokeOrder in self.getStrokeOrderAbbrevDict().items():
+            for key, strokeOrder in list(self.getStrokeOrderAbbrevDict().items()):
                 scDict[key] = len(strokeOrder.replace(' ', '-').split('-'))
             return scDict
 
@@ -1001,7 +1001,7 @@ class CharacterLookup(object):
             raise ValueError(abbrev + " is no valid stroke abbreviation")
 
     def getStrokeForName(self, name):
-        u"""
+        """
         Gets the stroke form for the given *stroke name* (e.g. ``'横折'``).
 
         :type name: str
@@ -1191,10 +1191,10 @@ class CharacterLookup(object):
                     if self.isBinaryIDSOperator(character):
                         # check for IDS operators we can't make any order
                         # assumption about
-                        if character in [u'⿻']:
+                        if character in ['⿻']:
                             return None, index
                         # ⿴ should only occur for 囗
-                        elif character == u'⿴':
+                        elif character == '⿴':
                             so, newindex = getFromEntry(subTree, index+1)
                             if not so: return None, index
                             strokes = [order.replace(' ', '-').split('-')
@@ -1209,7 +1209,7 @@ class CharacterLookup(object):
                             strokeOrder.extend(so)
                             strokeOrder.append('H')
                         # ⿷ should only occur for ⼕ and ⼖
-                        elif character == u'⿷':
+                        elif character == '⿷':
                             so, newindex = getFromEntry(subTree, index+1)
                             if not so: return None, index
                             strokes = [order.replace(' ', '-').split('-')
@@ -1224,10 +1224,10 @@ class CharacterLookup(object):
                             strokeOrder.extend(so)
                             strokeOrder.append(strokes[0][1])
                         else:
-                            if (character == u'⿶'
-                                or (character == u'⿺'
+                            if (character == '⿶'
+                                or (character == '⿺'
                                     and type(subTree[index+1]) == type(())
-                                    and subTree[index+1][0] in u'辶廴乙')):
+                                    and subTree[index+1][0] in '辶廴乙')):
                                 # IDS operators with order right one first
                                 subSequence = [1, 0]
                             else:
@@ -1256,7 +1256,7 @@ class CharacterLookup(object):
                     # no IDS operator but character
                     char, charGlyph = subTree[index]
                     # if the character is unknown or there is none, raise
-                    if char == u'？':
+                    if char == '？':
                         return None, index
                     else:
                         # recursion
@@ -1318,7 +1318,7 @@ class CharacterLookup(object):
         return result
 
     def getCharacterKangxiRadicalResidualStrokeCount(self, char, glyph=None):
-        u"""
+        """
         Gets the Kangxi radical form (either a *Unicode radical form* or a
         *Unicode radical variant*) found as a component in the character and
         the stroke count of the residual character components.
@@ -1363,7 +1363,7 @@ class CharacterLookup(object):
 
     def getCharacterRadicalResidualStrokeCount(self, char, radicalIndex,
         glyph=None):
-        u"""
+        """
         Gets the radical form (either a *Unicode radical form* or a
         *Unicode radical variant*) found as a component in the character and
         the stroke count of the residual character components.
@@ -1421,7 +1421,7 @@ class CharacterLookup(object):
                 "Character has no radical form information")
 
     def getCharacterRadicalResidualStrokeCountDict(self):
-        u"""
+        """
         Gets the full table of radical forms (either a *Unicode radical form*
         or a *Unicode radical variant*) found as a component in the character
         and the stroke count of the residual character components from the
@@ -1466,7 +1466,7 @@ class CharacterLookup(object):
         return radicalDict
 
     def getCharacterKangxiResidualStrokeCount(self, char, glyph=None):
-        u"""
+        """
         Gets the stroke count of the residual character components when leaving
         aside the radical form.
 
@@ -1497,7 +1497,7 @@ class CharacterLookup(object):
         return self.getCharacterResidualStrokeCount(char, radicalIndex, glyph)
 
     def getCharacterResidualStrokeCount(self, char, radicalIndex, glyph=None):
-        u"""
+        """
         Gets the stroke count of the residual character components when leaving
         aside the radical form.
 
@@ -1538,7 +1538,7 @@ class CharacterLookup(object):
                 "Character has no residual stroke count information")
 
     def getCharacterResidualStrokeCountDict(self):
-        u"""
+        """
         Gets the table of stroke counts of the residual character components
         from the database for all characters in the chosen *character domain*.
 
@@ -1699,7 +1699,7 @@ class CharacterLookup(object):
     #{ Radical form functions
 
     def getKangxiRadicalForm(self, radicalIdx):
-        u"""
+        """
         Gets a *Unicode radical form* for the given Kangxi radical index.
 
         This method will always return a single non null value, even if there
@@ -1719,7 +1719,7 @@ class CharacterLookup(object):
               Unicode.
         """
         if radicalIdx < 1 or radicalIdx > 214:
-            raise ValueError("Radical index '" + unicode(radicalIdx) \
+            raise ValueError("Radical index '" + str(radicalIdx) \
                 + "' not in range between 1 and 214")
 
         table = self.db.tables['KangxiRadical']
@@ -1799,7 +1799,7 @@ class CharacterLookup(object):
             + " variant form or equivalent character")
 
     def getKangxiRadicalRepresentativeCharacters(self, radicalIdx):
-        u"""
+        """
         Gets a list of characters that represent the radical for the given
         Kangxi radical index.
 
@@ -1872,10 +1872,10 @@ class CharacterLookup(object):
         """
         # check if Unicode code point of character lies in between U+2e80 and
         # U+2fd5
-        return char >= u'⺀' and char <= u'⿕'
+        return char >= '⺀' and char <= '⿕'
 
     def getRadicalFormEquivalentCharacter(self, radicalForm):
-        u"""
+        """
         Gets the *equivalent character* of the given *Unicode radical form* or
         *Unicode radical variant*.
 
@@ -1942,12 +1942,12 @@ class CharacterLookup(object):
     #}
     #{ Character component functions
 
-    IDS_BINARY = [u'⿰', u'⿱', u'⿴', u'⿵', u'⿶', u'⿷', u'⿸', u'⿹', u'⿺',
-        u'⿻']
+    IDS_BINARY = ['⿰', '⿱', '⿴', '⿵', '⿶', '⿷', '⿸', '⿹', '⿺',
+        '⿻']
     """
     A list of *binary IDS operators* used to describe character decompositions.
     """
-    IDS_TRINARY = [u'⿲', u'⿳']
+    IDS_TRINARY = ['⿲', '⿳']
     """
     A list of *trinary IDS operators* used to describe character
     decompositions.
@@ -1992,7 +1992,7 @@ class CharacterLookup(object):
     def getCharactersForComponents(self, componentList,
         includeEquivalentRadicalForms=True, resultIncludeRadicalForms=False,
         includeAllGlyphs=False):
-        u"""
+        """
         Gets all characters that contain the given components.
 
         If option ``includeEquivalentRadicalForms`` is set, all equivalent forms
@@ -2068,7 +2068,7 @@ class CharacterLookup(object):
 
     def getCharactersForEquivalentComponents(self, componentConstruct,
         resultIncludeRadicalForms=False, includeAllGlyphs=False):
-        u"""
+        """
         Gets all characters that contain at least one component per list entry,
         sorted by stroke count if available.
 
@@ -2406,7 +2406,7 @@ class CharacterLookup(object):
                 for charComponent in componentsList:
                     if type(charComponent) == type(()):
                         character, characterGlyph = charComponent
-                        if character != u'？':
+                        if character != '？':
                             # check if character and glyph match
                             if character == component \
                                 and (componentGlyph == None or

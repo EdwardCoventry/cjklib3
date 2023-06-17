@@ -19,7 +19,7 @@
 Automatically downloads external files to test against the build process.
 """
 
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import sys
 
 try:
@@ -35,7 +35,7 @@ try:
 
 except ImportError:
     def progress(i, chunkSize, total):
-        print '#',
+        print('#', end=' ')
 
 FILES = {'Unihan.zip': 'ftp://ftp.unicode.org/Public/UNIDATA/Unihan.zip',
     'kanjidic2.xml.gz': \
@@ -45,8 +45,8 @@ FILES = {'Unihan.zip': 'ftp://ftp.unicode.org/Public/UNIDATA/Unihan.zip',
 def main():
     for fileName in sys.argv[1:]:
         source = FILES[fileName]
-        print "Downloading %s from %s..." % (fileName, source)
-        urllib.urlretrieve(source, fileName, progress)
+        print("Downloading %s from %s..." % (fileName, source))
+        urllib.request.urlretrieve(source, fileName, progress)
 
 if __name__ == "__main__":
     main()

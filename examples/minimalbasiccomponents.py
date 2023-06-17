@@ -83,12 +83,12 @@ while characterQueue:
         for decomposition in characterDecomposition[charEntry]:
             # check all sub characters
             for subCharEntry in decomposition:
-                if type(subCharEntry) == type(u''):
+                if type(subCharEntry) == type(''):
                     # skip IDS operators
                     continue
 
                 subChar, subCharGlyph = subCharEntry
-                if subChar == u'？':
+                if subChar == '？':
                     continue
 
                 if subCharEntry in fullyDecomposedCharacters:
@@ -120,4 +120,4 @@ while characterQueue:
             characterQueue.remove(charEntry)
             fullyDecomposedCharacters.add(charEntry)
 
-print get_encode("".join(minimalBasicComponents), 'utf8')
+print(get_encode("".join(minimalBasicComponents), 'utf8'))

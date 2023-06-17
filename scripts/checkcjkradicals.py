@@ -57,8 +57,8 @@ def main():
             if matchObj:
                 index, variant, radicalCP, equivalentCP = matchObj.groups()
                 radicalIdx = int(index)
-                radicalForm = unichr(int(radicalCP, 16))
-                equivalentForm = unichr(int(equivalentCP, 16))
+                radicalForm = chr(int(radicalCP, 16))
+                equivalentForm = chr(int(equivalentCP, 16))
 
                 if variant:
                     seenRadicalVariantIndices.add(radicalIdx)
@@ -82,37 +82,37 @@ def main():
 
                 if radicalForm not in targetForms:
                     # cjklib is missing something
-                    print ("No entry for radical form '%s' with index %d%s"
+                    print(("No entry for radical form '%s' with index %d%s"
                         % (radicalForm, radicalIdx, variant))\
-                        .encode(default_encoding)
+                        .encode(default_encoding))
                     databaseMissingEntryCount += 1
                 if targetForms - set([radicalForm]):
                     # CJKRadicals.txt is missing something
                     for form in targetForms - set([radicalForm]):
-                        print ("Database entry '%s' with radical index %d%s" \
+                        print(("Database entry '%s' with radical index %d%s" \
                             % (form, radicalIdx, variant) \
                             + " not included in table")\
-                            .encode(default_encoding)
+                            .encode(default_encoding))
                     noEntryCount += 1
 
                 # check equivalentForm
                 libraryEquivalentForm \
                     = cjk.getRadicalFormEquivalentCharacter(radicalForm)
                 if libraryEquivalentForm != equivalentForm:
-                    print ("Equivalent radical form '%s' with index %d%s"
+                    print(("Equivalent radical form '%s' with index %d%s"
                         % (libraryEquivalentForm, radicalIdx, variant) \
                         + " not backed by table: '%s'" % equivalentForm)\
-                        .encode(default_encoding)
+                        .encode(default_encoding))
                     wrongEquivalentCount += 1
 
             else:
-                print ("error reading line: '" + line + "'")\
-                    .encode(default_encoding)
+                print(("error reading line: '" + line + "'")\
+                    .encode(default_encoding))
 
 
     for radicalIdx in set(range(1, 215)) - seenRadicalFormIndices:
-        print ("No table entry for radical index %d" % radicalIdx)\
-            .encode(default_encoding)
+        print(("No table entry for radical index %d" % radicalIdx)\
+            .encode(default_encoding))
         noEntryCount += 1
 
     for radicalIdx in set(range(1, 215)) - seenRadicalVariantIndices:
@@ -128,22 +128,22 @@ def main():
                 radicalIdx)) \
             - set(cjk.getKangxiRadicalVariantForms(radicalIdx)))
         for form in simplifiedForms:
-            print ("No table entry for simplified radical %s with index %d'"
-                % (form, radicalIdx)).encode(default_encoding)
+            print(("No table entry for simplified radical %s with index %d'"
+                % (form, radicalIdx)).encode(default_encoding))
             noEntryCount += 1
 
     for radicalIdx in range(1, 215):
         otherVariants = set(cjk.getKangxiRadicalVariantForms(radicalIdx)) \
             - set(cjkSimplified.getKangxiRadicalVariantForms(radicalIdx))
         for form in otherVariants:
-            print ("No table entry for variant %s with index %d'"
-                % (form, radicalIdx)).encode(default_encoding)
+            print(("No table entry for variant %s with index %d'"
+                % (form, radicalIdx)).encode(default_encoding))
             noEntryCount += 1
 
-    print "Total %d entries" % fileEntryCount \
+    print("Total %d entries" % fileEntryCount \
         + ", %d missing from cjklib" % databaseMissingEntryCount \
         + ", %d mismatches in equivalent forms" % wrongEquivalentCount \
-        + ", not found in source list: %d" % noEntryCount
+        + ", not found in source list: %d" % noEntryCount)
 
 
 if __name__ == "__main__":

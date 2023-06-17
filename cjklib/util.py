@@ -27,7 +27,7 @@ import re
 import copy
 import os.path
 import platform
-import ConfigParser
+import configparser
 from optparse import Option, OptionValueError
 import csv
 
@@ -70,10 +70,10 @@ def getConfigSettings(section, projectName='cjklib'):
     :return: configuration settings for the given project
     """
     # don't convert to lowercase
-    h = ConfigParser.SafeConfigParser.optionxform
+    h = configparser.SafeConfigParser.optionxform
     try:
-        ConfigParser.SafeConfigParser.optionxform = lambda self, x: x
-        config = ConfigParser.SafeConfigParser()
+        configparser.SafeConfigParser.optionxform = lambda self, x: x
+        config = configparser.SafeConfigParser()
         homeDir = os.path.expanduser('~')
 
         configFiles = []
@@ -112,10 +112,10 @@ def getConfigSettings(section, projectName='cjklib'):
         config.read(configFiles)
 
         configuration = dict(config.items(section))
-    except ConfigParser.NoSectionError:
+    except configparser.NoSectionError:
         configuration = {}
 
-    ConfigParser.SafeConfigParser.optionxform = h
+    configparser.SafeConfigParser.optionxform = h
 
     return configuration
 
@@ -200,13 +200,13 @@ def getDataPath():
 # define our own titlecase methods, as the Python implementation is currently
 #   buggy (http://bugs.python.org/issue6412), see also
 #   http://www.unicode.org/mail-arch/unicode-ml/y2009-m07/0066.html
-_FIRST_NON_CASE_IGNORABLE = re.compile(ur"(?u)([.˳｡￮₀ₒ]?\W*)(\w)(.*)$")
+_FIRST_NON_CASE_IGNORABLE = re.compile(r"(?u)([.˳｡￮₀ₒ]?\W*)(\w)(.*)$")
 """
 Regular expression matching the first alphabetic character. Include GR neutral
 tone forms.
 """
 def titlecase(strng):
-    u"""
+    """
     Returns the string (without "word borders") in titlecase.
 
     This function is not designed to work for multi-entity strings in general
@@ -265,7 +265,7 @@ def bytes_decode(_bytes, encoding='utf-8'):
 
 def get_unicode(_unicode, encoding='utf-8'):
     if sys.version_info[0] < 3:
-        return unicode(_unicode, encoding)
+        return str(_unicode, encoding)
     else:
         return _unicode
 
@@ -284,9 +284,9 @@ if sys.maxunicode < 0x10000:
         """
         if codepoint >= 0x10000:
             hi, lo = divmod(codepoint - 0x10000, 0x400)
-            return unichr(0xd800 + hi) + unichr(0xdc00 + lo)
+            return chr(0xd800 + hi) + chr(0xdc00 + lo)
         else:
-            return unichr(codepoint)
+            return chr(codepoint)
 
     def toCodepoint(char):
         """
@@ -311,8 +311,8 @@ if sys.maxunicode < 0x10000:
 
         Always returns ``False`` for wide builds.
         """
-        return (len(string) == 2 and u'\ud800' < string[0] < u'\udbff'
-            and u'\udc00' < string[1] < u'\udfff')
+        return (len(string) == 2 and '\ud800' < string[0] < '\udbff'
+            and '\udc00' < string[1] < '\udfff')
 
     def getCharacterList(string):
         """
@@ -418,7 +418,7 @@ class CharacterRangeIterator(object):
             return []
     def __iter__(self):
         return self
-    def next(self):
+    def __next__(self):
         if not self._curRange:
             raise StopIteration
 
@@ -450,11 +450,11 @@ class UnicodeCSVFileIterator(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         if not hasattr(self, '_csvReader'):
             self._csvReader = self._getCSVReader(self.fileHandle)
 
-        return [get_unicode(cell, 'utf-8') for cell in self._csvReader.next()]
+        return [get_unicode(cell, 'utf-8') for cell in next(self._csvReader)]
 
     @staticmethod
     def utf_8_encoder(unicode_csv_data):
@@ -502,7 +502,7 @@ class UnicodeCSVFileIterator(object):
         line = '#'
         try:
             while line.strip().startswith('#'):
-                line = fileHandle.next()
+                line = next(fileHandle)
         except StopIteration:
             return csv.reader(fileHandle)
         try:
@@ -825,7 +825,7 @@ if sys.version_info >= (2, 6):
         items = MutableMapping.items
 
         def __repr__(self):
-            pairs = ', '.join(map('%r: %r'.__mod__, self.items()))
+            pairs = ', '.join(map('%r: %r'.__mod__, list(self.items())))
             return '%s({%s})' % (self.__class__.__name__, pairs)
 
         def copy(self):
@@ -890,9 +890,9 @@ else:
             if not self:
                 raise KeyError('dictionary is empty')
             if last:
-                key = reversed(self).next()
+                key = next(reversed(self))
             else:
-                key = iter(self).next()
+                key = next(iter(self))
             value = self.pop(key)
             return key, value
 
@@ -921,7 +921,7 @@ else:
         def __repr__(self):
             if not self:
                 return '%s()' % (self.__class__.__name__,)
-            return '%s(%r)' % (self.__class__.__name__, self.items())
+            return '%s(%r)' % (self.__class__.__name__, list(self.items()))
 
         def copy(self):
             return self.__class__(self)
@@ -936,7 +936,7 @@ else:
         def __eq__(self, other):
             if isinstance(other, OrderedDict):
                 return len(self)==len(other) and \
-                    all(p==q for p, q in  zip(self.items(), other.items()))
+                    all(p==q for p, q in  zip(list(self.items()), list(other.items())))
             return dict.__eq__(self, other)
 
         def __ne__(self, other):

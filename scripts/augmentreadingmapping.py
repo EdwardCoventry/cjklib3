@@ -69,7 +69,7 @@ def _getCSVReader(handle):
     line = '#'
     try:
         while line.strip().startswith('#'):
-            line = handle.next()
+            line = next(handle)
     except StopIteration:
         return csv.reader(handle)
     try:

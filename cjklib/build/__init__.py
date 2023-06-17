@@ -73,7 +73,7 @@ class DatabaseBuilder:
                     os.path.dirname(os.path.abspath(__file__)), '../data')
             options['dataPath'] = [projectDataPath]
 
-        elif isinstance(options['dataPath'], basestring):
+        elif isinstance(options['dataPath'], str):
             # wrap as list
             options['dataPath'] = [options['dataPath']]
 
@@ -137,12 +137,12 @@ class DatabaseBuilder:
         understoodOptions = builderClass.getDefaultOptions()
 
         # set all globals first
-        builderOptions = dict([(o, v) for o, v in self.options.items() \
+        builderOptions = dict([(o, v) for o, v in list(self.options.items()) \
             if not o.startswith('--')])
 
         # no set (and maybe overwrite with) locals
         builderSpecificOptions = {}
-        for option, value in self.options.items():
+        for option, value in list(self.options.items()):
             if option.startswith('--'):
                 # local options
                 className, optionName = option[2:].split('-', 1)
@@ -184,7 +184,7 @@ class DatabaseBuilder:
         understoodOptions = builderClass.getDefaultOptions()
         newOptions = {}
 
-        for option, value in options.items():
+        for option, value in list(options.items()):
             if option not in understoodOptions:
                 raise ValueError("Unknown option '%s' for builder '%s'" \
                     % (option, builderClass.__name__))
@@ -192,7 +192,7 @@ class DatabaseBuilder:
             newOptions[localOptName] = value
 
         if exclusive:
-            for option, defaultValue in understoodOptions.items():
+            for option, defaultValue in list(understoodOptions.items()):
                 if option not in options:
                     localOptName = '--%s-%s' % (builderClass.__name__, option)
                     newOptions[localOptName] = defaultValue
@@ -215,7 +215,7 @@ class DatabaseBuilder:
             warn("Building database '%s'" % self.db.databaseUrl)
             if self.db.attached:
                 warn("Reading from additional databases '%s'"
-                    % "', '".join(self.db.attached.keys()))
+                    % "', '".join(list(self.db.attached.keys())))
 
         # remove tables that don't need to be rebuilt
         filteredTables = []
@@ -295,7 +295,7 @@ class DatabaseBuilder:
 
                 instance.build()
                 transaction.commit()
-            except IOError, e:
+            except IOError as e:
                 transaction.rollback()
                 # data not available, can't build table
                 if self.noFail:
@@ -318,7 +318,7 @@ class DatabaseBuilder:
                     if not self.quiet: warn("Error")
                     self.clearTemporary()
                     raise
-            except Exception, e:
+            except Exception as e:
                 transaction.rollback()
                 if not self.quiet: warn("Error")
                 self.clearTemporary()
@@ -601,7 +601,7 @@ class DatabaseBuilder:
         optionDefaultValues = {}
         optionMetaData = {}
         for builder in tableBuilderClasses:
-            for option, defaultValue in builder.getDefaultOptions().items():
+            for option, defaultValue in list(builder.getDefaultOptions().items()):
                 # check default value
                 if option in optionDefaultValues:
                     thatValue, thatBuilder = optionDefaultValues[option]
@@ -658,8 +658,8 @@ class DatabaseBuilder:
         buildModule = __import__("cjklib.build.builder")
         # get all classes that inherit from TableBuilder
         tableBuilderClasses = set([clss \
-            for clss in buildModule.build.builder.__dict__.values() \
-            if type(clss) == types.TypeType \
+            for clss in list(buildModule.build.builder.__dict__.values()) \
+            if type(clss) == type \
             and issubclass(clss, buildModule.build.builder.TableBuilder) \
             and clss.PROVIDES])
         # add additionally provided
@@ -711,7 +711,7 @@ class DatabaseBuilder:
             tableToBuilderMapping[clss.PROVIDES].add(clss)
 
         # now check conflicting and choose preferred if given
-        for tableName, builderClssSet in tableToBuilderMapping.items():
+        for tableName, builderClssSet in list(tableToBuilderMapping.items()):
             preferredBuilders = builderClssSet & preferClassSet
             if preferredBuilders:
                 if len(preferredBuilders) > 1:
@@ -813,4 +813,4 @@ def warn(message):
     :type message: str
     :param message: message to print
     """
-    print >> sys.stderr, replace_encode(message, locale.getpreferredencoding())
+    print(replace_encode(message, locale.getpreferredencoding()), file=sys.stderr)

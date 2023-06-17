@@ -95,7 +95,7 @@ class CharacterLookupMetaTest(CharacterLookupTest, unittest.TestCase):
     def testAvailableCharacterDomains(self):
         """Test if ``getAvailableCharacterDomains()`` returns proper domains."""
         # test default domain
-        self.assert_('Unicode' \
+        self.assertTrue('Unicode' \
             in self.characterLookup.getAvailableCharacterDomains())
 
         # test provided domain
@@ -106,7 +106,7 @@ class CharacterLookupMetaTest(CharacterLookupTest, unittest.TestCase):
         mydb = DatabaseConnectorMock(self.db,
             mockTables=[domain + 'Set'], mockTableDefinition=[tableObj])
         cjk = characterlookup.CharacterLookup('T', dbConnectInst=mydb)
-        self.assert_(domain in cjk.getAvailableCharacterDomains())
+        self.assertTrue(domain in cjk.getAvailableCharacterDomains())
         self.db.metadata.remove(tableObj)
 
         # test domain not included
@@ -114,7 +114,7 @@ class CharacterLookupMetaTest(CharacterLookupTest, unittest.TestCase):
         mydb = DatabaseConnectorMock(self.db,
             mockNonTables=[domain + 'Set'])
         cjk = characterlookup.CharacterLookup('T', dbConnectInst=mydb)
-        self.assert_(domain not in cjk.getAvailableCharacterDomains())
+        self.assertTrue(domain not in cjk.getAvailableCharacterDomains())
 
         # test domain not included
         domain = 'MyOtherDomain'
@@ -123,7 +123,7 @@ class CharacterLookupMetaTest(CharacterLookupTest, unittest.TestCase):
         mydb = DatabaseConnectorMock(self.db,
             mockTables=[domain + 'Set'], mockTableDefinition=[tableObj])
         cjk = characterlookup.CharacterLookup('T', dbConnectInst=mydb)
-        self.assert_(domain not in cjk.getAvailableCharacterDomains())
+        self.assertTrue(domain not in cjk.getAvailableCharacterDomains())
         self.db.metadata.remove(tableObj)
 
 
@@ -140,7 +140,7 @@ class CharacterLookupCharacterDomainTest(CharacterLookupTest,
                 domain, dbConnectInst=self.db)
             domainChars = [c for c \
                 in characterLookupDomain.getDomainCharacterIterator()]
-            self.assert_(domainChars \
+            self.assertTrue(domainChars \
                 == self.characterLookup.filterDomainCharacters(domainChars))
 
     @attr('slow')
@@ -150,7 +150,7 @@ class CharacterLookupCharacterDomainTest(CharacterLookupTest,
             characterLookupDomain = characterlookup.CharacterLookup('T',
                 domain, dbConnectInst=self.db)
             for char in characterLookupDomain.getDomainCharacterIterator():
-                self.assert_(characterLookupDomain.isCharacterInDomain(char))
+                self.assertTrue(characterLookupDomain.isCharacterInDomain(char))
 
     def testFilterIdentityOnSelf(self):
         """
@@ -162,7 +162,7 @@ class CharacterLookupCharacterDomainTest(CharacterLookupTest,
                 domain, dbConnectInst=self.db)
             domainChars = [c for c \
                 in characterLookupDomain.getDomainCharacterIterator()]
-            self.assert_(domainChars \
+            self.assertTrue(domainChars \
                 == characterLookupDomain.filterDomainCharacters(domainChars))
 
 
@@ -175,13 +175,13 @@ class CharacterLookupStrokesTest(CharacterLookupTest, unittest.TestCase):
         """
         import unicodedata
         for strokeCP in range(int('31C0', 16), int('31EF', 16)+1):
-            stroke = unichr(strokeCP)
+            stroke = chr(strokeCP)
             try:
                 abbrev = unicodedata.name(stroke).replace('CJK STROKE ', '')
             except ValueError:
                 continue
             try:
-                self.assertEquals(stroke,
+                self.assertEqual(stroke,
                     self.characterLookup.getStrokeForAbbrev(abbrev))
             except ValueError:
                 self.fail("Abbreviation '%s' not supported" % abbrev)
@@ -201,7 +201,7 @@ class CharacterLookupStrokeOrderTest(CharacterLookupTest, unittest.TestCase):
             try:
                 strokeOrder = cjk.getStrokeOrder(char, includePartial=True)
                 strokeCount = cjk.getStrokeCount(char)
-                self.assert_(len(strokeOrder) == strokeCount,
+                self.assertTrue(len(strokeOrder) == strokeCount,
                     "Stroke count %d does not match stroke order (%d)"
                     % (strokeCount, len(strokeOrder))
                     + " for character '%s'" % char)
@@ -235,7 +235,7 @@ class CharacterLookupReadingMethodsTest(CharacterLookupTest, unittest.TestCase):
         # mock to simulate availability of all tables in
         #   characterLookup.CHARARACTER_READING_MAPPING
         tables = [table for table, _ \
-            in self.characterLookup.CHARARACTER_READING_MAPPING.values()]
+            in list(self.characterLookup.CHARARACTER_READING_MAPPING.values())]
         self.characterLookup.db.engine = EngineMock(
                 self.characterLookup.db.engine, mockTables=tables)
 
@@ -243,17 +243,17 @@ class CharacterLookupReadingMethodsTest(CharacterLookupTest, unittest.TestCase):
             # only if table exists
             table, _ = self.characterLookup.CHARARACTER_READING_MAPPING[reading]
 
-            self.assert_(
+            self.assertTrue(
                 self.characterLookup.hasMappingForReadingToCharacter(reading))
-            self.assert_(
+            self.assertTrue(
                 self.characterLookup.hasMappingForCharacterToReading(reading))
 
         # test proper checking for all known readings
         for reading in self.f.getSupportedReadings():
-            self.assert_(
+            self.assertTrue(
                 self.characterLookup.hasMappingForReadingToCharacter(reading) \
                 in [True, False])
-            self.assert_(
+            self.assertTrue(
                 self.characterLookup.hasMappingForCharacterToReading(reading) \
                 in [True, False])
 
@@ -283,13 +283,13 @@ class CharacterLookupReadingMethodsTest(CharacterLookupTest, unittest.TestCase):
                         results = self.characterLookup.getCharactersForReading(
                             entity, reading, **dialect)
 
-                        self.assertEquals(type(results), type([]),
+                        self.assertEqual(type(results), type([]),
                             "Method getCharactersForReading() doesn't return" \
                                 + " a list for entity %s " % repr(entity) \
                         + ' (reading %s, dialect %s)' % (reading, dialect))
 
                         for entry in results:
-                            self.assertEquals(len(entry), 1,
+                            self.assertEqual(len(entry), 1,
                                 "Entry %s in result for %s has length != 1" \
                                     % (repr(entry), repr(entity)) \
                                 + ' (reading %s, dialect %s)' \
@@ -329,7 +329,7 @@ class CharacterLookupReferenceTest(CharacterLookupTest):
 
             for methodArgs, methodOptions, target in references:
                 result = method(*methodArgs, **methodOptions)
-                self.assertEquals(result, target,
+                self.assertEqual(result, target,
                     "Target %s not reached for input %s: %s" \
                         % (repr(target), repr((methodArgs, methodOptions)),
                             repr(result)))
@@ -341,14 +341,14 @@ class CharacterLookupFilterDomainCharactersReferenceTest(
 
     REFERENCE_LIST = [
         (('T', 'Unicode'), [
-            (([u'说', u'説', u'說', u'丷', u'か', u'국', u'\U000200d3'], ), {},
-                [u'说', u'説', u'說', u'丷', u'\U000200d3']),
+            ((['说', '説', '說', '丷', 'か', '국', '\U000200d3'], ), {},
+                ['说', '説', '說', '丷', '\U000200d3']),
             ]),
         (('T', 'BIG5'), [
-            (([u'说', u'説', u'說', u'丷', u'か', u'국'], ), {}, [u'說']),
+            ((['说', '説', '說', '丷', 'か', '국'], ), {}, ['說']),
             ]),
         (('T', 'GB2312'), [
-            (([u'说', u'説', u'說', u'丷', u'か', u'국'], ), {}, [u'说']),
+            ((['说', '説', '說', '丷', 'か', '국'], ), {}, ['说']),
             ]),
         ]
 
@@ -359,31 +359,31 @@ class CharacterLookupIsCharacterInDomainReferenceTest(
 
     REFERENCE_LIST = [
         (('T', 'Unicode'), [
-            ((u'说', ), {}, True),
-            ((u'説', ), {}, True),
-            ((u'說', ), {}, True),
-            ((u'丷', ), {}, True),
-            ((u'か', ), {}, False),
-            ((u'국', ), {}, False),
-            ((u'\U000200d3', ), {}, True),
+            (('说', ), {}, True),
+            (('説', ), {}, True),
+            (('說', ), {}, True),
+            (('丷', ), {}, True),
+            (('か', ), {}, False),
+            (('국', ), {}, False),
+            (('\U000200d3', ), {}, True),
             ]),
         (('T', 'BIG5'), [
-            ((u'说', ), {}, False),
-            ((u'説', ), {}, False),
-            ((u'說', ), {}, True),
-            ((u'丷', ), {}, False),
-            ((u'か', ), {}, False),
-            ((u'국', ), {}, False),
-            ((u'\U000200d3', ), {}, False),
+            (('说', ), {}, False),
+            (('説', ), {}, False),
+            (('說', ), {}, True),
+            (('丷', ), {}, False),
+            (('か', ), {}, False),
+            (('국', ), {}, False),
+            (('\U000200d3', ), {}, False),
             ]),
         (('T', 'GB2312'), [
-            ((u'说', ), {}, True),
-            ((u'説', ), {}, False),
-            ((u'說', ), {}, False),
-            ((u'丷', ), {}, False),
-            ((u'か', ), {}, False),
-            ((u'국', ), {}, False),
-            ((u'\U000200d3', ), {}, False),
+            (('说', ), {}, True),
+            (('説', ), {}, False),
+            (('說', ), {}, False),
+            (('丷', ), {}, False),
+            (('か', ), {}, False),
+            (('국', ), {}, False),
+            (('\U000200d3', ), {}, False),
             ]),
         ]
 
@@ -394,9 +394,9 @@ class CharacterLookupGetReadingForCharacterReferenceTest(
 
     REFERENCE_LIST = [
         (('T', ), [
-            ((u'中', 'Pinyin'), {}, [u'zhōng', u'zhòng']),
-            ((u'漢', 'Hangul'), {}, [u'한']),
-            ((u'漢', 'MandarinBraille'), {}, [u'⠓⠧⠆', u'⠞⠧⠁']),
+            (('中', 'Pinyin'), {}, ['zhōng', 'zhòng']),
+            (('漢', 'Hangul'), {}, ['한']),
+            (('漢', 'MandarinBraille'), {}, ['⠓⠧⠆', '⠞⠧⠁']),
             ]),
         ]
 
@@ -407,10 +407,10 @@ class CharacterLookupGetCharactersForReadingReferenceTest(
 
     REFERENCE_LIST = [
         (('T', 'GB2312'), [
-            ((u'èr', 'Pinyin'), {}, [u'二', u'佴', u'贰']),
+            (('èr', 'Pinyin'), {}, ['二', '佴', '贰']),
             ]),
         (('T', 'BIG5'), [
-            ((u'm\u0300h', 'CantoneseYale'), {}, [u'唔', u'嘸']),
+            (('m\u0300h', 'CantoneseYale'), {}, ['唔', '嘸']),
             ]),
         ]
 
@@ -421,10 +421,10 @@ class CharacterLookupGetCharacterVariantsReferenceTest(
 
     REFERENCE_LIST = [
         (('T', ), [
-            ((u'台', 'T'), {}, [u'\u53f0', u'\u6aaf', u'\u81fa', u'\u98b1']),
+            (('台', 'T'), {}, ['\u53f0', '\u6aaf', '\u81fa', '\u98b1']),
             ]),
         (('T', ), [
-            ((u'台', 'S'), {}, [u'\u53f0']),
+            (('台', 'S'), {}, ['\u53f0']),
             ]),
         ]
 
@@ -435,7 +435,7 @@ class CharacterLookupGetAllCharacterVariantsReferenceTest(
 
     REFERENCE_LIST = [
         (('T', ), [
-            ((u'他', ), {}, [(u'\u5979', u'M'), (u'\u7260', u'M')]),
+            (('他', ), {}, [('\u5979', 'M'), ('\u7260', 'M')]),
             ]),
         ]
 
@@ -446,7 +446,7 @@ class CharacterLookupGetDefaultGlyphReferenceTest(
 
     REFERENCE_LIST = [
         (('T', ), [
-            ((u'台', ), {}, 0),
+            (('台', ), {}, 0),
             ]),
         ]
 
@@ -457,7 +457,7 @@ class CharacterLookupGetCharacterGlyphsReferenceTest(
 
     REFERENCE_LIST = [
         (('T', ), [
-            ((u'口', ), {}, [0]),
+            (('口', ), {}, [0]),
             ]),
         ]
 
@@ -468,7 +468,7 @@ class CharacterLookupGetStrokeCountReferenceTest(
 
     REFERENCE_LIST = [
         (('T', ), [
-            ((u'口', ), {}, 3),
+            (('口', ), {}, 3),
             ]),
         ]
 
@@ -479,7 +479,7 @@ class CharacterLookupGetStrokeForAbbrevReferenceTest(
 
     REFERENCE_LIST = [
         (('T', ), [
-            ((u'HZG', ), {}, u'㇆'),
+            (('HZG', ), {}, '㇆'),
             ]),
         ]
 
@@ -490,7 +490,7 @@ class CharacterLookupGetStrokeForNameReferenceTest(
 
     REFERENCE_LIST = [
         (('T', ), [
-            ((u'提', ), {}, u'㇀'),
+            (('提', ), {}, '㇀'),
             ]),
         ]
 
@@ -501,7 +501,7 @@ class CharacterLookupGetStrokeOrderReferenceTest(
 
     REFERENCE_LIST = [
         (('T', ), [
-            ((u'口', ), {}, [u'㇑', u'㇕', u'㇐']),
+            (('口', ), {}, ['㇑', '㇕', '㇐']),
             ]),
         ]
 
@@ -512,7 +512,7 @@ class CharacterLookupGetStrokeOrderAbbrevReferenceTest(
 
     REFERENCE_LIST = [
         (('T', ), [
-            ((u'口', ), {}, 'S-HZ-H'),
+            (('口', ), {}, 'S-HZ-H'),
             ]),
         ]
 
@@ -523,7 +523,7 @@ class CharacterLookupGetCharacterKangxiRadicalIndexReferenceTest(
 
     REFERENCE_LIST = [
         (('T', ), [
-            ((u'他', ), {}, 9),
+            (('他', ), {}, 9),
             ]),
         ]
 
@@ -534,7 +534,7 @@ class CharacterLookupGetCharacterKangxiRadicalResidualStrokeCountReferenceTest(
 
     REFERENCE_LIST = [
         (('T', ), [
-            ((u'他', ), {}, [(u'\u4ebb', 0, u'\u2ff0', 0, 3)]),
+            (('他', ), {}, [('\u4ebb', 0, '\u2ff0', 0, 3)]),
             ]),
         ]
 
@@ -545,7 +545,7 @@ class CharacterLookupGetCharacterRadicalResidualStrokeCountReferenceTest(
 
     REFERENCE_LIST = [
         (('T', ), [
-            ((u'他', 9), {}, [(u'\u4ebb', 0, u'\u2ff0', 0, 3)]),
+            (('他', 9), {}, [('\u4ebb', 0, '\u2ff0', 0, 3)]),
             ]),
         ]
 
@@ -556,7 +556,7 @@ class CharacterLookupGetCharacterKangxiResidualStrokeCountReferenceTest(
 
     REFERENCE_LIST = [
         (('T', ), [
-            ((u'他', ), {}, 3),
+            (('他', ), {}, 3),
             ]),
         ]
 
@@ -567,7 +567,7 @@ class CharacterLookupGetCharacterResidualStrokeCountReferenceTest(
 
     REFERENCE_LIST = [
         (('T', ), [
-            ((u'他', 9), {}, 3),
+            (('他', 9), {}, 3),
             ]),
         ]
 
@@ -578,7 +578,7 @@ class CharacterLookupGetCharactersForKangxiRadicalIndexReferenceTest(
 
     REFERENCE_LIST = [
         (('C', 'GB2312'), [
-            ((214, ), {}, [u'\u9fa0']),
+            ((214, ), {}, ['\u9fa0']),
             ]),
         ]
 
@@ -589,7 +589,7 @@ class CharacterLookupGetCharactersForRadicalIndexReferenceTest(
 
     REFERENCE_LIST = [
         (('C', 'GB2312'), [
-            ((214, ), {}, [u'\u7039', u'\u9fa0']),
+            ((214, ), {}, ['\u7039', '\u9fa0']),
             ]),
         ]
 
@@ -600,7 +600,7 @@ class CharacterLookupGetResidualStrokeCountForKangxiRadicalIndexReferenceTest(
 
     REFERENCE_LIST = [
         (('C', 'GB2312'), [
-            ((214, ), {}, [(u'\u9fa0', 0)]),
+            ((214, ), {}, [('\u9fa0', 0)]),
             ]),
         ]
 
@@ -611,7 +611,7 @@ class CharacterLookupGetResidualStrokeCountForRadicalIndexReferenceTest(
 
     REFERENCE_LIST = [
         (('C', 'GB2312'), [
-            ((214, ), {}, [(u'\u7039', 3), (u'\u9fa0', 0)]),
+            ((214, ), {}, [('\u7039', 3), ('\u9fa0', 0)]),
             ]),
         ]
 
@@ -622,7 +622,7 @@ class CharacterLookupGetKangxiRadicalFormReferenceTest(
 
     REFERENCE_LIST = [
         (('T', ), [
-            ((214, ), {}, u'\u2fd5'),
+            ((214, ), {}, '\u2fd5'),
             ]),
         ]
 
@@ -636,7 +636,7 @@ class CharacterLookupGetKangxiRadicalVariantFormsReferenceTest(
             ((149, ), {}, []),
             ]),
         (('C', ), [
-            ((149, ), {}, [u'\u2ec8']),
+            ((149, ), {}, ['\u2ec8']),
             ]),
         ]
 
@@ -647,7 +647,7 @@ class CharacterLookupGetKangxiRadicalIndexReferenceTest(
 
     REFERENCE_LIST = [
         (('T', ), [
-            ((u'⿕', ), {}, 214),
+            (('⿕', ), {}, 214),
             ]),
         ]
 
@@ -658,7 +658,7 @@ class CharacterLookupGetKangxiRadicalIndexReferenceTest(
 
     REFERENCE_LIST = [
         (('T', ), [
-            ((u'⿕', ), {}, 214),
+            (('⿕', ), {}, 214),
             ]),
         ]
 
@@ -669,11 +669,11 @@ class CharacterLookupGetKangxiRadicalRepresentativeCharactersReferenceTest(
 
     REFERENCE_LIST = [
         (('T', ), [
-            ((149, ), {}, [u'\u2f94', u'\u8a00', u'\u8a01']),
+            ((149, ), {}, ['\u2f94', '\u8a00', '\u8a01']),
             ]),
         (('C', ), [
-            ((149, ), {}, [u'\u2ec8', u'\u2f94', u'\u8a00', u'\u8a01',
-                u'\u8ba0']),
+            ((149, ), {}, ['\u2ec8', '\u2f94', '\u8a00', '\u8a01',
+                '\u8ba0']),
             ]),
         ]
 
@@ -684,10 +684,10 @@ class CharacterLookupIsKangxiRadicalFormOrEquivalentReferenceTest(
 
     REFERENCE_LIST = [
         (('T', ), [
-            ((u'讠', ), {}, False),
+            (('讠', ), {}, False),
             ]),
         (('C', ), [
-            ((u'讠', ), {}, True),
+            (('讠', ), {}, True),
             ]),
         ]
 
@@ -698,7 +698,7 @@ class CharacterLookupIsRadicalCharReferenceTest(
 
     REFERENCE_LIST = [
         (('T', ), [
-            ((u'⿕', ), {}, True), ((u'龠', ), {}, False),
+            (('⿕', ), {}, True), (('龠', ), {}, False),
             ]),
         ]
 
@@ -709,7 +709,7 @@ class CharacterLookupGetRadicalFormEquivalentCharacterReferenceTest(
 
     REFERENCE_LIST = [
         (('T', ), [
-            ((u'⿕', ), {}, u'龠'),
+            (('⿕', ), {}, '龠'),
             ]),
         ]
 
@@ -720,7 +720,7 @@ class CharacterLookupGetCharacterEquivalentRadicalFormsReferenceTest(
 
     REFERENCE_LIST = [
         (('T', ), [
-            ((u'网', ), {}, [u'\u2f79', u'\u2eb3', u'\u2eb4']),
+            (('网', ), {}, ['\u2f79', '\u2eb3', '\u2eb4']),
             ]),
         ]
 
@@ -731,7 +731,7 @@ class CharacterLookupGetCharactersForComponentsReferenceTest(
 
     REFERENCE_LIST = [
         (('C', 'GB2312'), [
-            (([u'⿕', u'氵'], ), {}, [(u'\u7039', 0)]),
+            ((['⿕', '氵'], ), {}, [('\u7039', 0)]),
             ]),
         ]
 
@@ -742,7 +742,7 @@ class CharacterLookupGetDecompositionEntriesReferenceTest(
 
     REFERENCE_LIST = [
         (('C', 'GB2312'), [
-            ((u'瀹', ), {}, [[u'\u2ff0', (u'\u6c35', 0), (u'\u9fa0', 0)]]),
+            (('瀹', ), {}, [['\u2ff0', ('\u6c35', 0), ('\u9fa0', 0)]]),
             ]),
         ]
 
@@ -753,7 +753,7 @@ class CharacterLookupIsComponentInCharacterReferenceTest(
 
     REFERENCE_LIST = [
         (('T', ), [
-            ((u'女', u'好'), {}, True),
-            ((u'女', u'他'), {}, False),
+            (('女', '好'), {}, True),
+            (('女', '他'), {}, False),
             ]),
         ]

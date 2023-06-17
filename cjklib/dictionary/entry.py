@@ -24,7 +24,7 @@ __all__ = [
     "Tuple", "NamedTuple", "UnifiedHeadword",
     ]
 
-from itertools import imap
+
 
 #{ Entry factories
 
@@ -85,7 +85,7 @@ class NamedTuple(object):
 
                 # Parse and validate the field names.  Validation serves two purposes,
                 # generating informative error messages and preventing template injection attacks.
-                if isinstance(field_names, basestring):
+                if isinstance(field_names, str):
                     field_names = field_names.replace(',', ' ').split() # names separated by whitespace and/or commas
                 field_names = tuple(map(str, field_names))
                 if rename:
@@ -146,14 +146,14 @@ class NamedTuple(object):
                 for i, name in enumerate(field_names):
                     template += '        %s = _property(_itemgetter(%d))\n' % (name, i)
                 if verbose:
-                    print template
+                    print(template)
 
                 # Execute the template string in a temporary namespace
                 namespace = dict(_itemgetter=_itemgetter, __name__='namedtuple_%s' % typename,
                                 _property=property, _tuple=tuple)
                 try:
-                    exec template in namespace
-                except SyntaxError, e:
+                    exec(template, namespace)
+                except SyntaxError as e:
                     raise SyntaxError(e.message + ':\n' + template)
                 result = namespace[typename]
 
@@ -181,7 +181,7 @@ class NamedTuple(object):
         Returns the dictionary results as named tuples.
         """
         EntryTuple = self._getNamedTuple()
-        return imap(EntryTuple._make, results)
+        return map(EntryTuple._make, results)
 
 
 class UnifiedHeadword(NamedTuple):
@@ -209,7 +209,7 @@ class UnifiedHeadword(NamedTuple):
         if headwords[0] == headwords[1]:
             entry.append(headwords[0])
         else:
-            entry.append(u'%s（%s）' % headwords)
+            entry.append('%s（%s）' % headwords)
         return entry
 
     def getEntries(self, results):
@@ -221,7 +221,7 @@ class UnifiedHeadword(NamedTuple):
             return EntryTuple._make(entry)
 
         EntryTuple = self._getNamedTuple()
-        return imap(augmentedEntry, results)
+        return map(augmentedEntry, results)
 
     def setDictionaryInstance(self, dictInstance):
         super(UnifiedHeadword, self).setDictionaryInstance(

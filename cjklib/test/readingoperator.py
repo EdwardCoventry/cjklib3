@@ -82,14 +82,14 @@ class ReadingOperatorConsistencyTest(ReadingOperatorTest):
 
         for clss in self.f.getReadingOperatorClasses():
             if clss.READING_NAME == self.READING_NAME:
-                self.assert_(not seen,
+                self.assertTrue(not seen,
                     "Reading %s has more than one operator" \
                     % clss.READING_NAME)
                 seen = True
 
     def testInstantiation(self):
         """Test if given dialects can be instantiated."""
-        self.assert_(self.readingOperatorClass != None,
+        self.assertTrue(self.readingOperatorClass != None,
             "No reading operator class found" \
                 + ' (reading %s)' % self.READING_NAME)
 
@@ -108,12 +108,12 @@ class ReadingOperatorConsistencyTest(ReadingOperatorTest):
         """
         defaultOptions = self.readingOperatorClass.getDefaultOptions()
 
-        self.assertEquals(type(defaultOptions), type({}),
+        self.assertEqual(type(defaultOptions), type({}),
             "Default options %s is not of type dict" % repr(defaultOptions) \
             + ' (reading %s)' % self.READING_NAME)
         # test if option names are well-formed
         for option in defaultOptions:
-            self.assertEquals(type(option), type(''),
+            self.assertEqual(type(option), type(''),
                 "Option %s is not of type str" % repr(option) \
                 + ' (reading %s)' % self.READING_NAME)
 
@@ -124,7 +124,7 @@ class ReadingOperatorConsistencyTest(ReadingOperatorTest):
             forms.append({})
         for dialect in forms:
             for option in dialect:
-                self.assert_(option in defaultOptions,
+                self.assertTrue(option in defaultOptions,
                     "Test case option %s not found in default options" \
                         % repr(option) \
                     + ' (reading %s, dialect %s)' \
@@ -164,18 +164,18 @@ class ReadingOperatorConsistencyTest(ReadingOperatorTest):
 
         readingDialect = self.readingOperatorClass.guessReadingDialect('')
 
-        self.assertEquals(type(defaultOptions), type({}),
+        self.assertEqual(type(defaultOptions), type({}),
             "Guessed options %s is not of type dict" % repr(readingDialect) \
             + ' (reading %s)' % self.READING_NAME)
         # test if option names are well-formed
         for option in readingDialect:
-            self.assertEquals(type(option), type(''),
+            self.assertEqual(type(option), type(''),
                 "Option %s is not of type str" % repr(option) \
                 + ' (reading %s)' % self.READING_NAME)
 
         # test inclusion in default set
         for option in readingDialect:
-            self.assert_(option in defaultOptions,
+            self.assertTrue(option in defaultOptions,
                 "Option %s not found in default options" % repr(option) \
                 + ' (reading %s)' % self.READING_NAME)
 
@@ -203,7 +203,7 @@ class ReadingOperatorConsistencyTest(ReadingOperatorTest):
 
             # make sure all are characters
             for char in readingCharacters:
-                self.assert_(len(char) == 1,
+                self.assertTrue(len(char) == 1,
                     "Not len()==1: %s" % repr(char) \
                         + ' (reading %s, dialect %s)' \
                             % (self.READING_NAME, dialect))
@@ -212,9 +212,9 @@ class ReadingOperatorConsistencyTest(ReadingOperatorTest):
             for entity in entities:
                 charList = set(entity)
                 # include NFD form
-                charList.update(unicodedata.normalize('NFD', unicode(entity)))
+                charList.update(unicodedata.normalize('NFD', str(entity)))
                 for char in charList:
-                    self.assert_(char in readingCharacters,
+                    self.assertTrue(char in readingCharacters,
                         "Char %s not included" % repr(char) \
                             + ' (reading %s, dialect %s)' \
                                 % (self.READING_NAME, dialect))
@@ -235,7 +235,7 @@ class ReadingOperatorConsistencyTest(ReadingOperatorTest):
             entities = self.f.getReadingEntities(self.READING_NAME,
                 **dialect)
             for entity in entities:
-                self.assert_(
+                self.assertTrue(
                     self.f.isReadingEntity(entity, self.READING_NAME,
                         **dialect),
                     "Entity %s not accepted" % repr(entity) \
@@ -258,7 +258,7 @@ class ReadingOperatorConsistencyTest(ReadingOperatorTest):
             entities = self.f.getFormattingEntities(self.READING_NAME,
                 **dialect)
             for entity in entities:
-                self.assert_(
+                self.assertTrue(
                     self.f.isFormattingEntity(entity, self.READING_NAME,
                         **dialect),
                     "Entity %s not accepted" % repr(entity) \
@@ -281,7 +281,7 @@ class ReadingOperatorConsistencyTest(ReadingOperatorTest):
             plainEntities = self.f.getPlainReadingEntities(self.READING_NAME,
                 **dialect)
             for plainEntity in plainEntities:
-                self.assert_(
+                self.assertTrue(
                     self.f.isPlainReadingEntity(plainEntity, self.READING_NAME,
                         **dialect),
                     "Plain entity %s not accepted" % repr(plainEntity) \
@@ -333,7 +333,7 @@ class ReadingOperatorConsistencyTest(ReadingOperatorTest):
                 try:
                     entities = self.f.decompose(entity, self.READING_NAME,
                         **dialect)
-                    self.assertEquals(entities, [entity],
+                    self.assertEqual(entities, [entity],
                         "decomposition on single entity %s" % repr(entity) \
                         + " is not identical: %s" % repr(entities) \
                         + ' (reading %s, dialect %s)' \
@@ -371,7 +371,7 @@ class ReadingOperatorConsistencyTest(ReadingOperatorTest):
                     plainEntity, tone = self.f.splitEntityTone(entity,
                         self.READING_NAME, **dialect)
 
-                    self.assertEquals(
+                    self.assertEqual(
                         self.f.getTonalEntity(plainEntity, tone,
                             self.READING_NAME, **dialect),
                         entity,
@@ -398,7 +398,7 @@ class ReadingOperatorConsistencyTest(ReadingOperatorTest):
                         plainEntity, tone = self.f.splitEntityTone(
                             entityUpper, self.READING_NAME, **dialect)
 
-                        self.assertEquals(
+                        self.assertEqual(
                             self.f.getTonalEntity(plainEntity, tone,
                                 self.READING_NAME, **dialect),
                             entity.upper(),
@@ -435,14 +435,14 @@ class ReadingOperatorConsistencyTest(ReadingOperatorTest):
                     plainEntity, tone = self.f.splitEntityTone(entity,
                         self.READING_NAME, **dialect)
 
-                    self.assert_(self.f.isPlainReadingEntity(plainEntity,
+                    self.assertTrue(self.f.isPlainReadingEntity(plainEntity,
                         self.READING_NAME, **dialect),
                         "Plain entity of %s not accepted: %s" \
                             % (repr(entity), repr(plainEntity)) \
                         + ' (reading %s, dialect %s)' \
                             % (self.READING_NAME, dialect))
 
-                    self.assert_(
+                    self.assertTrue(
                         tone in self.f.getTones(self.READING_NAME, **dialect),
                         "Tone of entity %s not valid: %s " \
                             % (repr(entity), repr(tone)) \
@@ -488,7 +488,7 @@ class ReadingOperatorConsistencyTest(ReadingOperatorTest):
                         else:
                             cleanDecomposition = decomposition
 
-                        self.assertEquals(cleanDecomposition, pair,
+                        self.assertEqual(cleanDecomposition, pair,
                             "decompose doesn't keep entity pair %s: %s" \
                                 % (repr(pair), repr(cleanDecomposition)) \
                         + ' (reading %s, dialect %s)' \
@@ -503,7 +503,7 @@ class ReadingOperatorConsistencyTest(ReadingOperatorTest):
                             strict = self.f.isStrictDecomposition(decomposition,
                                 self.READING_NAME, **dialect)
 
-                            self.assert_(strict,
+                            self.assertTrue(strict,
                                 "Decomposition for pair %s is not strict" \
                                     % repr(string) \
                                 + ' (reading %s, dialect %s)' \
@@ -536,7 +536,7 @@ class ReadingOperatorTestCaseCheck(NeedsDatabaseTest, unittest.TestCase):
         self.f = ReadingFactory(dbConnectInst=self.db)
 
         for clss in self.f.getReadingOperatorClasses():
-            self.assert_(clss.READING_NAME in testClassReadingNames,
+            self.assertTrue(clss.READING_NAME in testClassReadingNames,
                 "Reading %s has no ReadingOperatorConsistencyTest" \
                     % clss.READING_NAME)
 
@@ -554,8 +554,8 @@ class ReadingOperatorTestCaseCheck(NeedsDatabaseTest, unittest.TestCase):
         #   ReadingOperatorConsistencyTest
         testModule = __import__("cjklib.test.readingoperator")
         testClasses = [clss for clss \
-            in testModule.test.readingoperator.__dict__.values() \
-            if type(clss) in [types.TypeType, types.ClassType] \
+            in list(testModule.test.readingoperator.__dict__.values()) \
+            if type(clss) in [type, type] \
             and issubclass(clss, ReadingOperatorConsistencyTest) \
             and clss.READING_NAME]
 
@@ -598,20 +598,20 @@ class ReadingOperatorReferenceTest(ReadingOperatorTest):
         for dialect, references in self.DECOMPOSITION_REFERENCES:
             for reference, target in references:
                 args = [reference, self.READING_NAME]
-                if type(target) in [types.TypeType, types.ClassType] \
+                if type(target) in [type, type] \
                     and issubclass(target, Exception):
                     self.assertRaises(target, self.f.decompose, *args,
                         **dialect)
                 else:
                     try:
                         decomposition = self.f.decompose(*args, **dialect)
-                        self.assertEquals(decomposition, target,
+                        self.assertEqual(decomposition, target,
                             "Decomposition %s of %s not reached: %s" \
                                 % (repr(target), repr(reference),
                                     repr(decomposition)) \
                             + ' (reading %s, dialect %s)' \
                                 % (self.READING_NAME, dialect))
-                    except exception.DecompositionError, e:
+                    except exception.DecompositionError as e:
                         self.fail(
                             'DecompositionError for %s with target %s: %s' \
                                 % (repr(reference), repr(target), repr(e)) \
@@ -623,19 +623,19 @@ class ReadingOperatorReferenceTest(ReadingOperatorTest):
         for dialect, references in self.COMPOSITION_REFERENCES:
             for reference, target in references:
                 args = [reference, self.READING_NAME]
-                if type(target) in [types.TypeType, types.ClassType] \
+                if type(target) in [type, type] \
                     and issubclass(target, Exception):
                     self.assertRaises(target, self.f.compose, *args, **dialect)
                 else:
                     try:
                         composition = self.f.compose(*args, **dialect)
-                        self.assertEquals(composition, target,
+                        self.assertEqual(composition, target,
                             "Composition %s of %s not reached: %s" \
                                 % (repr(target), repr(reference),
                                     repr(composition)) \
                             + ' (reading %s, dialect %s)' \
                                 % (self.READING_NAME, dialect))
-                    except exception.CompositionError, e:
+                    except exception.CompositionError as e:
                         self.fail('CompositionError for %s with target %s: %s' \
                             % (repr(reference), repr(target), repr(e)) \
                             + ' (reading %s, dialect %s)' \
@@ -647,7 +647,7 @@ class ReadingOperatorReferenceTest(ReadingOperatorTest):
             for reference, target in references:
                 result = self.f.isReadingEntity(reference,
                     self.READING_NAME, **dialect)
-                self.assertEquals(result, target,
+                self.assertEqual(result, target,
                     "Target %s of %s not reached: %s" \
                         % (repr(target), repr(reference), repr(result)) \
                     + ' (reading %s, dialect %s)' \
@@ -660,13 +660,13 @@ class ReadingOperatorReferenceTest(ReadingOperatorTest):
 
         for reference, dialect in self.GUESS_DIALECT_REFERENCES:
             result = self.readingOperatorClass.guessReadingDialect(reference)
-            for option, value in dialect.items():
-                self.assert_(option in result,
+            for option, value in list(dialect.items()):
+                self.assertTrue(option in result,
                     "Guessed dialect doesn't include option  %s" \
                         % repr(option) \
                     + ' (reading %s, dialect %s)' \
                         % (self.READING_NAME, dialect))
-                self.assertEquals(result[option], value,
+                self.assertEqual(result[option], value,
                     "Target for option %s=%s not reached for %s: %s" \
                         % (repr(option), repr(value), repr(reference),
                             repr(result[option])) \
@@ -711,7 +711,7 @@ class CanoneseIPAOperatorConsistencyTest(ReadingOperatorConsistencyTest,
             count = len(self.f.getReadingEntities(self.READING_NAME,
                 stopTones=stopTones))
             if entityCount != None:
-                self.assertEquals(entityCount, count)
+                self.assertEqual(entityCount, count)
 
     def testReportedToneValid(self):
         """
@@ -733,7 +733,7 @@ class CanoneseIPAOperatorConsistencyTest(ReadingOperatorConsistencyTest,
             for entity in entities:
                 plainEntity, tone = ipaOperator.splitEntityTone(entity)
 
-                self.assert_(ipaOperator.isToneValid(plainEntity, tone),
+                self.assertTrue(ipaOperator.isToneValid(plainEntity, tone),
                     "Tone %s is invalid with plain entity %s" \
                         % (repr(tone), repr(plainEntity)) \
                     + ' (reading %s, dialect %s)' \
@@ -753,7 +753,7 @@ class CanoneseIPAOperatorConsistencyTest(ReadingOperatorConsistencyTest,
                 **dialect)
             for tone in ipaOperator.getTones():
                 tone = ipaOperator.getBaseTone(tone)
-                self.assert_(tone == None or tone in ipaOperator.TONES)
+                self.assertTrue(tone == None or tone in ipaOperator.TONES)
 
             entities = ipaOperator.getPlainReadingEntities()
             for plainEntity in entities:
@@ -761,7 +761,7 @@ class CanoneseIPAOperatorConsistencyTest(ReadingOperatorConsistencyTest,
                     try:
                         explicitTone = ipaOperator.getExplicitTone(plainEntity,
                             tone)
-                        self.assert_(explicitTone == None \
+                        self.assertTrue(explicitTone == None \
                             or explicitTone in ipaOperator.TONES \
                             or explicitTone in ipaOperator.STOP_TONES_EXPLICIT)
                     except exception.InvalidEntityError:
@@ -803,127 +803,127 @@ class CantoneseYaleOperatorReferenceTest(ReadingOperatorReferenceTest,
 
     DECOMPOSITION_REFERENCES = [
         ({}, [
-            (u'gwóngjàuwá', [u'gwóng', u'jàu', u'wá']),
-            (u'yuhtyúh', [u'yuht', u'yúh']),
-            (u'néihhóu', [u'néih', u'hóu']),
-            (u'gwóngjaù', [u'gwóng', u'jaù']), # wrong placement of tone
-            (u'GWÓNGJÀUWÁ', [u'GWÓNG', u'JÀU', u'WÁ']),
-            (u'sīsísisìhsíhsihsīksiksihk', [u'sī', u'sí', u'si', u'sìh', u'síh',
-                u'sih', u'sīk', u'sik', u'sihk']),
-            (u'SÌSÍSISÌHSÍHSIHSĪKSIKSIHK', [u'SÌ', u'SÍ', u'SI', u'SÌH', u'SÍH',
-                u'SIH', u'SĪK', u'SIK', u'SIHK']),
+            ('gwóngjàuwá', ['gwóng', 'jàu', 'wá']),
+            ('yuhtyúh', ['yuht', 'yúh']),
+            ('néihhóu', ['néih', 'hóu']),
+            ('gwóngjaù', ['gwóng', 'jaù']), # wrong placement of tone
+            ('GWÓNGJÀUWÁ', ['GWÓNG', 'JÀU', 'WÁ']),
+            ('sīsísisìhsíhsihsīksiksihk', ['sī', 'sí', 'si', 'sìh', 'síh',
+                'sih', 'sīk', 'sik', 'sihk']),
+            ('SÌSÍSISÌHSÍHSIHSĪKSIKSIHK', ['SÌ', 'SÍ', 'SI', 'SÌH', 'SÍH',
+                'SIH', 'SĪK', 'SIK', 'SIHK']),
             ]),
         ({'toneMarkType': 'numbers'}, [
-            (u'gwong2jau1wa2', [u'gwong2', u'jau1', u'wa2']),
-            (u'yut6yu5', [u'yut6', u'yu5']),
-            (u'nei5hou2', [u'nei5', u'hou2']),
-            (u'GWONG2JAU1WA2', [u'GWONG2', u'JAU1', u'WA2']),
-            (u'si1si2si3si4si5si6sik1sik3sik6', [u'si1', u'si2', u'si3', u'si4',
-                u'si5', u'si6', u'sik1', u'sik3', u'sik6']),
-            (u'SI1SI2SI3SI4SI5SI6SIK1SIK3SIK6', [u'SI1', u'SI2', u'SI3', u'SI4',
-                u'SI5', u'SI6', u'SIK1', u'SIK3', u'SIK6']),
+            ('gwong2jau1wa2', ['gwong2', 'jau1', 'wa2']),
+            ('yut6yu5', ['yut6', 'yu5']),
+            ('nei5hou2', ['nei5', 'hou2']),
+            ('GWONG2JAU1WA2', ['GWONG2', 'JAU1', 'WA2']),
+            ('si1si2si3si4si5si6sik1sik3sik6', ['si1', 'si2', 'si3', 'si4',
+                'si5', 'si6', 'sik1', 'sik3', 'sik6']),
+            ('SI1SI2SI3SI4SI5SI6SIK1SIK3SIK6', ['SI1', 'SI2', 'SI3', 'SI4',
+                'SI5', 'SI6', 'SIK1', 'SIK3', 'SIK6']),
             ]),
         ({'strictDiacriticPlacement': True}, [
-            (u'gwóngjàuwá', [u'gwóng', u'jàu', u'wá']),
-            (u'yuhtyúh', [u'yuht', u'yúh']),
-            (u'néihhóu', [u'néih', u'hóu']),
-            (u'gwóngjaù', [u'gwóngjaù']), # wrong placement of tone
+            ('gwóngjàuwá', ['gwóng', 'jàu', 'wá']),
+            ('yuhtyúh', ['yuht', 'yúh']),
+            ('néihhóu', ['néih', 'hóu']),
+            ('gwóngjaù', ['gwóngjaù']), # wrong placement of tone
             ])
         ]
     COMPOSITION_REFERENCES = [
         ({}, [
-            ([u'gwóng', u'jàu', u'wá'], u'gwóngjàuwá'),
-            ([u'yuht', u'yúh'], u'yuhtyúh'),
-            ([u'gwóng', u'jaù'], u'gwóngjaù'), # wrong placement of tone
-            ([u'GWÓNG', u'JÀU', u'WÁ'], u'GWÓNGJÀUWÁ'),
-            ([u'sī', u'sí', u'si', u'sìh', u'síh', u'sih', u'sīk', u'sik',
-                u'sihk'], u'sīsísisìhsíhsihsīksiksihk'),
-            ([u'SÌ', u'SÍ', u'SI', u'SÌH', u'SÍH', u'SIH', u'SĪK', u'SIK',
-                u'SIHK'], u'SÌSÍSISÌHSÍHSIHSĪKSIKSIHK'),
+            (['gwóng', 'jàu', 'wá'], 'gwóngjàuwá'),
+            (['yuht', 'yúh'], 'yuhtyúh'),
+            (['gwóng', 'jaù'], 'gwóngjaù'), # wrong placement of tone
+            (['GWÓNG', 'JÀU', 'WÁ'], 'GWÓNGJÀUWÁ'),
+            (['sī', 'sí', 'si', 'sìh', 'síh', 'sih', 'sīk', 'sik',
+                'sihk'], 'sīsísisìhsíhsihsīksiksihk'),
+            (['SÌ', 'SÍ', 'SI', 'SÌH', 'SÍH', 'SIH', 'SĪK', 'SIK',
+                'SIHK'], 'SÌSÍSISÌHSÍHSIHSĪKSIKSIHK'),
             ]),
         ({'toneMarkType': 'numbers'}, [
-            ([u'gwong2', u'jau1', u'wa2'], u'gwong2jau1wa2'),
-            ([u'yut6', u'yu5'], u'yut6yu5'),
-            ([u'GWONG2', u'JAU1', u'WA2'], u'GWONG2JAU1WA2'),
-            ([u'si1', u'si2', u'si3', u'si4', u'si5', u'si6', u'sik1', u'sik3',
-                u'sik6'], u'si1si2si3si4si5si6sik1sik3sik6'),
-            ([u'SI1', u'SI2', u'SI3', u'SI4', u'SI5', u'SI6', u'SIK1', u'SIK3',
-                u'SIK6'], u'SI1SI2SI3SI4SI5SI6SIK1SIK3SIK6'),
+            (['gwong2', 'jau1', 'wa2'], 'gwong2jau1wa2'),
+            (['yut6', 'yu5'], 'yut6yu5'),
+            (['GWONG2', 'JAU1', 'WA2'], 'GWONG2JAU1WA2'),
+            (['si1', 'si2', 'si3', 'si4', 'si5', 'si6', 'sik1', 'sik3',
+                'sik6'], 'si1si2si3si4si5si6sik1sik3sik6'),
+            (['SI1', 'SI2', 'SI3', 'SI4', 'SI5', 'SI6', 'SIK1', 'SIK3',
+                'SIK6'], 'SI1SI2SI3SI4SI5SI6SIK1SIK3SIK6'),
             ]),
         ({'strictDiacriticPlacement': True}, [
-            ([u'gwóng', u'jàu', u'wá'], u'gwóngjàuwá'),
-            ([u'yuht', u'yúh'], u'yuhtyúh'),
-            ([u'gwóng', u'jaù'], exception.CompositionError),
+            (['gwóng', 'jàu', 'wá'], 'gwóngjàuwá'),
+            (['yuht', 'yúh'], 'yuhtyúh'),
+            (['gwóng', 'jaù'], exception.CompositionError),
                 # wrong placement of tone
-            ([u'jau\u0300', u'gwóng'], exception.CompositionError),
+            (['jau\u0300', 'gwóng'], exception.CompositionError),
                 # wrong placement of tone
             ]),
         ({'toneMarkType': 'numbers', 'missingToneMark': 'ignore'}, [
-            ([u'gwong2', u'jau1', u'wa2'], u'gwong2jau1wa2'),
-            ([u'gwong2', u'jau', u'wa2'], exception.CompositionError),
+            (['gwong2', 'jau1', 'wa2'], 'gwong2jau1wa2'),
+            (['gwong2', 'jau', 'wa2'], exception.CompositionError),
             ])
         ]
 
     READING_ENTITY_REFERENCES = [
         ({}, [
-            (u'wā', True),
-            (u'gwóng', True),
-            (u'jàu', True),
-            (u'wá', True),
-            (u'néih', True),
-            (u'yuht', True),
-            (u'gwong', True),
-            (u'wa\u0304', True),
-            (u'jaù', True),
-            (u'gwongh', True),
-            (u'wáa', False),
-            (u'GWÓNG', True),
-            (u'SIK', True),
-            (u'bàt', False), # stop tone
-            (u'bat4', False), # stop tone
+            ('wā', True),
+            ('gwóng', True),
+            ('jàu', True),
+            ('wá', True),
+            ('néih', True),
+            ('yuht', True),
+            ('gwong', True),
+            ('wa\u0304', True),
+            ('jaù', True),
+            ('gwongh', True),
+            ('wáa', False),
+            ('GWÓNG', True),
+            ('SIK', True),
+            ('bàt', False), # stop tone
+            ('bat4', False), # stop tone
             ]),
         ({'strictDiacriticPlacement': True}, [
-            (u'wā', True),
-            (u'gwóng', True),
-            (u'jàu', True),
-            (u'wá', True),
-            (u'néih', True),
-            (u'yuht', True),
-            (u'gwong', True),
-            (u'wa\u0304', True),
-            (u'jaù', False),
-            (u'gwongh', False),
-            (u'wáa', False),
-            (u'GWÓNG', True),
-            (u'SIK', True),
-            (u'bàt', False), # stop tone
-            (u'bat4', False), # stop tone
+            ('wā', True),
+            ('gwóng', True),
+            ('jàu', True),
+            ('wá', True),
+            ('néih', True),
+            ('yuht', True),
+            ('gwong', True),
+            ('wa\u0304', True),
+            ('jaù', False),
+            ('gwongh', False),
+            ('wáa', False),
+            ('GWÓNG', True),
+            ('SIK', True),
+            ('bàt', False), # stop tone
+            ('bat4', False), # stop tone
             ]),
         ({'case': 'lower'}, [
-            (u'wā', True),
-            (u'gwóng', True),
-            (u'jàu', True),
-            (u'wá', True),
-            (u'néih', True),
-            (u'yuht', True),
-            (u'gwong', True),
-            (u'wa\u0304', True),
-            (u'jaù', True),
-            (u'gwongh', True),
-            (u'wáa', False),
-            (u'GWÓNG', False),
-            (u'SIK', False),
-            (u'bàt', False), # stop tone
-            (u'bat4', False), # stop tone
+            ('wā', True),
+            ('gwóng', True),
+            ('jàu', True),
+            ('wá', True),
+            ('néih', True),
+            ('yuht', True),
+            ('gwong', True),
+            ('wa\u0304', True),
+            ('jaù', True),
+            ('gwongh', True),
+            ('wáa', False),
+            ('GWÓNG', False),
+            ('SIK', False),
+            ('bàt', False), # stop tone
+            ('bat4', False), # stop tone
             ]),
         ]
 
     GUESS_DIALECT_REFERENCES = [
-        (u"Mh", {'toneMarkType': 'diacritics'}),
-        (u"YUHT", {'toneMarkType': 'diacritics'}),
-        (u"yuht", {'toneMarkType': 'diacritics'}),
-        (u"wā", {'toneMarkType': 'diacritics'}),
-        (u"gwong2", {'toneMarkType': 'numbers'}),
+        ("Mh", {'toneMarkType': 'diacritics'}),
+        ("YUHT", {'toneMarkType': 'diacritics'}),
+        ("yuht", {'toneMarkType': 'diacritics'}),
+        ("wā", {'toneMarkType': 'diacritics'}),
+        ("gwong2", {'toneMarkType': 'numbers'}),
         ]
 
 
@@ -945,34 +945,34 @@ class JyutpingOperatorReferenceTest(ReadingOperatorReferenceTest,
 
     DECOMPOSITION_REFERENCES = [
         ({}, [
-            (u'gwong2zau1waa2', [u'gwong2', u'zau1', u'waa2']),
+            ('gwong2zau1waa2', ['gwong2', 'zau1', 'waa2']),
             ]),
         ]
 
     COMPOSITION_REFERENCES = [
         ({}, [
-            ([u'gwong2', u'zau1', u'waa2'], u'gwong2zau1waa2'),
+            (['gwong2', 'zau1', 'waa2'], 'gwong2zau1waa2'),
             ]),
         ({'missingToneMark': 'ignore'}, [
-            ([u'gwong2', u'zau1', u'waa2'], u'gwong2zau1waa2'),
-            ([u'gwong2', u'zau', u'waa2'], exception.CompositionError),
+            (['gwong2', 'zau1', 'waa2'], 'gwong2zau1waa2'),
+            (['gwong2', 'zau', 'waa2'], exception.CompositionError),
             ]),
         ]
 
     READING_ENTITY_REFERENCES = [
         ({}, [
-            (u'si1', True),
-            (u'si2', True),
-            (u'si3', True),
-            (u'si4', True),
-            (u'si5', True),
-            (u'si6', True),
-            (u'sik1', True),
-            (u'sik2', False), # stop tone
-            (u'sik3', True),
-            (u'sik4', False), # stop tone
-            (u'sik5', False), # stop tone
-            (u'sik6', True),
+            ('si1', True),
+            ('si2', True),
+            ('si3', True),
+            ('si4', True),
+            ('si5', True),
+            ('si6', True),
+            ('sik1', True),
+            ('sik2', False), # stop tone
+            ('sik3', True),
+            ('sik4', False), # stop tone
+            ('sik5', False), # stop tone
+            ('sik6', True),
             ]),
         ]
 
@@ -989,15 +989,15 @@ class HangulOperatorReferenceTest(ReadingOperatorReferenceTest,
 
     DECOMPOSITION_REFERENCES = [
         ({}, [
-            (u"한글은 한국어의 고유", [u"한", u"글", u"은", u" ",
-                u"한", u"국", u"어", u"의", u" ", u"고", u"유"]),
+            ("한글은 한국어의 고유", ["한", "글", "은", " ",
+                "한", "국", "어", "의", " ", "고", "유"]),
             ]),
         ]
 
     COMPOSITION_REFERENCES = [
         ({}, [
-            ([u"한", u"글", u"은", u" ", u"한", u"국", u"어", u"의", u" ", u"고",
-                u"유"], u"한글은 한국어의 고유"),
+            (["한", "글", "은", " ", "한", "국", "어", "의", " ", "고",
+                "유"], "한글은 한국어의 고유"),
             ]),
         ]
 
@@ -1072,10 +1072,10 @@ class PinyinOperatorConsistencyTest(ReadingOperatorConsistencyTest,
             {'toneMarkType': 'numbers', 'yVowel': 'v'},
             {'toneMarkType': 'numbers', 'yVowel': 'uu'},
             {'toneMarkType': 'none'},
-            {'pinyinDiacritics': (u'\u0304', u'\u0301', u'\u0306', u'\u0300')},
-            {'pinyinDiacritics': (u'\u0304', u'\u0301', u'\u0302', u'\u0300')},
+            {'pinyinDiacritics': ('\u0304', '\u0301', '\u0306', '\u0300')},
+            {'pinyinDiacritics': ('\u0304', '\u0301', '\u0302', '\u0300')},
             {'strictDiacriticPlacement': True}],
-        [{}, {'pinyinApostrophe': u'’'}],
+        [{}, {'pinyinApostrophe': '’'}],
         [{}, {'pinyinApostropheFunction': _noToneApostropheRule}],
         [{}, {'erhua': 'oneSyllable'}, {'erhua': 'ignore'}],
         [{}, {'strictSegmentation': True}],
@@ -1102,634 +1102,634 @@ class PinyinOperatorReferenceTest(ReadingOperatorReferenceTest,
 
     DECOMPOSITION_REFERENCES = [
         ({}, [
-            (u"tiān'ānmén", [u"tiān", "'", u"ān", u"mén"]),
+            ("tiān'ānmén", ["tiān", "'", "ān", "mén"]),
             ("xian", ["xian"]),
-            (u"xīān", [u"xī", u"ān"]),
-            (u"tian1'an1men2", [u"tian1", "'", u"an1", u"men2"]),
-            (u"tian'anmen", [u"tian", "'", u"an", u"men"]),
-            (u"xi1an1", [u"xi1", u"an1"]),
-            (u"lao3tou2r5", [u"lao3", u"tou2", u"r5"]),
-            (u"lao3tour2", [u"lao3", u"tour2"]),
-            (u"er2hua4yin1", [u"er2", u"hua4", u"yin1"]),
-            (u"peínǐ", [u'peí', u'nǐ']), # wrong placement of tone
-            (u"hónglùo", [u'hóng', u'lùo']), # wrong placement of tone
-            (u"Tiān'ānmén", [u"Tiān", "'", u"ān", u"mén"]),
-            (u"TIĀN'ĀNMÉN", [u"TIĀN", "'", u"ĀN", u"MÉN"]),
+            ("xīān", ["xī", "ān"]),
+            ("tian1'an1men2", ["tian1", "'", "an1", "men2"]),
+            ("tian'anmen", ["tian", "'", "an", "men"]),
+            ("xi1an1", ["xi1", "an1"]),
+            ("lao3tou2r5", ["lao3", "tou2", "r5"]),
+            ("lao3tour2", ["lao3", "tour2"]),
+            ("er2hua4yin1", ["er2", "hua4", "yin1"]),
+            ("peínǐ", ['peí', 'nǐ']), # wrong placement of tone
+            ("hónglùo", ['hóng', 'lùo']), # wrong placement of tone
+            ("Tiān'ānmén", ["Tiān", "'", "ān", "mén"]),
+            ("TIĀN'ĀNMÉN", ["TIĀN", "'", "ĀN", "MÉN"]),
             ("XIAN", ["XIAN"]),
-            (u"TIAN1'AN1MEN2", [u"TIAN1", "'", u"AN1", u"MEN2"]),
-            (u'tiananmen', exception.DecompositionError),
-            (u'zhīshi', [u'zhī', 'shi']),
+            ("TIAN1'AN1MEN2", ["TIAN1", "'", "AN1", "MEN2"]),
+            ('tiananmen', exception.DecompositionError),
+            ('zhīshi', ['zhī', 'shi']),
             ]),
         ({'toneMarkType': 'numbers'}, [
-            (u"tiān'ānmén", [u"tiān", "'", u"ānmén"]),
+            ("tiān'ānmén", ["tiān", "'", "ānmén"]),
             ("xian", ["xian"]),
-            (u"xīān", [u"xīān"]),
-            (u"tian1'an1men2", [u"tian1", "'", u"an1", u"men2"]),
-            (u"tian'anmen", [u"tian", "'", u"an", u"men"]),
-            (u"xi1an1", [u"xi1", u"an1"]),
-            (u"lao3tou2r5", [u"lao3", u"tou2", u"r5"]),
-            (u"lao3tour2", [u"lao3", u"tour2"]),
-            (u"er2hua4yin1", [u"er2", u"hua4", u"yin1"]),
-            (u"peínǐ", [u'peínǐ']), # wrong placement of tone
-            (u"hónglùo", [u'hónglùo']), # wrong placement of tone
-            (u"Tiān'ānmén", [u"Tiān", "'", u"ānmén"]),
-            (u"TIĀN'ĀNMÉN", [u"TIĀN", "'", u"ĀNMÉN"]),
+            ("xīān", ["xīān"]),
+            ("tian1'an1men2", ["tian1", "'", "an1", "men2"]),
+            ("tian'anmen", ["tian", "'", "an", "men"]),
+            ("xi1an1", ["xi1", "an1"]),
+            ("lao3tou2r5", ["lao3", "tou2", "r5"]),
+            ("lao3tour2", ["lao3", "tour2"]),
+            ("er2hua4yin1", ["er2", "hua4", "yin1"]),
+            ("peínǐ", ['peínǐ']), # wrong placement of tone
+            ("hónglùo", ['hónglùo']), # wrong placement of tone
+            ("Tiān'ānmén", ["Tiān", "'", "ānmén"]),
+            ("TIĀN'ĀNMÉN", ["TIĀN", "'", "ĀNMÉN"]),
             ("XIAN", ["XIAN"]),
-            (u"TIAN1'AN1MEN2", [u"TIAN1", "'", u"AN1", u"MEN2"]),
+            ("TIAN1'AN1MEN2", ["TIAN1", "'", "AN1", "MEN2"]),
             ]),
         ({'toneMarkType': 'numbers', 'missingToneMark': 'ignore'}, [
-            (u"tiān'ānmén", [u"tiān", "'", u"ānmén"]),
+            ("tiān'ānmén", ["tiān", "'", "ānmén"]),
             ("xian", ["xian"]),
-            (u"xīān", [u"xīān"]),
-            (u"tian1'an1men2", [u"tian1", "'", u"an1", u"men2"]),
-            (u"tian'anmen", [u"tian", "'", u"anmen"]),
-            (u"xi1an1", [u"xi1", u"an1"]),
-            (u"lao3tou2r5", [u"lao3", u"tou2", u"r5"]),
-            (u"lao3tour2", [u"lao3", u"tour2"]),
-            (u"er2hua4yin1", [u"er2", u"hua4", u"yin1"]),
-            (u"peínǐ", [u'peínǐ']), # wrong placement of tone
-            (u"hónglùo", [u'hónglùo']), # wrong placement of tone
-            (u"Tiān'ānmén", [u"Tiān", "'", u"ānmén"]),
-            (u"TIĀN'ĀNMÉN", [u"TIĀN", "'", u"ĀNMÉN"]),
+            ("xīān", ["xīān"]),
+            ("tian1'an1men2", ["tian1", "'", "an1", "men2"]),
+            ("tian'anmen", ["tian", "'", "anmen"]),
+            ("xi1an1", ["xi1", "an1"]),
+            ("lao3tou2r5", ["lao3", "tou2", "r5"]),
+            ("lao3tour2", ["lao3", "tour2"]),
+            ("er2hua4yin1", ["er2", "hua4", "yin1"]),
+            ("peínǐ", ['peínǐ']), # wrong placement of tone
+            ("hónglùo", ['hónglùo']), # wrong placement of tone
+            ("Tiān'ānmén", ["Tiān", "'", "ānmén"]),
+            ("TIĀN'ĀNMÉN", ["TIĀN", "'", "ĀNMÉN"]),
             ("XIAN", ["XIAN"]),
-            (u"TIAN1'AN1MEN2", [u"TIAN1", "'", u"AN1", u"MEN2"]),
+            ("TIAN1'AN1MEN2", ["TIAN1", "'", "AN1", "MEN2"]),
             ]),
         ({'erhua': 'oneSyllable'}, [
-            (u"tiān'ānmén", [u"tiān", "'", u"ān", u"mén"]),
+            ("tiān'ānmén", ["tiān", "'", "ān", "mén"]),
             ("xian", ["xian"]),
-            (u"xīān", [u"xī", u"ān"]),
-            (u"tian1'an1men2", [u"tian1", "'", u"an1", u"men2"]),
-            (u"tian'anmen", [u"tian", "'", u"an", u"men"]),
-            (u"xi1an1", [u"xi1", u"an1"]),
-            (u"lao3tou2r5", [u"lao3", u"tou2", u"r5"]),
-            (u"lao3tour2", [u"lao3", u"tour2"]),
-            (u"er2hua4yin1", [u"er2", u"hua4", u"yin1"]),
-            (u"peínǐ", [u'peí', u'nǐ']), # wrong placement of tone
-            (u"hónglùo", [u'hóng', u'lùo']), # wrong placement of tone
-            (u"Tiān'ānmén", [u"Tiān", "'", u"ān", u"mén"]),
-            (u"TIĀN'ĀNMÉN", [u"TIĀN", "'", u"ĀN", u"MÉN"]),
+            ("xīān", ["xī", "ān"]),
+            ("tian1'an1men2", ["tian1", "'", "an1", "men2"]),
+            ("tian'anmen", ["tian", "'", "an", "men"]),
+            ("xi1an1", ["xi1", "an1"]),
+            ("lao3tou2r5", ["lao3", "tou2", "r5"]),
+            ("lao3tour2", ["lao3", "tour2"]),
+            ("er2hua4yin1", ["er2", "hua4", "yin1"]),
+            ("peínǐ", ['peí', 'nǐ']), # wrong placement of tone
+            ("hónglùo", ['hóng', 'lùo']), # wrong placement of tone
+            ("Tiān'ānmén", ["Tiān", "'", "ān", "mén"]),
+            ("TIĀN'ĀNMÉN", ["TIĀN", "'", "ĀN", "MÉN"]),
             ("XIAN", ["XIAN"]),
-            (u"TIAN1'AN1MEN2", [u"TIAN1", "'", u"AN1", u"MEN2"]),
+            ("TIAN1'AN1MEN2", ["TIAN1", "'", "AN1", "MEN2"]),
             ]),
         ({'strictDiacriticPlacement': True}, [
-            (u"tiān'ānmén", [u"tiān", "'", u"ān", u"mén"]),
+            ("tiān'ānmén", ["tiān", "'", "ān", "mén"]),
             ("xian", ["xian"]),
-            (u"xīān", [u"xī", u"ān"]),
-            (u"tian1'an1men2", [u"tian1", "'", u"an1", u"men2"]),
-            (u"tian'anmen", [u"tian", "'", u"an", u"men"]),
-            (u"xi1an1", [u"xi1", u"an1"]),
-            (u"lao3tou2r5", [u"lao3", u"tou2", u"r5"]),
-            (u"lao3tour2", [u"lao3", u"tour2"]),
-            (u"er2hua4yin1", [u"er2", u"hua4", u"yin1"]),
-            (u"peínǐ", [u'peínǐ']), # wrong placement of tone
-            (u"hónglùo", [u'hóng', u'lù', u'o']), # wrong placement of tone
-            (u"Tiān'ānmén", [u"Tiān", "'", u"ān", u"mén"]),
-            (u"TIĀN'ĀNMÉN", [u"TIĀN", "'", u"ĀN", u"MÉN"]),
+            ("xīān", ["xī", "ān"]),
+            ("tian1'an1men2", ["tian1", "'", "an1", "men2"]),
+            ("tian'anmen", ["tian", "'", "an", "men"]),
+            ("xi1an1", ["xi1", "an1"]),
+            ("lao3tou2r5", ["lao3", "tou2", "r5"]),
+            ("lao3tour2", ["lao3", "tour2"]),
+            ("er2hua4yin1", ["er2", "hua4", "yin1"]),
+            ("peínǐ", ['peínǐ']), # wrong placement of tone
+            ("hónglùo", ['hóng', 'lù', 'o']), # wrong placement of tone
+            ("Tiān'ānmén", ["Tiān", "'", "ān", "mén"]),
+            ("TIĀN'ĀNMÉN", ["TIĀN", "'", "ĀN", "MÉN"]),
             ("XIAN", ["XIAN"]),
-            (u"TIAN1'AN1MEN2", [u"TIAN1", "'", u"AN1", u"MEN2"]),
+            ("TIAN1'AN1MEN2", ["TIAN1", "'", "AN1", "MEN2"]),
             ]),
         ({'case': 'lower'}, [
-            (u"tiān'ānmén", [u"tiān", "'", u"ān", u"mén"]),
+            ("tiān'ānmén", ["tiān", "'", "ān", "mén"]),
             ("xian", ["xian"]),
-            (u"xīān", [u"xī", u"ān"]),
-            (u"tian1'an1men2", [u"tian1", "'", u"an1", u"men2"]),
-            (u"tian'anmen", [u"tian", "'", u"an", u"men"]),
-            (u"xi1an1", [u"xi1", u"an1"]),
-            (u"lao3tou2r5", [u"lao3", u"tou2", u"r5"]),
-            (u"lao3tour2", [u"lao3", u"tour2"]),
-            (u"er2hua4yin1", [u"er2", u"hua4", u"yin1"]),
-            (u"peínǐ", [u'peí', u'nǐ']), # wrong placement of tone
-            (u"hónglùo", [u'hóng', u'lùo']), # wrong placement of tone
-            (u"Tiān'ānmén", [u"Tiān", "'", u"ān", u"mén"]),
-            (u"TIĀN'ĀNMÉN", [u"TIĀN", "'", u"ĀNMÉN"]),
+            ("xīān", ["xī", "ān"]),
+            ("tian1'an1men2", ["tian1", "'", "an1", "men2"]),
+            ("tian'anmen", ["tian", "'", "an", "men"]),
+            ("xi1an1", ["xi1", "an1"]),
+            ("lao3tou2r5", ["lao3", "tou2", "r5"]),
+            ("lao3tour2", ["lao3", "tour2"]),
+            ("er2hua4yin1", ["er2", "hua4", "yin1"]),
+            ("peínǐ", ['peí', 'nǐ']), # wrong placement of tone
+            ("hónglùo", ['hóng', 'lùo']), # wrong placement of tone
+            ("Tiān'ānmén", ["Tiān", "'", "ān", "mén"]),
+            ("TIĀN'ĀNMÉN", ["TIĀN", "'", "ĀNMÉN"]),
             ("XIAN", ["XIAN"]),
-            (u"TIAN1'AN1MEN2", [u"TIAN1", "'", u"AN1", u"MEN2"]),
+            ("TIAN1'AN1MEN2", ["TIAN1", "'", "AN1", "MEN2"]),
             ]),
         ({'toneMarkType': 'numbers', 'yVowel': 'v'}, [
-            (u'nv3hai2', [u'nv3', u'hai2']),
-            (u'nvhai', [u'nv', 'hai']),
-            (u'nü3hai2', [u'nü3', u'hai2']),
-            (u'nühai', [u'nühai']),
+            ('nv3hai2', ['nv3', 'hai2']),
+            ('nvhai', ['nv', 'hai']),
+            ('nü3hai2', ['nü3', 'hai2']),
+            ('nühai', ['nühai']),
             ]),
         ]
 
     COMPOSITION_REFERENCES = [
         ({}, [
-            ([u"tiān", u"ān", u"mén"], u"tiān'ānmén"),
+            (["tiān", "ān", "mén"], "tiān'ānmén"),
             (["xian"], "xian"),
-            ([u"xī", u"ān"], u"xī'ān"),
-            ([u"tian1", "'", u"an1", u"men2"], u"tian1'an1men2"),
-            ([u"tian1", u"an1", u"men2"], u"tian1an1men2"),
-            ([u"tian", u"an", u"men"], u"tian'anmen"),
-            ([u"xi1", u"an1"], u"xi1an1"),
-            ([u"lao3", u"tou2", u"r5"], u"lao3tou2r5"),
-            ([u"lao3", u"tour2"], u"lao3tour2"),
-            ([u"lao3", u"angr2"], u"lao3angr2"),
-            ([u"lao3", u"ang2", u"r5"], u"lao3ang2r5"),
-            ([u"er2", u"hua4", u"yin1"], u"er2hua4yin1"),
-            ([u'peí', u'nǐ'], u"peínǐ"), # wrong placement of tone
-            ([u'hóng', u'lùo'], u"hónglùo"), # wrong placement of tone
-            ([u"TIĀN", u"ĀN", u"MÉN"], u"TIĀN'ĀNMÉN"),
-            ([u"TIAN1", u"AN1", u"MEN2"], u"TIAN1AN1MEN2", ),
-            ([u"e", u"r"], u"e'r"),
-            ([u"ti", u"anr"], exception.CompositionError),
-            ([u"chang", u"an"], u"chang'an"),
-            ([u"ĉaŋ", u"an"], exception.CompositionError),
+            (["xī", "ān"], "xī'ān"),
+            (["tian1", "'", "an1", "men2"], "tian1'an1men2"),
+            (["tian1", "an1", "men2"], "tian1an1men2"),
+            (["tian", "an", "men"], "tian'anmen"),
+            (["xi1", "an1"], "xi1an1"),
+            (["lao3", "tou2", "r5"], "lao3tou2r5"),
+            (["lao3", "tour2"], "lao3tour2"),
+            (["lao3", "angr2"], "lao3angr2"),
+            (["lao3", "ang2", "r5"], "lao3ang2r5"),
+            (["er2", "hua4", "yin1"], "er2hua4yin1"),
+            (['peí', 'nǐ'], "peínǐ"), # wrong placement of tone
+            (['hóng', 'lùo'], "hónglùo"), # wrong placement of tone
+            (["TIĀN", "ĀN", "MÉN"], "TIĀN'ĀNMÉN"),
+            (["TIAN1", "AN1", "MEN2"], "TIAN1AN1MEN2", ),
+            (["e", "r"], "e'r"),
+            (["ti", "anr"], exception.CompositionError),
+            (["chang", "an"], "chang'an"),
+            (["ĉaŋ", "an"], exception.CompositionError),
             ]),
         ({'toneMarkType': 'numbers'}, [
-            ([u"tiān", u"ān", u"mén"], u"tiānānmén"),
+            (["tiān", "ān", "mén"], "tiānānmén"),
             (["xian"], "xian"),
-            ([u"xī", u"ān"], u"xīān"),
-            ([u"tian1", "'", u"an1", u"men2"], u"tian1'an1men2"),
-            ([u"tian1", u"an1", u"men2"], u"tian1'an1men2"),
-            ([u"tian", u"an", u"men"], u"tian'anmen"),
-            ([u"xi1", u"an1"], u"xi1'an1"),
-            ([u"lao3", u"tou2", u"r5"], u"lao3tou2r5"),
-            ([u"lao3", u"tour2"], u"lao3tour2"),
-            ([u"lao3", u"angr2"], u"lao3angr2"),
-            ([u"lao3", u"ang2", u"r5"], u"lao3'ang2r5"),
-            ([u"er2", u"hua4", u"yin1"], u"er2hua4yin1"),
-            ([u'peí', u'nǐ'], u"peínǐ"), # wrong placement of tone
-            ([u'hóng', u'lùo'], u"hónglùo"), # wrong placement of tone
-            ([u"TIĀN", u"ĀN", u"MÉN"], u"TIĀNĀNMÉN"),
-            ([u"TIAN1", u"AN1", u"MEN2"], u"TIAN1'AN1MEN2", ),
-            ([u"e", u"r"], u"e'r"),
+            (["xī", "ān"], "xīān"),
+            (["tian1", "'", "an1", "men2"], "tian1'an1men2"),
+            (["tian1", "an1", "men2"], "tian1'an1men2"),
+            (["tian", "an", "men"], "tian'anmen"),
+            (["xi1", "an1"], "xi1'an1"),
+            (["lao3", "tou2", "r5"], "lao3tou2r5"),
+            (["lao3", "tour2"], "lao3tour2"),
+            (["lao3", "angr2"], "lao3angr2"),
+            (["lao3", "ang2", "r5"], "lao3'ang2r5"),
+            (["er2", "hua4", "yin1"], "er2hua4yin1"),
+            (['peí', 'nǐ'], "peínǐ"), # wrong placement of tone
+            (['hóng', 'lùo'], "hónglùo"), # wrong placement of tone
+            (["TIĀN", "ĀN", "MÉN"], "TIĀNĀNMÉN"),
+            (["TIAN1", "AN1", "MEN2"], "TIAN1'AN1MEN2", ),
+            (["e", "r"], "e'r"),
             ]),
         ({'toneMarkType': 'numbers', 'missingToneMark': 'ignore'}, [
-            ([u"tiān", u"ān", u"mén"], u"tiānānmén"),
+            (["tiān", "ān", "mén"], "tiānānmén"),
             (["xian"], "xian"),
-            ([u"xī", u"ān"], u"xīān"),
-            ([u"tian1", "'", u"an1", u"men2"], u"tian1'an1men2"),
-            ([u"tian1", u"an1", u"men2"], u"tian1'an1men2"),
-            ([u"tian", u"an", u"men"], u"tiananmen"),
-            ([u"xi1", u"an1"], u"xi1'an1"),
-            ([u"lao3", u"tou2", u"r5"], u"lao3tou2r5"),
-            ([u"lao3", u"tour2"], u"lao3tour2"),
-            ([u"lao3", u"angr2"], u"lao3angr2"),
-            ([u"lao3", u"ang2", u"r5"], u"lao3'ang2r5"),
-            ([u"er2", u"hua4", u"yin1"], u"er2hua4yin1"),
-            ([u'peí', u'nǐ'], u"peínǐ"), # wrong placement of tone
-            ([u'hóng', u'lùo'], u"hónglùo"), # wrong placement of tone
-            ([u"TIĀN", u"ĀN", u"MÉN"], u"TIĀNĀNMÉN"),
-            ([u"TIAN1", u"AN1", u"MEN2"], u"TIAN1'AN1MEN2", ),
-            ([u"e5", u"r5"], u"e5'r5"),
+            (["xī", "ān"], "xīān"),
+            (["tian1", "'", "an1", "men2"], "tian1'an1men2"),
+            (["tian1", "an1", "men2"], "tian1'an1men2"),
+            (["tian", "an", "men"], "tiananmen"),
+            (["xi1", "an1"], "xi1'an1"),
+            (["lao3", "tou2", "r5"], "lao3tou2r5"),
+            (["lao3", "tour2"], "lao3tour2"),
+            (["lao3", "angr2"], "lao3angr2"),
+            (["lao3", "ang2", "r5"], "lao3'ang2r5"),
+            (["er2", "hua4", "yin1"], "er2hua4yin1"),
+            (['peí', 'nǐ'], "peínǐ"), # wrong placement of tone
+            (['hóng', 'lùo'], "hónglùo"), # wrong placement of tone
+            (["TIĀN", "ĀN", "MÉN"], "TIĀNĀNMÉN"),
+            (["TIAN1", "AN1", "MEN2"], "TIAN1'AN1MEN2", ),
+            (["e5", "r5"], "e5'r5"),
             ]),
         ({'erhua': 'oneSyllable'}, [
-            ([u"tiān", u"ān", u"mén"], u"tiān'ānmén"),
+            (["tiān", "ān", "mén"], "tiān'ānmén"),
             (["xian"], "xian"),
-            ([u"xī", u"ān"], u"xī'ān"),
-            ([u"tian1", "'", u"an1", u"men2"], u"tian1'an1men2"),
-            ([u"tian1", u"an1", u"men2"], u"tian1an1men2"),
-            ([u"tian", u"an", u"men"], u"tian'anmen"),
-            ([u"xi1", u"an1"], u"xi1an1"),
-            ([u"lao3", u"tou2", u"r5"], u"lao3tou2r5"),
-            ([u"lao3", u"tour2"], u"lao3tour2"),
-            ([u"lao3", u"angr2"], u"lao3angr2"),
-            ([u"lao3", u"ang2", u"r5"], u"lao3ang2r5"),
-            ([u"er2", u"hua4", u"yin1"], u"er2hua4yin1"),
-            ([u'peí', u'nǐ'], u"peínǐ"), # wrong placement of tone
-            ([u'hóng', u'lùo'], u"hónglùo"), # wrong placement of tone
-            ([u"TIĀN", u"ĀN", u"MÉN"], u"TIĀN'ĀNMÉN"),
-            ([u"TIAN1", u"AN1", u"MEN2"], u"TIAN1AN1MEN2", ),
-            ([u"e", u"r"], exception.CompositionError),
+            (["xī", "ān"], "xī'ān"),
+            (["tian1", "'", "an1", "men2"], "tian1'an1men2"),
+            (["tian1", "an1", "men2"], "tian1an1men2"),
+            (["tian", "an", "men"], "tian'anmen"),
+            (["xi1", "an1"], "xi1an1"),
+            (["lao3", "tou2", "r5"], "lao3tou2r5"),
+            (["lao3", "tour2"], "lao3tour2"),
+            (["lao3", "angr2"], "lao3angr2"),
+            (["lao3", "ang2", "r5"], "lao3ang2r5"),
+            (["er2", "hua4", "yin1"], "er2hua4yin1"),
+            (['peí', 'nǐ'], "peínǐ"), # wrong placement of tone
+            (['hóng', 'lùo'], "hónglùo"), # wrong placement of tone
+            (["TIĀN", "ĀN", "MÉN"], "TIĀN'ĀNMÉN"),
+            (["TIAN1", "AN1", "MEN2"], "TIAN1AN1MEN2", ),
+            (["e", "r"], exception.CompositionError),
             ]),
         ({'toneMarkType': 'numbers', 'erhua': 'oneSyllable'}, [
-            ([u"tiān", u"ān", u"mén"], u"tiānānmén"),
+            (["tiān", "ān", "mén"], "tiānānmén"),
             (["xian"], "xian"),
-            ([u"xī", u"ān"], u"xīān"),
-            ([u"tian1", "'", u"an1", u"men2"], u"tian1'an1men2"),
-            ([u"tian1", u"an1", u"men2"], u"tian1'an1men2"),
-            ([u"tian", u"an", u"men"], u"tian'anmen"),
-            ([u"xi1", u"an1"], u"xi1'an1"),
-            ([u"lao3", u"tou2", u"r5"], u"lao3tou2r5"),
-            ([u"lao3", u"tour2"], u"lao3tour2"),
-            ([u"lao3", u"angr2"], u"lao3'angr2"),
-            ([u"lao3", u"ang2", u"r5"], u"lao3'ang2r5"),
-            ([u"er2", u"hua4", u"yin1"], u"er2hua4yin1"),
-            ([u'peí', u'nǐ'], u"peínǐ"), # wrong placement of tone
-            ([u'hóng', u'lùo'], u"hónglùo"), # wrong placement of tone
-            ([u"TIĀN", u"ĀN", u"MÉN"], u"TIĀNĀNMÉN"),
-            ([u"TIAN1", u"AN1", u"MEN2"], u"TIAN1'AN1MEN2", ),
-            ([u"e", u"r"], exception.CompositionError),
+            (["xī", "ān"], "xīān"),
+            (["tian1", "'", "an1", "men2"], "tian1'an1men2"),
+            (["tian1", "an1", "men2"], "tian1'an1men2"),
+            (["tian", "an", "men"], "tian'anmen"),
+            (["xi1", "an1"], "xi1'an1"),
+            (["lao3", "tou2", "r5"], "lao3tou2r5"),
+            (["lao3", "tour2"], "lao3tour2"),
+            (["lao3", "angr2"], "lao3'angr2"),
+            (["lao3", "ang2", "r5"], "lao3'ang2r5"),
+            (["er2", "hua4", "yin1"], "er2hua4yin1"),
+            (['peí', 'nǐ'], "peínǐ"), # wrong placement of tone
+            (['hóng', 'lùo'], "hónglùo"), # wrong placement of tone
+            (["TIĀN", "ĀN", "MÉN"], "TIĀNĀNMÉN"),
+            (["TIAN1", "AN1", "MEN2"], "TIAN1'AN1MEN2", ),
+            (["e", "r"], exception.CompositionError),
             ]),
         ({'strictDiacriticPlacement': True}, [
-            ([u"tiān", u"ān", u"mén"], u"tiān'ānmén"),
+            (["tiān", "ān", "mén"], "tiān'ānmén"),
             (["xian"], "xian"),
-            ([u"xī", u"ān"], u"xī'ān"),
-            ([u"tian1", "'", u"an1", u"men2"], u"tian1'an1men2"),
-            ([u"tian1", u"an1", u"men2"], u"tian1an1men2"),
-            ([u"tian", u"an", u"men"], u"tian'anmen"),
-            ([u"xi1", u"an1"], u"xi1an1"),
-            ([u"lao3", u"tou2", u"r5"], u"lao3tou2r5"),
-            ([u"lao3", u"tour2"], u"lao3tour2"),
-            ([u"lao3", u"angr2"], u"lao3angr2"),
-            ([u"lao3", u"ang2", u"r5"], u"lao3ang2r5"),
-            ([u"er2", u"hua4", u"yin1"], u"er2hua4yin1"),
-            ([u'peí', u'nǐ'], exception.CompositionError),
+            (["xī", "ān"], "xī'ān"),
+            (["tian1", "'", "an1", "men2"], "tian1'an1men2"),
+            (["tian1", "an1", "men2"], "tian1an1men2"),
+            (["tian", "an", "men"], "tian'anmen"),
+            (["xi1", "an1"], "xi1an1"),
+            (["lao3", "tou2", "r5"], "lao3tou2r5"),
+            (["lao3", "tour2"], "lao3tour2"),
+            (["lao3", "angr2"], "lao3angr2"),
+            (["lao3", "ang2", "r5"], "lao3ang2r5"),
+            (["er2", "hua4", "yin1"], "er2hua4yin1"),
+            (['peí', 'nǐ'], exception.CompositionError),
                 # wrong placement of tone
-            ([u'hóng', u'lùo'], exception.CompositionError),
+            (['hóng', 'lùo'], exception.CompositionError),
                 # wrong placement of tone
-            ([u"TIĀN", u"ĀN", u"MÉN"], u"TIĀN'ĀNMÉN"),
-            ([u"TIAN1", u"AN1", u"MEN2"], u"TIAN1AN1MEN2", ),
-            ([u"e", u"r"], u"e'r"),
+            (["TIĀN", "ĀN", "MÉN"], "TIĀN'ĀNMÉN"),
+            (["TIAN1", "AN1", "MEN2"], "TIAN1AN1MEN2", ),
+            (["e", "r"], "e'r"),
             ]),
         ({'toneMarkType': 'numbers', 'yVowel': 'v'}, [
-            ([u'nv3', u'hai2'], u'nv3hai2'),
-            ([u'nü3', u'hai2'], u'nü3hai2'),
+            (['nv3', 'hai2'], 'nv3hai2'),
+            (['nü3', 'hai2'], 'nü3hai2'),
             ]),
         ({'shortenedLetters': True}, [
-            ([u"tiān", u"ān", u"mén"], u"tiān'ānmén"),
+            (["tiān", "ān", "mén"], "tiān'ānmén"),
             (["xian"], "xian"),
-            ([u"xī", u"ān"], u"xī'ān"),
-            ([u"tian1", "'", u"an1", u"men2"], u"tian1'an1men2"),
-            ([u"tian1", u"an1", u"men2"], u"tian1an1men2"),
-            ([u"tian", u"an", u"men"], u"tian'anmen"),
-            ([u"xi1", u"an1"], u"xi1an1"),
-            ([u"lao3", u"tou2", u"r5"], u"lao3tou2r5"),
-            ([u"lao3", u"tour2"], u"lao3tour2"),
-            ([u"lao3", u"angr2"], u"lao3angr2"),
-            ([u"lao3", u"ang2", u"r5"], u"lao3ang2r5"),
-            ([u"er2", u"hua4", u"yin1"], u"er2hua4yin1"),
-            ([u'peí', u'nǐ'], u"peínǐ"), # wrong placement of tone
-            ([u"TIĀN", u"ĀN", u"MÉN"], u"TIĀN'ĀNMÉN"),
-            ([u"TIAN1", u"AN1", u"MEN2"], u"TIAN1AN1MEN2", ),
-            ([u"e", u"r"], u"e'r"),
-            ([u"ti", u"anr"], exception.CompositionError),
-            ([u"chang", u"an"], exception.CompositionError),
-            ([u"ĉaŋ", u"an"], u"ĉaŋ'an"),
+            (["xī", "ān"], "xī'ān"),
+            (["tian1", "'", "an1", "men2"], "tian1'an1men2"),
+            (["tian1", "an1", "men2"], "tian1an1men2"),
+            (["tian", "an", "men"], "tian'anmen"),
+            (["xi1", "an1"], "xi1an1"),
+            (["lao3", "tou2", "r5"], "lao3tou2r5"),
+            (["lao3", "tour2"], "lao3tour2"),
+            (["lao3", "angr2"], "lao3angr2"),
+            (["lao3", "ang2", "r5"], "lao3ang2r5"),
+            (["er2", "hua4", "yin1"], "er2hua4yin1"),
+            (['peí', 'nǐ'], "peínǐ"), # wrong placement of tone
+            (["TIĀN", "ĀN", "MÉN"], "TIĀN'ĀNMÉN"),
+            (["TIAN1", "AN1", "MEN2"], "TIAN1AN1MEN2", ),
+            (["e", "r"], "e'r"),
+            (["ti", "anr"], exception.CompositionError),
+            (["chang", "an"], exception.CompositionError),
+            (["ĉaŋ", "an"], "ĉaŋ'an"),
             ]),
         ]
 
     READING_ENTITY_REFERENCES = [
         ({}, [
-            (u"tiān", True),
-            (u"ān", True),
-            (u"mén", True),
-            (u"lào", True),
-            (u"xǐ", True),
-            (u"lü", True),
-            (u"ê", True),
-            (u"Ê", True),
-            (u"tian1", False),
-            (u"an1", False),
-            (u"men2", False),
-            (u"lao4", False),
-            (u"xi3", False),
-            (u"xian", True),
-            (u"ti\u0304an", True),
-            (u"tia\u0304n", True),
-            (u"laǒ", True),
-            (u"tīan", True),
-            (u"tīa", False),
-            (u"tiā", False),
-            (u"angr", False),
-            (u"er", True),
-            (u"r", True),
-            (u"TIĀN", True),
-            (u"XIAN", True),
-            (u"TIAN1", False),
-            (u"r1", False),
-            (u"zhī", True),
-            (u"tang", True),
-            (u"ẑī", False),
-            (u"taŋ", False),
-            (u"ề", True),
+            ("tiān", True),
+            ("ān", True),
+            ("mén", True),
+            ("lào", True),
+            ("xǐ", True),
+            ("lü", True),
+            ("ê", True),
+            ("Ê", True),
+            ("tian1", False),
+            ("an1", False),
+            ("men2", False),
+            ("lao4", False),
+            ("xi3", False),
+            ("xian", True),
+            ("ti\u0304an", True),
+            ("tia\u0304n", True),
+            ("laǒ", True),
+            ("tīan", True),
+            ("tīa", False),
+            ("tiā", False),
+            ("angr", False),
+            ("er", True),
+            ("r", True),
+            ("TIĀN", True),
+            ("XIAN", True),
+            ("TIAN1", False),
+            ("r1", False),
+            ("zhī", True),
+            ("tang", True),
+            ("ẑī", False),
+            ("taŋ", False),
+            ("ề", True),
             ]),
         ({'toneMarkType': 'numbers'}, [
-            (u"tiān", False),
-            (u"ān", False),
-            (u"mén", False),
-            (u"lào", False),
-            (u"xǐ", False),
-            (u"lü", True),
-            (u"ê", True),
-            (u"tian1", True),
-            (u"an1", True),
-            (u"men2", True),
-            (u"lao4", True),
-            (u"xi3", True),
-            (u"xian", True),
-            (u"ti\u0304an", False),
-            (u"tia\u0304n", False),
-            (u"laǒ", False),
-            (u"tīan", False),
-            (u"tīa", False),
-            (u"tiā", False),
-            (u"angr", False),
-            (u"er", True),
-            (u"r", True),
-            (u"TIĀN", False),
-            (u"XIAN", True),
-            (u"TIAN1", True),
-            (u"r1", False),
-            (u"ề", False),
+            ("tiān", False),
+            ("ān", False),
+            ("mén", False),
+            ("lào", False),
+            ("xǐ", False),
+            ("lü", True),
+            ("ê", True),
+            ("tian1", True),
+            ("an1", True),
+            ("men2", True),
+            ("lao4", True),
+            ("xi3", True),
+            ("xian", True),
+            ("ti\u0304an", False),
+            ("tia\u0304n", False),
+            ("laǒ", False),
+            ("tīan", False),
+            ("tīa", False),
+            ("tiā", False),
+            ("angr", False),
+            ("er", True),
+            ("r", True),
+            ("TIĀN", False),
+            ("XIAN", True),
+            ("TIAN1", True),
+            ("r1", False),
+            ("ề", False),
             ]),
         ({'toneMarkType': 'numbers', 'missingToneMark': 'ignore'}, [
-            (u"tiān", False),
-            (u"ān", False),
-            (u"mén", False),
-            (u"lào", False),
-            (u"xǐ", False),
-            (u"lü", False),
-            (u"ê", False),
-            (u"tian1", True),
-            (u"an1", True),
-            (u"men2", True),
-            (u"lao4", True),
-            (u"xi3", True),
-            (u"xian", False),
-            (u"ti\u0304an", False),
-            (u"tia\u0304n", False),
-            (u"laǒ", False),
-            (u"tīan", False),
-            (u"tīa", False),
-            (u"tiā", False),
-            (u"angr", False),
-            (u"er", False),
-            (u"r", False),
-            (u"TIĀN", False),
-            (u"XIAN", False),
-            (u"TIAN1", True),
-            (u"r1", False),
-            (u"ề", False),
+            ("tiān", False),
+            ("ān", False),
+            ("mén", False),
+            ("lào", False),
+            ("xǐ", False),
+            ("lü", False),
+            ("ê", False),
+            ("tian1", True),
+            ("an1", True),
+            ("men2", True),
+            ("lao4", True),
+            ("xi3", True),
+            ("xian", False),
+            ("ti\u0304an", False),
+            ("tia\u0304n", False),
+            ("laǒ", False),
+            ("tīan", False),
+            ("tīa", False),
+            ("tiā", False),
+            ("angr", False),
+            ("er", False),
+            ("r", False),
+            ("TIĀN", False),
+            ("XIAN", False),
+            ("TIAN1", True),
+            ("r1", False),
+            ("ề", False),
             ]),
         ({'erhua': 'oneSyllable'}, [
-            (u"tiān", True),
-            (u"ān", True),
-            (u"mén", True),
-            (u"lào", True),
-            (u"xǐ", True),
-            (u"lü", True),
-            (u"ê", True),
-            (u"tian1", False),
-            (u"an1", False),
-            (u"men2", False),
-            (u"lao4", False),
-            (u"xi3", False),
-            (u"xian", True),
-            (u"ti\u0304an", True),
-            (u"tia\u0304n", True),
-            (u"laǒ", True),
-            (u"tīan", True),
-            (u"tīa", False),
-            (u"tiā", False),
-            (u"angr", True),
-            (u"er", True),
-            (u"r", False),
-            (u"TIĀN", True),
-            (u"XIAN", True),
-            (u"TIAN1", False),
-            (u"r1", False),
-            (u"ề", True),
+            ("tiān", True),
+            ("ān", True),
+            ("mén", True),
+            ("lào", True),
+            ("xǐ", True),
+            ("lü", True),
+            ("ê", True),
+            ("tian1", False),
+            ("an1", False),
+            ("men2", False),
+            ("lao4", False),
+            ("xi3", False),
+            ("xian", True),
+            ("ti\u0304an", True),
+            ("tia\u0304n", True),
+            ("laǒ", True),
+            ("tīan", True),
+            ("tīa", False),
+            ("tiā", False),
+            ("angr", True),
+            ("er", True),
+            ("r", False),
+            ("TIĀN", True),
+            ("XIAN", True),
+            ("TIAN1", False),
+            ("r1", False),
+            ("ề", True),
             ]),
         ({'strictDiacriticPlacement': True}, [
-            (u"tiān", True),
-            (u"ān", True),
-            (u"mén", True),
-            (u"lào", True),
-            (u"xǐ", True),
-            (u"lü", True),
-            (u"ê", True),
-            (u"tian1", False),
-            (u"an1", False),
-            (u"men2", False),
-            (u"lao4", False),
-            (u"xi3", False),
-            (u"xian", True),
-            (u"tia\u0304n", True),
-            (u"ti\u0304an", False),
-            (u"laǒ", False),
-            (u"tīan", False),
-            (u"tīa", False),
-            (u"tiā", False),
-            (u"angr", False),
-            (u"er", True),
-            (u"r", True),
-            (u"TIĀN", True),
-            (u"XIAN", True),
-            (u"TIAN1", False),
-            (u"r1", False),
-            (u"ề", True),
+            ("tiān", True),
+            ("ān", True),
+            ("mén", True),
+            ("lào", True),
+            ("xǐ", True),
+            ("lü", True),
+            ("ê", True),
+            ("tian1", False),
+            ("an1", False),
+            ("men2", False),
+            ("lao4", False),
+            ("xi3", False),
+            ("xian", True),
+            ("tia\u0304n", True),
+            ("ti\u0304an", False),
+            ("laǒ", False),
+            ("tīan", False),
+            ("tīa", False),
+            ("tiā", False),
+            ("angr", False),
+            ("er", True),
+            ("r", True),
+            ("TIĀN", True),
+            ("XIAN", True),
+            ("TIAN1", False),
+            ("r1", False),
+            ("ề", True),
             ]),
         ({'case': 'lower'}, [
-            (u"tiān", True),
-            (u"ān", True),
-            (u"mén", True),
-            (u"lào", True),
-            (u"xǐ", True),
-            (u"lü", True),
-            (u"ê", True),
-            (u"tian1", False),
-            (u"an1", False),
-            (u"men2", False),
-            (u"lao4", False),
-            (u"xi3", False),
-            (u"xian", True),
-            (u"ti\u0304an", True),
-            (u"tia\u0304n", True),
-            (u"laǒ", True),
-            (u"tīan", True),
-            (u"tīa", False),
-            (u"tiā", False),
-            (u"angr", False),
-            (u"er", True),
-            (u"r", True),
-            (u"TIĀN", False),
-            (u"XIAN", False),
-            (u"TIAN1", False),
-            (u"r1", False),
-            (u"ề", True),
+            ("tiān", True),
+            ("ān", True),
+            ("mén", True),
+            ("lào", True),
+            ("xǐ", True),
+            ("lü", True),
+            ("ê", True),
+            ("tian1", False),
+            ("an1", False),
+            ("men2", False),
+            ("lao4", False),
+            ("xi3", False),
+            ("xian", True),
+            ("ti\u0304an", True),
+            ("tia\u0304n", True),
+            ("laǒ", True),
+            ("tīan", True),
+            ("tīa", False),
+            ("tiā", False),
+            ("angr", False),
+            ("er", True),
+            ("r", True),
+            ("TIĀN", False),
+            ("XIAN", False),
+            ("TIAN1", False),
+            ("r1", False),
+            ("ề", True),
             ]),
         ({'toneMarkType': 'numbers', 'yVowel': 'v'}, [
-            (u"tiān", False),
-            (u"ān", False),
-            (u"mén", False),
-            (u"lào", False),
-            (u"xǐ", False),
-            (u"lü", False),
-            (u"lv", True),
-            (u"ê", True),
-            (u"tian1", True),
-            (u"an1", True),
-            (u"men2", True),
-            (u"lao4", True),
-            (u"xi3", True),
-            (u"xian", True),
-            (u"ti\u0304an", False),
-            (u"tia\u0304n", False),
-            (u"laǒ", False),
-            (u"tīan", False),
-            (u"tīa", False),
-            (u"tiā", False),
-            (u"angr", False),
-            (u"er", True),
-            (u"r", True),
-            (u"TIĀN", False),
-            (u"XIAN", True),
-            (u"TIAN1", True),
-            (u"r1", False),
-            (u"ề", False),
+            ("tiān", False),
+            ("ān", False),
+            ("mén", False),
+            ("lào", False),
+            ("xǐ", False),
+            ("lü", False),
+            ("lv", True),
+            ("ê", True),
+            ("tian1", True),
+            ("an1", True),
+            ("men2", True),
+            ("lao4", True),
+            ("xi3", True),
+            ("xian", True),
+            ("ti\u0304an", False),
+            ("tia\u0304n", False),
+            ("laǒ", False),
+            ("tīan", False),
+            ("tīa", False),
+            ("tiā", False),
+            ("angr", False),
+            ("er", True),
+            ("r", True),
+            ("TIĀN", False),
+            ("XIAN", True),
+            ("TIAN1", True),
+            ("r1", False),
+            ("ề", False),
             ]),
         ({'shortenedLetters': True}, [
-            (u"tiān", True),
-            (u"ān", True),
-            (u"mén", True),
-            (u"lào", True),
-            (u"xǐ", True),
-            (u"lü", True),
-            (u"ê", True),
-            (u"Ê", True),
-            (u"tian1", False),
-            (u"an1", False),
-            (u"men2", False),
-            (u"lao4", False),
-            (u"xi3", False),
-            (u"xian", True),
-            (u"ti\u0304an", True),
-            (u"tia\u0304n", True),
-            (u"laǒ", True),
-            (u"tīan", True),
-            (u"tīa", False),
-            (u"tiā", False),
-            (u"angr", False),
-            (u"er", True),
-            (u"r", True),
-            (u"TIĀN", True),
-            (u"XIAN", True),
-            (u"TIAN1", False),
-            (u"r1", False),
-            (u"zhī", False),
-            (u"tang", False),
-            (u"ẑī", True),
-            (u"taŋ", True),
-            (u"ŜAŊ", True),
-            (u"ề", True),
+            ("tiān", True),
+            ("ān", True),
+            ("mén", True),
+            ("lào", True),
+            ("xǐ", True),
+            ("lü", True),
+            ("ê", True),
+            ("Ê", True),
+            ("tian1", False),
+            ("an1", False),
+            ("men2", False),
+            ("lao4", False),
+            ("xi3", False),
+            ("xian", True),
+            ("ti\u0304an", True),
+            ("tia\u0304n", True),
+            ("laǒ", True),
+            ("tīan", True),
+            ("tīa", False),
+            ("tiā", False),
+            ("angr", False),
+            ("er", True),
+            ("r", True),
+            ("TIĀN", True),
+            ("XIAN", True),
+            ("TIAN1", False),
+            ("r1", False),
+            ("zhī", False),
+            ("tang", False),
+            ("ẑī", True),
+            ("taŋ", True),
+            ("ŜAŊ", True),
+            ("ề", True),
             ]),
-        ({'pinyinDiacritics': (u'\u0304', u'\u0301', u'\u0302', u'\u0300')}, [
-            (u"tiān", True),
-            (u"ān", True),
-            (u"mén", True),
-            (u"lào", True),
-            (u"xǐ", False),
-            (u"lü", True),
-            (u"ê", True),
-            (u"Ê", True),
-            (u"tian1", False),
-            (u"an1", False),
-            (u"men2", False),
-            (u"lao4", False),
-            (u"xi3", False),
-            (u"xian", True),
-            (u"ti\u0304an", True),
-            (u"tia\u0304n", True),
-            (u"laǒ", False),
-            (u"tīan", True),
-            (u"tīa", False),
-            (u"tiā", False),
-            (u"angr", False),
-            (u"er", True),
-            (u"r", True),
-            (u"TIĀN", True),
-            (u"XIAN", True),
-            (u"TIAN1", False),
-            (u"r1", False),
-            (u"zhī", True),
-            (u"tang", True),
-            (u"ẑī", False),
-            (u"taŋ", False),
-            (u"ề", False),
+        ({'pinyinDiacritics': ('\u0304', '\u0301', '\u0302', '\u0300')}, [
+            ("tiān", True),
+            ("ān", True),
+            ("mén", True),
+            ("lào", True),
+            ("xǐ", False),
+            ("lü", True),
+            ("ê", True),
+            ("Ê", True),
+            ("tian1", False),
+            ("an1", False),
+            ("men2", False),
+            ("lao4", False),
+            ("xi3", False),
+            ("xian", True),
+            ("ti\u0304an", True),
+            ("tia\u0304n", True),
+            ("laǒ", False),
+            ("tīan", True),
+            ("tīa", False),
+            ("tiā", False),
+            ("angr", False),
+            ("er", True),
+            ("r", True),
+            ("TIĀN", True),
+            ("XIAN", True),
+            ("TIAN1", False),
+            ("r1", False),
+            ("zhī", True),
+            ("tang", True),
+            ("ẑī", False),
+            ("taŋ", False),
+            ("ề", False),
             ]),
         ]
 
     STRICT_DECOMPOSITION_REFERENCES = [
         ({}, [
-            ([u"tiān", "'", u"ān", u"mén"], True),
-            ([u"tiān", u"ān", u"mén"], False),
-            ([u"chan", u"gan"], True),
+            (["tiān", "'", "ān", "mén"], True),
+            (["tiān", "ān", "mén"], False),
+            (["chan", "gan"], True),
             (["xian"], True),
-            ([u"tian1", u"an1", u"men2"], True),
-            ([u"tian", u"an", u"men"], False),
-            ([u"tian", "'", u"an", u"men"], True),
-            ([u"lao3", u"angr2"], True),
-            ([u"lao3", u"ang2", u"r5"], True),
-            ([u"TIĀN", u"ĀN", u"MÉN"], False),
-            ([u"TIAN1", u"AN1", u"MEN2"], True),
+            (["tian1", "an1", "men2"], True),
+            (["tian", "an", "men"], False),
+            (["tian", "'", "an", "men"], True),
+            (["lao3", "angr2"], True),
+            (["lao3", "ang2", "r5"], True),
+            (["TIĀN", "ĀN", "MÉN"], False),
+            (["TIAN1", "AN1", "MEN2"], True),
             ]),
         ({'toneMarkType': 'numbers'}, [
-            ([u"tiān", "'", u"ān", u"mén"], True),
-            ([u"tiān", u"ān", u"mén"], True),
-            ([u"chan", u"gan"], True),
+            (["tiān", "'", "ān", "mén"], True),
+            (["tiān", "ān", "mén"], True),
+            (["chan", "gan"], True),
             (["xian"], True),
-            ([u"tian1", u"an1", u"men2"], False),
-            ([u"tian", u"an", u"men"], False),
-            ([u"tian", "'", u"an", u"men"], True),
-            ([u"lao3", u"angr2"], True),
-            ([u"lao3", u"ang2", u"r5"], False),
-            ([u"TIĀN", u"ĀN", u"MÉN"], True),
-            ([u"TIAN1", u"AN1", u"MEN2"], False),
+            (["tian1", "an1", "men2"], False),
+            (["tian", "an", "men"], False),
+            (["tian", "'", "an", "men"], True),
+            (["lao3", "angr2"], True),
+            (["lao3", "ang2", "r5"], False),
+            (["TIĀN", "ĀN", "MÉN"], True),
+            (["TIAN1", "AN1", "MEN2"], False),
             ]),
         ({'toneMarkType': 'numbers', 'missingToneMark': 'ignore'}, [
-            ([u"tiān", "'", u"ān", u"mén"], True),
-            ([u"tiān", u"ān", u"mén"], True),
-            ([u"chan", u"gan"], True),
+            (["tiān", "'", "ān", "mén"], True),
+            (["tiān", "ān", "mén"], True),
+            (["chan", "gan"], True),
             (["xian"], True),
-            ([u"tian1", u"an1", u"men2"], False),
-            ([u"tian", u"an", u"men"], True),
-            ([u"tian", "'", u"an", u"men"], True),
-            ([u"lao3", u"angr2"], True),
-            ([u"lao3", u"ang2", u"r5"], False),
-            ([u"TIĀN", u"ĀN", u"MÉN"], True),
-            ([u"TIAN1", u"AN1", u"MEN2"], False),
+            (["tian1", "an1", "men2"], False),
+            (["tian", "an", "men"], True),
+            (["tian", "'", "an", "men"], True),
+            (["lao3", "angr2"], True),
+            (["lao3", "ang2", "r5"], False),
+            (["TIĀN", "ĀN", "MÉN"], True),
+            (["TIAN1", "AN1", "MEN2"], False),
             ]),
         ({'toneMarkType': 'numbers', 'erhua': 'oneSyllable'}, [
-            ([u"tiān", "'", u"ān", u"mén"], True),
-            ([u"tiān", u"ān", u"mén"], True),
-            ([u"chan", u"gan"], True),
+            (["tiān", "'", "ān", "mén"], True),
+            (["tiān", "ān", "mén"], True),
+            (["chan", "gan"], True),
             (["xian"], True),
-            ([u"tian1", u"an1", u"men2"], False),
-            ([u"tian", u"an", u"men"], False),
-            ([u"tian", "'", u"an", u"men"], True),
-            ([u"lao3", u"angr2"], False),
-            ([u"lao3", u"ang2", u"r5"], False),
-            ([u"TIĀN", u"ĀN", u"MÉN"], True),
-            ([u"TIAN1", u"AN1", u"MEN2"], False),
+            (["tian1", "an1", "men2"], False),
+            (["tian", "an", "men"], False),
+            (["tian", "'", "an", "men"], True),
+            (["lao3", "angr2"], False),
+            (["lao3", "ang2", "r5"], False),
+            (["TIĀN", "ĀN", "MÉN"], True),
+            (["TIAN1", "AN1", "MEN2"], False),
             ]),
         ]
 
     GUESS_DIALECT_REFERENCES = [
-        (u"tiān'ānmén", {'toneMarkType': 'diacritics',
+        ("tiān'ānmén", {'toneMarkType': 'diacritics',
             'pinyinApostrophe': "'"}),
-        (u"tiān’ānmén", {'toneMarkType': 'diacritics',
-            'pinyinApostrophe': u"’"}),
-        (u"xīān", {'toneMarkType': 'diacritics'}),
-        (u"tian1'an1men2", {'toneMarkType': 'numbers',
+        ("tiān’ānmén", {'toneMarkType': 'diacritics',
+            'pinyinApostrophe': "’"}),
+        ("xīān", {'toneMarkType': 'diacritics'}),
+        ("tian1'an1men2", {'toneMarkType': 'numbers',
             'pinyinApostrophe': "'"}),
-        (u"nv3hai2", {'toneMarkType': 'numbers', 'yVowel': 'v'}),
-        (u"NV3HAI2", {'toneMarkType': 'numbers', 'yVowel': 'v'}),
-        (u"nuu3hai2", {'toneMarkType': 'numbers', 'yVowel': 'uu'}),
-        (u"nǚhái", {'toneMarkType': 'diacritics', 'yVowel': u'ü'}),
-        (u"NǙHÁI", {'toneMarkType': 'diacritics', 'yVowel': u'ü'}),
-        (u"xi1'an1", {'toneMarkType': 'numbers', 'pinyinApostrophe': "'"}),
-        (u"lao3tou2r5", {'toneMarkType': 'numbers',
+        ("nv3hai2", {'toneMarkType': 'numbers', 'yVowel': 'v'}),
+        ("NV3HAI2", {'toneMarkType': 'numbers', 'yVowel': 'v'}),
+        ("nuu3hai2", {'toneMarkType': 'numbers', 'yVowel': 'uu'}),
+        ("nǚhái", {'toneMarkType': 'diacritics', 'yVowel': 'ü'}),
+        ("NǙHÁI", {'toneMarkType': 'diacritics', 'yVowel': 'ü'}),
+        ("xi1'an1", {'toneMarkType': 'numbers', 'pinyinApostrophe': "'"}),
+        ("lao3tou2r5", {'toneMarkType': 'numbers',
             'erhua': 'twoSyllables'}),
-        (u"lao3tour2", {'toneMarkType': 'numbers', 'erhua': 'oneSyllable'}),
-        (u"peínǐ", {'toneMarkType': 'diacritics'}), # wrong placement of tone
-        (u"TIĀNĀNMÉN", {'toneMarkType': 'diacritics'}),
-        (u"e5'r5", {'toneMarkType': 'numbers', 'pinyinApostrophe': "'",
+        ("lao3tour2", {'toneMarkType': 'numbers', 'erhua': 'oneSyllable'}),
+        ("peínǐ", {'toneMarkType': 'diacritics'}), # wrong placement of tone
+        ("TIĀNĀNMÉN", {'toneMarkType': 'diacritics'}),
+        ("e5'r5", {'toneMarkType': 'numbers', 'pinyinApostrophe': "'",
             'erhua': 'twoSyllables'}),
-        (u"yi xia r ", {'toneMarkType': 'numbers', 'erhua': 'twoSyllables'}),
-        (u"ẑīdao", {'toneMarkType': 'diacritics', 'shortenedLetters': True}),
-        (u"mian4taŋ1", {'toneMarkType': 'numbers', 'shortenedLetters': True}),
-        (u"ŜÀŊHǍI", {'toneMarkType': 'diacritics', 'shortenedLetters': True,
-            'pinyinDiacritics': (u'\u0304', u'\u0301', u'\u030c', u'\u0300')}),
-        (u"SHÀNGHǍI", {'toneMarkType': 'diacritics',
+        ("yi xia r ", {'toneMarkType': 'numbers', 'erhua': 'twoSyllables'}),
+        ("ẑīdao", {'toneMarkType': 'diacritics', 'shortenedLetters': True}),
+        ("mian4taŋ1", {'toneMarkType': 'numbers', 'shortenedLetters': True}),
+        ("ŜÀŊHǍI", {'toneMarkType': 'diacritics', 'shortenedLetters': True,
+            'pinyinDiacritics': ('\u0304', '\u0301', '\u030c', '\u0300')}),
+        ("SHÀNGHǍI", {'toneMarkType': 'diacritics',
             'shortenedLetters': False}),
-        (u"Wŏ huì shuō yìdiănr", {'toneMarkType': 'diacritics',
-            'pinyinDiacritics': (u'\u0304', u'\u0301', u'\u0306', u'\u0300')}),
-        (u"Xiàndài Hànyû Dàcídiân", {'toneMarkType': 'diacritics',
-            'pinyinDiacritics': (u'\u0304', u'\u0301', u'\u0302', u'\u0300')}),
-        (u"ê Hàn", {'pinyinDiacritics': (u'\u0304', u'\u0301', u'\u030c',
-            u'\u0300')}),
+        ("Wŏ huì shuō yìdiănr", {'toneMarkType': 'diacritics',
+            'pinyinDiacritics': ('\u0304', '\u0301', '\u0306', '\u0300')}),
+        ("Xiàndài Hànyû Dàcídiân", {'toneMarkType': 'diacritics',
+            'pinyinDiacritics': ('\u0304', '\u0301', '\u0302', '\u0300')}),
+        ("ê Hàn", {'pinyinDiacritics': ('\u0304', '\u0301', '\u030c',
+            '\u0300')}),
         ]
 
     def testStrictDecompositionReferences(self):
@@ -1738,7 +1738,7 @@ class PinyinOperatorReferenceTest(ReadingOperatorReferenceTest,
             for reference, target in references:
                 result = self.f.isStrictDecomposition(reference,
                     self.READING_NAME, **dialect)
-                self.assertEquals(result, target,
+                self.assertEqual(result, target,
                     "Target %s of %s not reached: %s" \
                         % (repr(target), repr(reference), repr(result)) \
                     + ' (reading %s, dialect %s)' \
@@ -1755,7 +1755,7 @@ class WadeGilesOperatorConsistencyTest(ReadingOperatorConsistencyTest,
         [{}, {'umlautU': 'u'}],
         [{}, {'useInitialSz': True}],
         [{}, {'neutralToneMark': 'zero'}, {'neutralToneMark': 'five'}],
-        [{}, {'wadeGilesApostrophe': u"'"}],
+        [{}, {'wadeGilesApostrophe': "'"}],
         [{}, {'toneMarkType': 'numbers'}, {'toneMarkType': 'none'}],
         [{}, {'missingToneMark': 'ignore'}],
         [{}, {'strictSegmentation': True}],
@@ -1781,215 +1781,215 @@ class WadeGilesOperatorReferenceTest(ReadingOperatorReferenceTest,
 
     DECOMPOSITION_REFERENCES = [
         ({}, [
-            (u"K’ung³-tzŭ³", [u"K’ung³", u"-", u"tzŭ³"]),
-            (u"Ssŭma Ch’ien", [u"Ssŭ", "ma", " ", u"Ch’ien"]),
+            ("K’ung³-tzŭ³", ["K’ung³", "-", "tzŭ³"]),
+            ("Ssŭma Ch’ien", ["Ssŭ", "ma", " ", "Ch’ien"]),
             ]),
         ({'wadeGilesApostrophe': "'", 'zeroFinal': 'u'}, [
-            (u"Ssuma Ch'ien", [u"Ssu", u"ma", " ", u"Ch'ien"]),
+            ("Ssuma Ch'ien", ["Ssu", "ma", " ", "Ch'ien"]),
             ]),
         ({'wadeGilesApostrophe': "'"}, [
-            (u"Ssuma Ch'ien", [u"Ssuma", " ", u"Ch'ien"]),
-            (u"Ssŭma Ch'ien", [u"Ssŭ", u"ma", " ", u"Ch'ien"]),
+            ("Ssuma Ch'ien", ["Ssuma", " ", "Ch'ien"]),
+            ("Ssŭma Ch'ien", ["Ssŭ", "ma", " ", "Ch'ien"]),
             ]),
         ({'wadeGilesApostrophe': "'", 'zeroFinal': 'u'}, [
-            (u"Ssuma Ch'ien", [u"Ssu", "ma", " ", u"Ch'ien"]),
-            (u"Ssŭma Ch'ien", [u"Ssŭma", " ", u"Ch'ien"]),
+            ("Ssuma Ch'ien", ["Ssu", "ma", " ", "Ch'ien"]),
+            ("Ssŭma Ch'ien", ["Ssŭma", " ", "Ch'ien"]),
             ]),
         ({'toneMarkType': 'numbers', 'umlautU': 'u'}, [
-            (u"Shih3-Chi4", [u"Shih3", "-", u"Chi4"]),
+            ("Shih3-Chi4", ["Shih3", "-", "Chi4"]),
             ("chueh1", ["chueh1"])
             ]),
         ({'wadeGilesApostrophe': "'", 'strictSegmentation': True}, [
-            (u"Ssuma Ch'ien", exception.DecompositionError),
-            (u"Ssŭma Ch'ien", [u"Ssŭ", "ma", " ", u"Ch'ien"]),
+            ("Ssuma Ch'ien", exception.DecompositionError),
+            ("Ssŭma Ch'ien", ["Ssŭ", "ma", " ", "Ch'ien"]),
             ]),
         ]
 
     COMPOSITION_REFERENCES = [
         ({}, [
-            ([u"K’ung³", u"-", u"tzŭ³"], u"K’ung³-tzŭ³"),
-            ([u"K’ung³", u"tzŭ³"], u"K’ung³-tzŭ³"),
+            (["K’ung³", "-", "tzŭ³"], "K’ung³-tzŭ³"),
+            (["K’ung³", "tzŭ³"], "K’ung³-tzŭ³"),
             ]),
         ({'wadeGilesApostrophe': "'", 'zeroFinal': 'u'}, [
-            ([u"Ssu", "ma", " ", u"Ch'ien"], u"Ssu-ma Ch'ien"),
+            (["Ssu", "ma", " ", "Ch'ien"], "Ssu-ma Ch'ien"),
             ]),
         ({'wadeGilesApostrophe': "'"}, [
-            ([u"Ssu", "ma", " ", u"Ch'ien"], exception.CompositionError),
-            ([u"Ssŭ", "ma", " ", u"Ch'ien"], u"Ssŭ-ma Ch'ien"),
+            (["Ssu", "ma", " ", "Ch'ien"], exception.CompositionError),
+            (["Ssŭ", "ma", " ", "Ch'ien"], "Ssŭ-ma Ch'ien"),
             ]),
         ({'toneMarkType': 'numbers'}, [
-            ([u"Shih3", "-", u"Chi4"], u"Shih3-Chi4"),
-            ([u"Shih3", u"Chi4"], u"Shih3-Chi4"),
-            (['t', u'’', 'ung1'], exception.CompositionError),
+            (["Shih3", "-", "Chi4"], "Shih3-Chi4"),
+            (["Shih3", "Chi4"], "Shih3-Chi4"),
+            (['t', '’', 'ung1'], exception.CompositionError),
             ]),
         ({'toneMarkType': 'numbers', 'neutralToneMark': 'zero',
             'missingToneMark': 'ignore'}, [
-            ([u"Shih3", "-", u"Chi"], u"Shih3-Chi"),
-            ([u"Shih3", u"Chi"], u"Shih3Chi"),
-            ([u"Shih", u"Chi4"], exception.CompositionError),
+            (["Shih3", "-", "Chi"], "Shih3-Chi"),
+            (["Shih3", "Chi"], "Shih3Chi"),
+            (["Shih", "Chi4"], exception.CompositionError),
             ]),
         ]
 
     READING_ENTITY_REFERENCES = [
         ({}, [
-            (u"shih", True),
-            (u"jou⁴", True),
-            (u"nü³", True),
-            (u"Ssŭ", True),
-            (u"ch’êng", True),
-            (u"Ch’ien", True),
-            (u"ch'ien", False),
-            (u"ssu", False),
-            (u"szu", False),
-            (u"ch’eng", False),
-            (u"shih⁰", False),
-            (u"shih⁵", False),
-            (u"shih1", False),
+            ("shih", True),
+            ("jou⁴", True),
+            ("nü³", True),
+            ("Ssŭ", True),
+            ("ch’êng", True),
+            ("Ch’ien", True),
+            ("ch'ien", False),
+            ("ssu", False),
+            ("szu", False),
+            ("ch’eng", False),
+            ("shih⁰", False),
+            ("shih⁵", False),
+            ("shih1", False),
             ]),
         ({'diacriticE': 'e'}, [
-            (u"shih", True),
-            (u"jou⁴", True),
-            (u"nü³", True),
-            (u"Ssŭ", True),
-            (u"ch’êng", False),
-            (u"Ch’ien", True),
-            (u"ch'ien", False),
-            (u"ssu", False),
-            (u"szu", False),
-            (u"ch’eng", True),
-            (u"shih⁰", False),
-            (u"shih⁵", False),
-            (u"shih1", False),
+            ("shih", True),
+            ("jou⁴", True),
+            ("nü³", True),
+            ("Ssŭ", True),
+            ("ch’êng", False),
+            ("Ch’ien", True),
+            ("ch'ien", False),
+            ("ssu", False),
+            ("szu", False),
+            ("ch’eng", True),
+            ("shih⁰", False),
+            ("shih⁵", False),
+            ("shih1", False),
             ]),
         ({'zeroFinal': 'u'}, [
-            (u"shih", True),
-            (u"jou⁴", True),
-            (u"nü³", True),
-            (u"Ssŭ", False),
-            (u"ch’êng", True),
-            (u"Ch’ien", True),
-            (u"ch'ien", False),
-            (u"ssu", True),
-            (u"szu", False),
-            (u"ch’eng", False),
-            (u"shih⁰", False),
-            (u"shih⁵", False),
-            (u"shih1", False),
+            ("shih", True),
+            ("jou⁴", True),
+            ("nü³", True),
+            ("Ssŭ", False),
+            ("ch’êng", True),
+            ("Ch’ien", True),
+            ("ch'ien", False),
+            ("ssu", True),
+            ("szu", False),
+            ("ch’eng", False),
+            ("shih⁰", False),
+            ("shih⁵", False),
+            ("shih1", False),
             ]),
         ({'neutralToneMark': 'zero'}, [
-            (u"shih", True),
-            (u"jou⁴", True),
-            (u"nü³", True),
-            (u"Ssŭ", True),
-            (u"ch’êng", True),
-            (u"Ch’ien", True),
-            (u"ch'ien", False),
-            (u"ssu", False),
-            (u"szu", False),
-            (u"ch’eng", False),
-            (u"shih⁰", True),
-            (u"shih⁵", False),
-            (u"shih1", False),
+            ("shih", True),
+            ("jou⁴", True),
+            ("nü³", True),
+            ("Ssŭ", True),
+            ("ch’êng", True),
+            ("Ch’ien", True),
+            ("ch'ien", False),
+            ("ssu", False),
+            ("szu", False),
+            ("ch’eng", False),
+            ("shih⁰", True),
+            ("shih⁵", False),
+            ("shih1", False),
             ]),
         ({'neutralToneMark': 'five'}, [
-            (u"shih", True),
-            (u"jou⁴", True),
-            (u"nü³", True),
-            (u"Ssŭ", True),
-            (u"ch’êng", True),
-            (u"Ch’ien", True),
-            (u"ch'ien", False),
-            (u"ssu", False),
-            (u"szu", False),
-            (u"ch’eng", False),
-            (u"shih⁰", False),
-            (u"shih⁵", True),
-            (u"shih1", False),
+            ("shih", True),
+            ("jou⁴", True),
+            ("nü³", True),
+            ("Ssŭ", True),
+            ("ch’êng", True),
+            ("Ch’ien", True),
+            ("ch'ien", False),
+            ("ssu", False),
+            ("szu", False),
+            ("ch’eng", False),
+            ("shih⁰", False),
+            ("shih⁵", True),
+            ("shih1", False),
             ]),
         ({'useInitialSz': True}, [
-            (u"shih", True),
-            (u"jou⁴", True),
-            (u"nü³", True),
-            (u"Ssŭ", False),
-            (u"ch’êng", True),
-            (u"Ch’ien", True),
-            (u"ch'ien", False),
-            (u"ssu", False),
-            (u"szu", False),
-            (u"szŭ", True),
-            (u"ch’eng", False),
-            (u"shih⁰", False),
-            (u"shih⁵", False),
-            (u"shih1", False),
+            ("shih", True),
+            ("jou⁴", True),
+            ("nü³", True),
+            ("Ssŭ", False),
+            ("ch’êng", True),
+            ("Ch’ien", True),
+            ("ch'ien", False),
+            ("ssu", False),
+            ("szu", False),
+            ("szŭ", True),
+            ("ch’eng", False),
+            ("shih⁰", False),
+            ("shih⁵", False),
+            ("shih1", False),
             ]),
         ({'umlautU': 'u'}, [
-            (u"shih", True),
-            (u"jou⁴", True),
-            (u"nü³", False),
-            (u"Ssŭ", True),
-            (u"ch’êng", True),
-            (u"Ch’ien", True),
-            (u"ch'ien", False),
-            (u"ssu", False),
-            (u"szu", False),
-            (u"ch’eng", False),
-            (u"shih⁰", False),
-            (u"shih⁵", False),
-            (u"shih1", False),
+            ("shih", True),
+            ("jou⁴", True),
+            ("nü³", False),
+            ("Ssŭ", True),
+            ("ch’êng", True),
+            ("Ch’ien", True),
+            ("ch'ien", False),
+            ("ssu", False),
+            ("szu", False),
+            ("ch’eng", False),
+            ("shih⁰", False),
+            ("shih⁵", False),
+            ("shih1", False),
             ]),
         ({'toneMarkType': 'numbers'}, [
-            (u"shih", True),
-            (u"jou⁴", False),
-            (u"nü³", False),
-            (u"Ssŭ", True),
-            (u"ch’êng", True),
-            (u"Ch’ien", True),
-            (u"ch'ien", False),
-            (u"ssu", False),
-            (u"szu", False),
-            (u"ch’eng", False),
-            (u"shih⁰", False),
-            (u"shih⁵", False),
-            (u"shih1", True),
+            ("shih", True),
+            ("jou⁴", False),
+            ("nü³", False),
+            ("Ssŭ", True),
+            ("ch’êng", True),
+            ("Ch’ien", True),
+            ("ch'ien", False),
+            ("ssu", False),
+            ("szu", False),
+            ("ch’eng", False),
+            ("shih⁰", False),
+            ("shih⁵", False),
+            ("shih1", True),
             ]),
         ({'wadeGilesApostrophe': "'"}, [
-            (u"shih", True),
-            (u"jou⁴", True),
-            (u"nü³", True),
-            (u"Ssŭ", True),
-            (u"ch’êng", False),
-            (u"Ch’ien", False),
-            (u"ch'ien", True),
-            (u"ssu", False),
-            (u"szu", False),
-            (u"ch’eng", False),
-            (u"shih⁰", False),
-            (u"shih⁵", False),
-            (u"shih1", False),
+            ("shih", True),
+            ("jou⁴", True),
+            ("nü³", True),
+            ("Ssŭ", True),
+            ("ch’êng", False),
+            ("Ch’ien", False),
+            ("ch'ien", True),
+            ("ssu", False),
+            ("szu", False),
+            ("ch’eng", False),
+            ("shih⁰", False),
+            ("shih⁵", False),
+            ("shih1", False),
             ]),
         ]
 
     GUESS_DIALECT_REFERENCES = [
-        (u"K’ung³-tzǔ³", {'toneMarkType': 'superscriptNumbers',
-            'wadeGilesApostrophe': u'’', 'zeroFinal': u'ǔ'}),
-        (u"K’ung³-tzŭ³", {'toneMarkType': 'superscriptNumbers',
-            'wadeGilesApostrophe': u'’', 'zeroFinal': u'ŭ'}),
-        (u"Ssŭma Ch'ien", {'wadeGilesApostrophe': "'", 'zeroFinal': u'ŭ'}),
-        (u"Szuma Ch'ien", {'wadeGilesApostrophe': "'", 'zeroFinal': 'u',
+        ("K’ung³-tzǔ³", {'toneMarkType': 'superscriptNumbers',
+            'wadeGilesApostrophe': '’', 'zeroFinal': 'ǔ'}),
+        ("K’ung³-tzŭ³", {'toneMarkType': 'superscriptNumbers',
+            'wadeGilesApostrophe': '’', 'zeroFinal': 'ŭ'}),
+        ("Ssŭma Ch'ien", {'wadeGilesApostrophe': "'", 'zeroFinal': 'ŭ'}),
+        ("Szuma Ch'ien", {'wadeGilesApostrophe': "'", 'zeroFinal': 'u',
             'useInitialSz': True}),
-        (u"Szu1ma3 Ch'ien1", {'wadeGilesApostrophe': "'", 'zeroFinal': 'u',
+        ("Szu1ma3 Ch'ien1", {'wadeGilesApostrophe': "'", 'zeroFinal': 'u',
             'useInitialSz': True, 'toneMarkType': 'numbers'}),
-        (u"Shih3-Chi4", {'toneMarkType': 'numbers'}),
-        (u"chih¹-tao⁵", {'neutralToneMark': 'five'}),
-        (u"chih¹-tao", {'neutralToneMark': 'none'}),
-        (u"p’êng3yu0", {'neutralToneMark': 'zero', 'diacriticE': u'ê',
-            'wadeGilesApostrophe': u'’', 'toneMarkType': 'numbers'}),
-        (u"p’eng³yu", {'neutralToneMark': 'none', 'diacriticE': u'e',
-            'wadeGilesApostrophe': u'’', 'toneMarkType': 'superscriptNumbers'}),
-        (u"hsu¹", {'umlautU': 'u', 'toneMarkType': 'superscriptNumbers'}),
-        (u"nueh1", {'umlautU': 'u', 'toneMarkType': 'numbers'}),
-        (u"yu³", {'umlautU': u'ü', 'toneMarkType': 'superscriptNumbers'}),
-        (u"Cheng Ho", {'diacriticE': 'e', 'neutralToneMark': 'zero'}),
+        ("Shih3-Chi4", {'toneMarkType': 'numbers'}),
+        ("chih¹-tao⁵", {'neutralToneMark': 'five'}),
+        ("chih¹-tao", {'neutralToneMark': 'none'}),
+        ("p’êng3yu0", {'neutralToneMark': 'zero', 'diacriticE': 'ê',
+            'wadeGilesApostrophe': '’', 'toneMarkType': 'numbers'}),
+        ("p’eng³yu", {'neutralToneMark': 'none', 'diacriticE': 'e',
+            'wadeGilesApostrophe': '’', 'toneMarkType': 'superscriptNumbers'}),
+        ("hsu¹", {'umlautU': 'u', 'toneMarkType': 'superscriptNumbers'}),
+        ("nueh1", {'umlautU': 'u', 'toneMarkType': 'numbers'}),
+        ("yu³", {'umlautU': 'ü', 'toneMarkType': 'superscriptNumbers'}),
+        ("Cheng Ho", {'diacriticE': 'e', 'neutralToneMark': 'zero'}),
             # either zero or five to enable tone "None" for all syllables
         ]
 
@@ -2002,7 +2002,7 @@ class GROperatorConsistencyTest(ReadingOperatorConsistencyTest,
         [{}, {'abbreviations': False}],
         [{}, {'grRhotacisedFinalApostrophe': "'"}],
         [{}, {'grSyllableSeparatorApostrophe': "'"}],
-        [{}, {'optionalNeutralToneMarker': u'₀'}],
+        [{}, {'optionalNeutralToneMarker': '₀'}],
         [{}, {'case': 'lower'}],
         )
 
@@ -2036,7 +2036,7 @@ class GROperatorConsistencyTest(ReadingOperatorConsistencyTest,
                 **dialect)
             entities = grOperator.getAbbreviatedEntities()
             for entity in entities:
-                self.assert_(
+                self.assertTrue(
                     grOperator.isAbbreviatedEntity(entity),
                     "Abbreviated entity %s not accepted" % repr(entity) \
                         + ' (reading %s, dialect %s)' \
@@ -2058,7 +2058,7 @@ class GROperatorConsistencyTest(ReadingOperatorConsistencyTest,
             abbrevEntities = grOperator.getAbbreviatedEntities()
             # test abbreviated entity is not a full form
             for entity in abbrevEntities:
-                self.assert_(entity not in fullEntities,
+                self.assertTrue(entity not in fullEntities,
                     "Abbreviated entity %s is a full form" % repr(entity) \
                         + ' (reading %s, dialect %s)' \
                             % (self.READING_NAME, dialect))
@@ -2066,7 +2066,7 @@ class GROperatorConsistencyTest(ReadingOperatorConsistencyTest,
             # test forms have valid entities
             for form in grOperator.getAbbreviatedForms():
                 for entity in form:
-                    self.assert_(entity in abbrevEntities \
+                    self.assertTrue(entity in abbrevEntities \
                         or entity in fullEntities,
                         "Form %s has invalid entity %s" \
                             % (repr(form), repr(entity)) \
@@ -2105,7 +2105,7 @@ class GROperatorConsistencyTest(ReadingOperatorConsistencyTest,
             for rhotacisedForm in rhotacisedDict:
                 entityPairs = grOperator.getBaseEntitiesForRhotacised(
                     rhotacisedForm)
-                self.assertEquals(entityPairs, rhotacisedDict[rhotacisedForm])
+                self.assertEqual(entityPairs, rhotacisedDict[rhotacisedForm])
 
 
 #TODO
@@ -2115,88 +2115,88 @@ class GROperatorReferenceTest(ReadingOperatorReferenceTest,
 
     DECOMPOSITION_REFERENCES = [
         ({}, [
-            (u"tian’anmen", ["tian", u"’", "an", "men"]),
-            (u"Beeijing", ["Beei", "jing"]),
-            (u"faan-guohlai", ["faan", "-", "guoh", "lai"]),
-            (u'"Haeshianq gen Muh.jianq"', ['"', "Hae", "shianq", " ", "gen",
+            ("tian’anmen", ["tian", "’", "an", "men"]),
+            ("Beeijing", ["Beei", "jing"]),
+            ("faan-guohlai", ["faan", "-", "guoh", "lai"]),
+            ('"Haeshianq gen Muh.jianq"', ['"', "Hae", "shianq", " ", "gen",
                 " ", "Muh", ".jianq", '"']),
-            (u"keesh", ["kee", "sh"]),
-            (u"yeou ideal", ["yeou", " ", "i", "deal"]),
-            (u"TIAN’ANMEN", ["TIAN", u"’", "AN", "MEN"]),
-            (u"sherm.me", ["sherm", ".me"]),
-            (u"ig", ["i", "g"]),
+            ("keesh", ["kee", "sh"]),
+            ("yeou ideal", ["yeou", " ", "i", "deal"]),
+            ("TIAN’ANMEN", ["TIAN", "’", "AN", "MEN"]),
+            ("sherm.me", ["sherm", ".me"]),
+            ("ig", ["i", "g"]),
             ]),
         ({'abbreviations': False}, [
-            (u"tian’anmen", ["tian", u"’", "an", "men"]),
-            (u"Beeijing", ["Beei", "jing"]),
-            (u"faan-guohlai", ["faan", "-", "guoh", "lai"]),
-            (u'"Haeshianq gen Muh.jianq"', ['"', "Hae", "shianq", " ", "gen",
+            ("tian’anmen", ["tian", "’", "an", "men"]),
+            ("Beeijing", ["Beei", "jing"]),
+            ("faan-guohlai", ["faan", "-", "guoh", "lai"]),
+            ('"Haeshianq gen Muh.jianq"', ['"', "Hae", "shianq", " ", "gen",
                 " ", "Muh", ".jianq", '"']),
-            (u"keesh", ["keesh"]),
-            (u"yeou ideal", ["yeou", " ", "i", "deal"]),
-            (u"TIAN’ANMEN", ["TIAN", u"’", "AN", "MEN"]),
-            (u"sherm.me", ["sherm", ".me"]),
-            (u"ig", ["ig"]),
+            ("keesh", ["keesh"]),
+            ("yeou ideal", ["yeou", " ", "i", "deal"]),
+            ("TIAN’ANMEN", ["TIAN", "’", "AN", "MEN"]),
+            ("sherm.me", ["sherm", ".me"]),
+            ("ig", ["ig"]),
             ]),
         ]
 
     COMPOSITION_REFERENCES = [
         ({}, [
-            (["tian", "an", "men"], u"tian’anmen"),
-            (["tian", u"’", "an", "men"], u"tian’anmen"),
-            (["Beei", "jing"], u"Beeijing"),
-            (["yeou", " ", "i", "deal"], u"yeou ideal"),
-            (["faan", "-", "guoh", "lai"], u"faan-guohlai"),
-            (["TIAN", "AN", "MEN"], u"TIAN’ANMEN"),
+            (["tian", "an", "men"], "tian’anmen"),
+            (["tian", "’", "an", "men"], "tian’anmen"),
+            (["Beei", "jing"], "Beeijing"),
+            (["yeou", " ", "i", "deal"], "yeou ideal"),
+            (["faan", "-", "guoh", "lai"], "faan-guohlai"),
+            (["TIAN", "AN", "MEN"], "TIAN’ANMEN"),
             (["yeou", " ", "i", "dea'l"], exception.CompositionError),
-            (["jie", u"’", "l"], exception.CompositionError),
-            (["sherm", ".me"], u"sherm.me"),
-            (["san", "g"], u"san’g"),
-            (["i", "g"], u"ig"),
+            (["jie", "’", "l"], exception.CompositionError),
+            (["sherm", ".me"], "sherm.me"),
+            (["san", "g"], "san’g"),
+            (["i", "g"], "ig"),
             ]),
         ({'abbreviations': False}, [
-            (["tian", "an", "men"], u"tian’anmen"),
-            (["tian", u"’", "an", "men"], u"tian’anmen"),
-            (["Beei", "jing"], u"Beeijing"),
-            (["yeou", " ", "i", "deal"], u"yeou ideal"),
-            (["faan", "-", "guoh", "lai"], u"faan-guohlai"),
-            (["TIAN", "AN", "MEN"], u"TIAN’ANMEN"),
+            (["tian", "an", "men"], "tian’anmen"),
+            (["tian", "’", "an", "men"], "tian’anmen"),
+            (["Beei", "jing"], "Beeijing"),
+            (["yeou", " ", "i", "deal"], "yeou ideal"),
+            (["faan", "-", "guoh", "lai"], "faan-guohlai"),
+            (["TIAN", "AN", "MEN"], "TIAN’ANMEN"),
             (["yeou", " ", "i", "dea'l"], exception.CompositionError),
-            (["jie", u"’", "l"], exception.CompositionError),
+            (["jie", "’", "l"], exception.CompositionError),
             (["sherm", ".me"], exception.CompositionError),
             ]),
         ]
 
     READING_ENTITY_REFERENCES = [
         ({}, [
-            (u"shau", True),
-            (u"shao", True),
-            (u"shaw", True),
-            (u"dea’l", False),
-            (u"jie’l", True),
-            (u"jie'l", False),
-            (u"˳shyh", True),
-            (u"sh", True),
-            (u"j", True),
-            (u"jemm", True),
-            (u"JEMM", True),
-            (u"tzeem.me", False),
-            (u".v", True),
+            ("shau", True),
+            ("shao", True),
+            ("shaw", True),
+            ("dea’l", False),
+            ("jie’l", True),
+            ("jie'l", False),
+            ("˳shyh", True),
+            ("sh", True),
+            ("j", True),
+            ("jemm", True),
+            ("JEMM", True),
+            ("tzeem.me", False),
+            (".v", True),
             ]),
         ({'abbreviations': False}, [
-            (u"shau", True),
-            (u"shao", True),
-            (u"shaw", True),
-            (u"dea’l", False),
-            (u"jie’l", True),
-            (u"jie'l", False),
-            (u"˳shyh", True),
-            (u"sh", False),
-            (u"j", False),
-            (u"jemm", False),
-            (u"JEMM", False),
-            (u"tzeem.me", False),
-            (u".v", False),
+            ("shau", True),
+            ("shao", True),
+            ("shaw", True),
+            ("dea’l", False),
+            ("jie’l", True),
+            ("jie'l", False),
+            ("˳shyh", True),
+            ("sh", False),
+            ("j", False),
+            ("jemm", False),
+            ("JEMM", False),
+            ("tzeem.me", False),
+            (".v", False),
             ]),
         ]
 
@@ -2204,9 +2204,9 @@ class GROperatorReferenceTest(ReadingOperatorReferenceTest,
 
     ABBREVIATED_READING_ENTITY_REFERENCES = [
         ({}, [
-            (u"sh", True),
-            (u"SH", True),
-            (u"x", True),
+            ("sh", True),
+            ("SH", True),
+            ("x", True),
             ]),
         ]
 
@@ -2221,7 +2221,7 @@ class GROperatorReferenceTest(ReadingOperatorReferenceTest,
             for reference, target in references:
                 result = grOperator.isAbbreviatedEntity(reference)
 
-                self.assertEquals(result, target,
+                self.assertEqual(result, target,
                     "Target %s of %s not reached: %s" \
                         % (repr(target), repr(reference), repr(result)) \
                     + ' (reading %s, dialect %s)' \
@@ -2384,10 +2384,10 @@ u:anr           iual    yual    eual    iuall           hiual   iual
 u:nr            iuel    yuel    euel    iuell           hiuel   iuel
 """
 
-    PINYIN_FINAL_MAPPING = {'iu': 'iou', 'ui': 'uei', 'un': 'uen', 'u:': u'ü',
-        'u:e': u'üe', 'u:an': u'üan', 'u:n': u'ün', 'iur': 'iour',
-        'uir': 'ueir', 'unr': 'uenr', 'u:r': u'ür', 'u:er': u'üer',
-        'u:anr': u'üanr', 'u:nr': u'ünr'}
+    PINYIN_FINAL_MAPPING = {'iu': 'iou', 'ui': 'uei', 'un': 'uen', 'u:': 'ü',
+        'u:e': 'üe', 'u:an': 'üan', 'u:n': 'ün', 'iur': 'iour',
+        'uir': 'ueir', 'unr': 'uenr', 'u:r': 'ür', 'u:er': 'üer',
+        'u:anr': 'üanr', 'u:nr': 'ünr'}
 
     INITIAL_REGEX = re.compile('^(tz|ts|ch|sh|[bpmfdtnlsjrgkh])?')
 
@@ -2448,7 +2448,7 @@ u:nr            iuel    yuel    euel    iuell           hiuel   iuel
                 grEntities.remove(entity)
 
         # remove syllables with entry '-' in GR Junction table
-        grEntities = grEntities - set([u'yeai', u'yay', u'weng'])
+        grEntities = grEntities - set(['yeai', 'yay', 'weng'])
 
         pinyinEntities = self.pinyinOperator.getPlainReadingEntities()
         for pinyinPlainSyllable in pinyinEntities:
@@ -2471,7 +2471,7 @@ u:nr            iuel    yuel    euel    iuell           hiuel   iuel
 
                     syllable = self.converter.convert(pinyinSyllable)
 
-                    self.assertEquals(syllable, target,
+                    self.assertEqual(syllable, target,
                         "Wrong conversion to GR %s for Pinyin syllable %s: %s" \
                             % (repr(target), repr(pinyinSyllable),
                                 repr(syllable)))
@@ -2480,7 +2480,7 @@ u:nr            iuel    yuel    euel    iuell           hiuel   iuel
                     grEntities.discard(target)
 
             elif pinyinInitial in ['m', 'n', 'l', 'r'] \
-                and pinyinFinal[0] != u'ʅ' \
+                and pinyinFinal[0] != 'ʅ' \
                 and pinyinFinal in self.grJunctionFinalMNLRMapping \
                 and pinyinFinal in self.grJunctionFinalMapping:
 
@@ -2495,7 +2495,7 @@ u:nr            iuel    yuel    euel    iuell           hiuel   iuel
 
                     tonalFinal = self.INITIAL_REGEX.sub('', syllable)
 
-                    self.assertEquals(tonalFinal, target,
+                    self.assertEqual(tonalFinal, target,
                         "Wrong conversion to GR %s for Pinyin syllable %s: %s" \
                             % (repr(target), repr(pinyinSyllable),
                                 repr(syllable)))
@@ -2515,7 +2515,7 @@ u:nr            iuel    yuel    euel    iuell           hiuel   iuel
 
                     tonalFinal = self.INITIAL_REGEX.sub('', syllable)
 
-                    self.assertEquals(tonalFinal, target,
+                    self.assertEqual(tonalFinal, target,
                         "Wrong conversion to GR %s for Pinyin syllable %s: %s" \
                             % (repr(target), repr(pinyinSyllable),
                                 repr(syllable)))
@@ -2529,8 +2529,8 @@ u:nr            iuel    yuel    euel    iuell           hiuel   iuel
 
             #elif pinyinInitial not in ['z', 'c', 's', 'zh', 'ch', 'sh', ''] \
                 #and pinyinFinal not in ['m', 'ng', 'mr', 'ngr', u'ʅ', u'ʅr']:
-            elif pinyinFinal not in ['m', 'n', 'ng', 'mr', 'nr', 'ngr', u'ʅ',
-                u'ʅr', u'ɿr', u'ê', u'êr'] \
+            elif pinyinFinal not in ['m', 'n', 'ng', 'mr', 'nr', 'ngr', 'ʅ',
+                'ʅr', 'ɿr', 'ê', 'êr'] \
                 and pinyinFinal in self.grJunctionFinalMapping:
 
                 for tone in [1, 2, 3, 4]:
@@ -2544,7 +2544,7 @@ u:nr            iuel    yuel    euel    iuell           hiuel   iuel
 
                     tonalFinal = self.INITIAL_REGEX.sub('', syllable)
 
-                    self.assertEquals(tonalFinal, target,
+                    self.assertEqual(tonalFinal, target,
                         "Wrong conversion to GR %s for Pinyin syllable %s: %s" \
                             % (repr(target), repr(pinyinSyllable),
                                 repr(syllable)))
@@ -2556,7 +2556,7 @@ u:nr            iuel    yuel    euel    iuell           hiuel   iuel
                         initialTarget = ''
                     grEntities.discard(initialTarget + target)
 
-        self.assert_(len(grEntities) == 0,
+        self.assertTrue(len(grEntities) == 0,
             'Not all GR entities have test cases: %s' % repr(grEntities))
 
 
@@ -2645,89 +2645,89 @@ class ShanghaineseIPAReferenceTest(ReadingOperatorReferenceTest,
 
     DECOMPOSITION_REFERENCES = [
         ({'toneMarkType': 'superscriptChaoDigits'}, [
-            (u'ɦi⁵³ ɦɑ̃⁵³.ʦɤ lɛ⁵³ gəˀ¹²', [u'ɦi⁵³', ' ', u'ɦɑ̃⁵³', '.', u'ʦɤ',
-                ' ', u'lɛ⁵³', ' ', u'gəˀ¹²']),
+            ('ɦi⁵³ ɦɑ̃⁵³.ʦɤ lɛ⁵³ gəˀ¹²', ['ɦi⁵³', ' ', 'ɦɑ̃⁵³', '.', 'ʦɤ',
+                ' ', 'lɛ⁵³', ' ', 'gəˀ¹²']),
             ]),
         ]
 
     COMPOSITION_REFERENCES = [
         ({'toneMarkType': 'superscriptChaoDigits'}, [
-            ([u'ɦi⁵³', ' ', u'ɦɑ̃⁵³', u'ʦɤ', ' ', u'lɛ⁵³', ' ', u'gəˀ¹²'],
-                u'ɦi⁵³ ɦɑ̃⁵³.ʦɤ lɛ⁵³ gəˀ¹²'),
+            (['ɦi⁵³', ' ', 'ɦɑ̃⁵³', 'ʦɤ', ' ', 'lɛ⁵³', ' ', 'gəˀ¹²'],
+                'ɦi⁵³ ɦɑ̃⁵³.ʦɤ lɛ⁵³ gəˀ¹²'),
             ]),
         ]
 
     READING_ENTITY_REFERENCES = [
         ({'toneMarkType': 'chaoDigits'}, [
-            (u"tʰi53", True),
-            (u"tʰi34", True),
-            (u"di23", True),
-            (u"tʰiɪˀ55", True),
-            (u"diɪˀ12", True),
-            (u"noŋ53", True),
-            (u"diɪˀ1", False),
-            (u"diɪˀ23", True),
-            (u"diɪˀ55", True), # YinRu
+            ("tʰi53", True),
+            ("tʰi34", True),
+            ("di23", True),
+            ("tʰiɪˀ55", True),
+            ("diɪˀ12", True),
+            ("noŋ53", True),
+            ("diɪˀ1", False),
+            ("diɪˀ23", True),
+            ("diɪˀ55", True), # YinRu
             ]),
         ({'toneMarkType': 'superscriptChaoDigits'}, [
-            (u"tʰi⁵³", True),
-            (u"tʰi³⁴", True),
-            (u"di²³", True),
-            (u"tʰiɪˀ⁵⁵", True),
-            (u"diɪˀ¹²", True),
-            (u"noŋ⁵³", True),
-            (u"diɪˀ¹", False),
+            ("tʰi⁵³", True),
+            ("tʰi³⁴", True),
+            ("di²³", True),
+            ("tʰiɪˀ⁵⁵", True),
+            ("diɪˀ¹²", True),
+            ("noŋ⁵³", True),
+            ("diɪˀ¹", False),
             ]),
         ({'toneMarkType': 'ipaToneBar'}, [
-            (u"tʰi˥˧", True),
-            (u"tʰi˧˦", True),
-            (u"di˨˧", True),
-            (u"tʰiɪˀ˥˥", True),
-            (u"diɪˀ˩˨", True),
-            (u"noŋ˥˧", True),
-            (u"tʰi˥", False),
+            ("tʰi˥˧", True),
+            ("tʰi˧˦", True),
+            ("di˨˧", True),
+            ("tʰiɪˀ˥˥", True),
+            ("diɪˀ˩˨", True),
+            ("noŋ˥˧", True),
+            ("tʰi˥", False),
             ]),
         ({'toneMarkType': 'chaoDigits', 'constrainEntering': True}, [
-            (u"tʰi53", True),
-            (u"tʰi34", True),
-            (u"di23", True),
-            (u"tʰiɪˀ55", True),
-            (u"diɪˀ12", True),
-            (u"noŋ53", True),
-            (u"diɪˀ1", False),
-            (u"diɪˀ23", False), # YangQu
-            (u"diɪˀ55", True),  # YinRu
-            (u"di55", False),   # YinRu
+            ("tʰi53", True),
+            ("tʰi34", True),
+            ("di23", True),
+            ("tʰiɪˀ55", True),
+            ("diɪˀ12", True),
+            ("noŋ53", True),
+            ("diɪˀ1", False),
+            ("diɪˀ23", False), # YangQu
+            ("diɪˀ55", True),  # YinRu
+            ("di55", False),   # YinRu
             ]),
         ({'toneMarkType': 'chaoDigits', 'constrainToneCategories': True}, [
-            (u"tʰi53", True),
-            (u"tʰi34", True),
-            (u"di23", True),
-            (u"tʰiɪˀ55", True),
-            (u"diɪˀ12", True),
-            (u"noŋ53", False),  # Voiced + YinPing
-            (u"diɪˀ1", False),
-            (u"diɪˀ23", True),  # Voiced + YangQu
-            (u"diɪˀ55", False), # Voiced + YinRu
-            (u"di55", False),   # Voiced + YinRu
+            ("tʰi53", True),
+            ("tʰi34", True),
+            ("di23", True),
+            ("tʰiɪˀ55", True),
+            ("diɪˀ12", True),
+            ("noŋ53", False),  # Voiced + YinPing
+            ("diɪˀ1", False),
+            ("diɪˀ23", True),  # Voiced + YangQu
+            ("diɪˀ55", False), # Voiced + YinRu
+            ("di55", False),   # Voiced + YinRu
             ]),
         ({'toneMarkType': 'chaoDigits', 'constrainEntering': True,
             'constrainToneCategories': True}, [
-            (u"tʰi53", True),
-            (u"tʰi34", True),
-            (u"di23", True),
-            (u"tʰiɪˀ55", True),
-            (u"diɪˀ12", True),
-            (u"noŋ53", False),  # Voiced + YinPing
-            (u"diɪˀ1", False),
-            (u"diɪˀ23", False), # Voiced + YangQu
-            (u"diɪˀ55", False), # Voiced + YinRu
-            (u"di55", False),   # Voiced + YinRu
+            ("tʰi53", True),
+            ("tʰi34", True),
+            ("di23", True),
+            ("tʰiɪˀ55", True),
+            ("diɪˀ12", True),
+            ("noŋ53", False),  # Voiced + YinPing
+            ("diɪˀ1", False),
+            ("diɪˀ23", False), # Voiced + YangQu
+            ("diɪˀ55", False), # Voiced + YinRu
+            ("di55", False),   # Voiced + YinRu
             ]),
     ]
 
     GUESS_DIALECT_REFERENCES = [
-        (u"zã˥˧", {'toneMarkType': 'ipaToneBar'}),
-        (u"zã53", {'toneMarkType': 'chaoDigits'}),
-        (u"ɦɑ⁵³.ʦɤ", {'toneMarkType': 'superscriptChaoDigits'}),
+        ("zã˥˧", {'toneMarkType': 'ipaToneBar'}),
+        ("zã53", {'toneMarkType': 'chaoDigits'}),
+        ("ɦɑ⁵³.ʦɤ", {'toneMarkType': 'superscriptChaoDigits'}),
         ]

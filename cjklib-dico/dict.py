@@ -39,8 +39,8 @@ class DicoModule:
         try:
             self._dictInst = getDictionary(self._dictionaryName,
 		entryFactory=entry.UnifiedHeadword())
-        except ValueError, e:
-            if debug: print >> sys.stderr, e
+        except ValueError as e:
+            if debug: print(e, file=sys.stderr)
             return False
 
 	if self._dictInst.READING:
@@ -88,14 +88,14 @@ class DicoModule:
 
     def match_word (self, strat, word):
         """Look up a word in the database."""
-        print >> sys.stderr, "MATCH", strat, word
+        print("MATCH", strat, word, file=sys.stderr)
         return "DEBUG"
         return False
 
     def output (self, rh, n):
         """Output Nth result from the result set."""
         if rh[0] == 'define' :
-            print rh[1]
+            print(rh[1])
             return True
         else:
             return False
