@@ -33,7 +33,8 @@ import csv
 
 from sqlalchemy.types import String, Text
 
-#{ Configuration and file access
+
+# { Configuration and file access
 
 def locateProjectFile(relPath, projectName='cjklib'):
     """
@@ -49,13 +50,14 @@ def locateProjectFile(relPath, projectName='cjklib'):
     """
     try:
         from pkg_resources import (Requirement, resource_filename,
-            DistributionNotFound)
+                                   DistributionNotFound)
     except ImportError:
         return
     try:
         return resource_filename(Requirement.parse(projectName), relPath)
     except (DistributionNotFound, ValueError):
         pass
+
 
 def getConfigSettings(section, projectName='cjklib'):
     """
@@ -69,55 +71,53 @@ def getConfigSettings(section, projectName='cjklib'):
     :rtype: dict
     :return: configuration settings for the given project
     """
-    # don't convert to lowercase
-    h = configparser.SafeConfigParser.optionxform
-    try:
-        configparser.SafeConfigParser.optionxform = lambda self, x: x
-        config = configparser.SafeConfigParser()
-        homeDir = os.path.expanduser('~')
+    config = configparser.ConfigParser()
+    # Preserve case sensitivity for options
+    config.optionxform = str
+    homeDir = os.path.expanduser('~')
 
-        configFiles = []
-        # Library directory
-        libdir = locateProjectFile(projectName, projectName)
-        if not libdir:
-            if projectName != 'cjklib':
-                import warnings
-                warnings.warn("Cannot locate packaged files for project '%s'"
-                    % projectName)
-            # fall back to the directory of this file, only works for cjklib
-            libdir = os.path.dirname(os.path.abspath(__file__))
-        configFiles.append(os.path.join(libdir, '%s.conf' % projectName))
+    configFiles = []
+    # Library directory
+    libdir = locateProjectFile(projectName, projectName)
+    if not libdir:
+        if projectName != 'cjklib':
+            import warnings
+            warnings.warn("Cannot locate packaged files for project '%s'"
+                          % projectName)
+        # fall back to the directory of this file, only works for cjklib
+        libdir = os.path.dirname(os.path.abspath(__file__))
+    configFiles.append(os.path.join(libdir, '%s.conf' % projectName))
 
-        # Windows
-        if 'APPDATA' in os.environ:
-            configFiles += [
-                os.path.join(os.environ["APPDATA"], projectName,
-                    '%s.conf' % projectName),
-                ]
-        # OSX
-        if platform.system() == 'Darwin':
-            configFiles += [
-                os.path.join("/Library", "Application Support", projectName,
-                    '%s.conf' % projectName),
-                os.path.join(homeDir, "Library", "Application Support",
-                    projectName, '%s.conf' % projectName),
-                ]
-        # Unix
+    # Windows
+    if 'APPDATA' in os.environ:
         configFiles += [
-            os.path.join('/', 'etc', '%s.conf' % projectName),
-            os.path.join(homeDir, '.%s.conf' % projectName),
-            os.path.join(homeDir, '%s.conf' % projectName),
-            ]
+            os.path.join(os.environ["APPDATA"], projectName,
+                         '%s.conf' % projectName),
+        ]
+    # OSX
+    if platform.system() == 'Darwin':
+        configFiles += [
+            os.path.join("/Library", "Application Support", projectName,
+                         '%s.conf' % projectName),
+            os.path.join(homeDir, "Library", "Application Support",
+                         projectName, '%s.conf' % projectName),
+        ]
+    # Unix
+    configFiles += [
+        os.path.join('/', 'etc', '%s.conf' % projectName),
+        os.path.join(homeDir, '.%s.conf' % projectName),
+        os.path.join(homeDir, '%s.conf' % projectName),
+    ]
 
-        config.read(configFiles)
+    config.read(configFiles)
 
+    try:
         configuration = dict(config.items(section))
     except configparser.NoSectionError:
         configuration = {}
 
-    configparser.SafeConfigParser.optionxform = h
-
     return configuration
+
 
 def getSearchPaths(projectName='cjklib'):
     """
@@ -132,7 +132,7 @@ def getSearchPaths(projectName='cjklib'):
         # personal directory
         os.path.join(os.path.expanduser('~'), '.%s' % projectName),
         os.path.join(os.path.expanduser('~'), '%s' % projectName),
-        ]
+    ]
 
     # Unix
     searchPath += [
@@ -141,23 +141,23 @@ def getSearchPaths(projectName='cjklib'):
         # for Maemo
         "/media/mmc1/%s/" % projectName,
         "/media/mmc2/%s/" % projectName,
-        ]
+    ]
 
     # Windows
     if 'APPDATA' in os.environ:
         searchPath += [os.path.join(os.environ['APPDATA'], projectName),
-            r"C:\Python24\share\%s" % projectName,
-            r"C:\Python25\share\%s" % projectName,
-            r"C:\Python26\share\%s" % projectName,
-            ]
+                       r"C:\Python24\share\%s" % projectName,
+                       r"C:\Python25\share\%s" % projectName,
+                       r"C:\Python26\share\%s" % projectName,
+                       ]
 
     # OSX
     if platform.system() == 'Darwin':
         searchPath += [
             os.path.join(os.path.expanduser('~'), "Library",
-                "Application Support", projectName),
+                         "Application Support", projectName),
             os.path.join("/Library", "Application Support", projectName),
-            ]
+        ]
 
     # Respect environment variable, e.g. CJKLIB_DB_PATH
     env = "%s_DB_PATH" % projectName.upper()
@@ -171,13 +171,14 @@ def getSearchPaths(projectName='cjklib'):
         if projectName != 'cjklib':
             import warnings
             warnings.warn("Cannot locate packaged files for project '%s'"
-                % projectName)
+                          % projectName)
         # fall back to the directory of this file, only works for cjklib
         libdir = os.path.dirname(os.path.abspath(__file__))
 
     searchPath.append(libdir)
 
     return searchPath
+
 
 def getDataPath():
     """
@@ -195,7 +196,8 @@ def getDataPath():
 
     return dataDir
 
-#{ Unicode support enhancement
+
+# { Unicode support enhancement
 
 # define our own titlecase methods, as the Python implementation is currently
 #   buggy (http://bugs.python.org/issue6412), see also
@@ -205,6 +207,8 @@ _FIRST_NON_CASE_IGNORABLE = re.compile(r"(?u)([.˳｡￮₀ₒ]?\W*)(\w)(.*)$")
 Regular expression matching the first alphabetic character. Include GR neutral
 tone forms.
 """
+
+
 def titlecase(strng):
     """
     Returns the string (without "word borders") in titlecase.
@@ -233,6 +237,7 @@ def titlecase(strng):
         tonal, firstChar, rest = matchObj.groups()
         return tonal + firstChar.upper() + rest
 
+
 def istitlecase(strng):
     """
     Checks if the given string is in titlecase.
@@ -245,11 +250,13 @@ def istitlecase(strng):
     """
     return titlecase(strng) == strng
 
+
 def get_encode(_str, encoding='utf-8'):
     if sys.version_info[0] < 3:
         return _str.encode(encoding)
     else:
         return _str
+
 
 def replace_encode(_str, encoding='utf-8'):
     if sys.version_info[0] < 3:
@@ -257,17 +264,20 @@ def replace_encode(_str, encoding='utf-8'):
     else:
         return _str
 
+
 def bytes_decode(_bytes, encoding='utf-8'):
     if sys.version_info[0] < 3:
         return _bytes
     else:
         return _bytes.decode(encoding)
 
+
 def get_unicode(_unicode, encoding='utf-8'):
     if sys.version_info[0] < 3:
         return str(_unicode, encoding)
     else:
         return _unicode
+
 
 if sys.maxunicode < 0x10000:
     def fromCodepoint(codepoint):
@@ -288,6 +298,7 @@ if sys.maxunicode < 0x10000:
         else:
             return chr(codepoint)
 
+
     def toCodepoint(char):
         """
         Returns the Unicode codepoint for this character similar to ``ord``.
@@ -305,6 +316,7 @@ if sys.maxunicode < 0x10000:
         else:
             return ord(char)
 
+
     def isValidSurrogate(string):
         """
         Returns ``True`` if the given string is a single surrogate pair.
@@ -312,7 +324,8 @@ if sys.maxunicode < 0x10000:
         Always returns ``False`` for wide builds.
         """
         return (len(string) == 2 and '\ud800' < string[0] < '\udbff'
-            and '\udc00' < string[1] < '\udfff')
+                and '\udc00' < string[1] < '\udfff')
+
 
     def getCharacterList(string):
         """
@@ -322,8 +335,8 @@ if sys.maxunicode < 0x10000:
         charList = []
         i = 0
         while i < len(string):
-            if isValidSurrogate(string[i:i+2]):
-                charList.append(string[i:i+2])
+            if isValidSurrogate(string[i:i + 2]):
+                charList.append(string[i:i + 2])
                 i += 2
             else:
                 charList.append(string[i])
@@ -345,6 +358,7 @@ else:
         """
         return chr(codepoint)
 
+
     def toCodepoint(char):
         """
         Returns the Unicode codepoint for this character similar to ``ord``.
@@ -356,6 +370,7 @@ else:
         """
         return ord(char)
 
+
     def isValidSurrogate(string):
         """
         Returns ``True`` if the given string is a single surrogate pair.
@@ -364,6 +379,7 @@ else:
         """
         return False
 
+
     def getCharacterList(string):
         """
         Split a string of characters into a list of single characters.
@@ -371,7 +387,8 @@ else:
         """
         return list(string)
 
-#{ Helper methods
+
+# { Helper methods
 
 def cross(*args):
     """
@@ -383,11 +400,13 @@ def cross(*args):
     """
     ans = [[]]
     for arg in args:
-        ans = [x+[y] for x in ans for y in arg]
+        ans = [x + [y] for x in ans for y in arg]
     return ans
+
 
 def crossDict(*args):
     """Builds a cross product of the given dicts."""
+
     def joinDict(a, b):
         a = a.copy()
         a.update(y)
@@ -398,13 +417,16 @@ def crossDict(*args):
         ans = [joinDict(x, y) for x in ans for y in arg]
     return ans
 
-#{ Helper classes
+
+# { Helper classes
 
 class CharacterRangeIterator(object):
     """Iterates over a given set of codepoint ranges given in hex."""
+
     def __init__(self, ranges):
         self.ranges = ranges[:]
         self._curRange = self._popRange()
+
     def _popRange(self):
         if self.ranges:
             charRange = self.ranges[0]
@@ -416,8 +438,10 @@ class CharacterRangeIterator(object):
             return (int(rangeFrom, 16), int(rangeTo, 16))
         else:
             return []
+
     def __iter__(self):
         return self
+
     def __next__(self):
         if not self._curRange:
             raise StopIteration
@@ -429,10 +453,12 @@ class CharacterRangeIterator(object):
             self._curRange = self._popRange()
         return fromCodepoint(curIndex)
 
-#{ Library extensions
+
+# { Library extensions
 
 class UnicodeCSVFileIterator(object):
     """Provides a CSV file iterator supporting Unicode."""
+
     class DefaultDialect(csv.Dialect):
         """Defines a default dialect for the case sniffing fails."""
         quoting = csv.QUOTE_NONE
@@ -466,7 +492,7 @@ class UnicodeCSVFileIterator(object):
         class ByteStringDialect(csv.Dialect):
             def __init__(self, dialect):
                 for attr in ["delimiter", "quotechar", "escapechar",
-                    "lineterminator"]:
+                             "lineterminator"]:
                     old = getattr(dialect, attr)
                     if old is not None:
                         setattr(self, attr, str(old))
@@ -491,6 +517,7 @@ class UnicodeCSVFileIterator(object):
         :rtype: instance
         :return: CSV reader object returning one entry per line
         """
+
         def prependLineGenerator(line, data):
             """
             The first line red for guessing format has to be reinserted.
@@ -518,7 +545,7 @@ class UnicodeCSVFileIterator(object):
             UnicodeCSVFileIterator.utf_8_encoder(content),
             dialect=UnicodeCSVFileIterator.byte_string_dialect(
                 self.fileDialect))
-        #return csv.reader(content, dialect=self.fileDialect) # TODO
+        # return csv.reader(content, dialect=self.fileDialect) # TODO
 
 
 class ExtendedOption(Option):
@@ -535,6 +562,7 @@ class ExtendedOption(Option):
     # taken from ConfigParser.RawConfigParser
     _boolean_states = {'1': True, 'yes': True, 'true': True, 'on': True,
                        '0': False, 'no': False, 'false': False, 'off': False}
+
     def check_bool(option, opt, value):
         if value.lower() in ExtendedOption._boolean_states:
             return ExtendedOption._boolean_states[value.lower()]
@@ -555,11 +583,11 @@ class ExtendedOption(Option):
 
     ACTIONS = Option.ACTIONS + ("extendResetDefault", "appendResetDefault")
     STORE_ACTIONS = Option.STORE_ACTIONS + ("extendResetDefault",
-        "appendResetDefault")
+                                            "appendResetDefault")
     TYPED_ACTIONS = Option.TYPED_ACTIONS + ("extendResetDefault",
-        "appendResetDefault")
+                                            "appendResetDefault")
     ALWAYS_TYPED_ACTIONS = Option.ALWAYS_TYPED_ACTIONS + ("extendResetDefault",
-        "appendResetDefault")
+                                                          "appendResetDefault")
 
     def take_action(self, action, dest, opt, value, values, parser):
         if action == "extendResetDefault":
@@ -580,7 +608,8 @@ class ExtendedOption(Option):
             Option.take_action(
                 self, action, dest, opt, value, values, parser)
 
-#{ SQLAlchemy column types
+
+# { SQLAlchemy column types
 
 class _CollationMixin(object):
     def __init__(self, collation=None, **kwargs):
@@ -605,6 +634,7 @@ class _CollationMixin(object):
     def get_search_list(self):
         return tuple()
 
+
 class CollationString(_CollationMixin, String):
     def __init__(self, length=None, collation=None, **kwargs):
         """
@@ -614,7 +644,7 @@ class CollationString(_CollationMixin, String):
           value.
         """
         String.__init__(self, length, kwargs.get('convert_unicode', False),
-            kwargs.get('assert_unicode', None))
+                        kwargs.get('assert_unicode', None))
         _CollationMixin.__init__(self, collation, **kwargs)
 
     def get_col_spec(self):
@@ -633,7 +663,7 @@ class CollationText(_CollationMixin, Text):
           value.
         """
         Text.__init__(self, length, kwargs.get('convert_unicode', False),
-            kwargs.get('assert_unicode', None))
+                      kwargs.get('assert_unicode', None))
         _CollationMixin.__init__(self, collation, **kwargs)
 
     def get_col_spec(self):
@@ -642,33 +672,43 @@ class CollationText(_CollationMixin, Text):
         else:
             return self._extend("TEXT")
 
-#{ Decorators
+
+# { Decorators
 
 def cachedproperty(fget):
     """
     Decorates a property to memoize its value.
     """
+
     def fget_wrapper(self):
         name = '_%s_cached' % fget.__name__
-        try: return getattr(self, name)
+        try:
+            return getattr(self, name)
         except AttributeError:
             value = fget(self)
             setattr(self, name, value)
             return value
+
     def fdel(self):
         name = '_%s_cached' % fget.__name__
-        try: delattr(self, name)
-        except AttributeError: pass
+        try:
+            delattr(self, name)
+        except AttributeError:
+            pass
+
     return property(fget_wrapper, fdel=fdel, doc=fget.__doc__)
 
 
 if sys.version_info >= (2, 5):
     import functools
+
+
     class cachedmethod(object):
         """
         Decorate a method to memoize its return value. Only applicable for
         methods without arguments.
         """
+
         def __init__(self, fget):
             self.fget = fget
             self.__doc__ = fget.__doc__
@@ -679,10 +719,12 @@ if sys.version_info >= (2, 5):
             def oneshot(*args, **kwargs):
                 @functools.wraps(self.fget)
                 def memo(*a, **k): return result
+
                 result = self.fget(*args, **kwargs)
                 # save to instance __dict__
                 args[0].__dict__[self.__name__] = memo
                 return result
+
             return oneshot.__get__(obj, cls)
 else:
     class cachedmethod(object):
@@ -690,6 +732,7 @@ else:
         Decorate a method to memoize its return value. Only applicable for
         methods without arguments.
         """
+
         def __init__(self, fget, doc=None):
             self.fget = fget
             self.__doc__ = doc or fget.__doc__
@@ -704,29 +747,15 @@ else:
                 # save to instance __dict__
                 args[0].__dict__[self.__name__] = memo
                 return result
+
             oneshot.__name__ = self.__name__
             oneshot.__doc__ = self.__doc__
             return oneshot.__get__(obj, cls)
-
 
 if sys.version_info >= (2, 5):
     import warnings
     import functools
 
-    def deprecated(func):
-        """
-        Decorator which can be used to mark functions
-        as deprecated. It will result in a warning being emitted
-        when the function is used.
-        """
-        @functools.wraps(func)
-        def new_func(*args, **kwargs):
-            warnings.warn("Call to deprecated function %s." % func.__name__,
-                category=DeprecationWarning, stacklevel=2)
-            return func(*args, **kwargs)
-        return new_func
-else:
-    import warnings
 
     def deprecated(func):
         """
@@ -734,20 +763,41 @@ else:
         as deprecated. It will result in a warning being emitted
         when the function is used.
         """
+
+        @functools.wraps(func)
         def new_func(*args, **kwargs):
             warnings.warn("Call to deprecated function %s." % func.__name__,
-                category=DeprecationWarning, stacklevel=2)
+                          category=DeprecationWarning, stacklevel=2)
             return func(*args, **kwargs)
+
+        return new_func
+else:
+    import warnings
+
+
+    def deprecated(func):
+        """
+        Decorator which can be used to mark functions
+        as deprecated. It will result in a warning being emitted
+        when the function is used.
+        """
+
+        def new_func(*args, **kwargs):
+            warnings.warn("Call to deprecated function %s." % func.__name__,
+                          category=DeprecationWarning, stacklevel=2)
+            return func(*args, **kwargs)
+
         new_func.__name__ = func.__name__
         new_func.__doc__ = func.__doc__
         new_func.__dict__.update(func.__dict__)
         return new_func
 
-#{ Collection classes
+# { Collection classes
 
 if sys.version_info >= (2, 5):
     class LazyDict(dict):
         """A dict that will load entries on-demand."""
+
         def __init__(self, creator, *args):
             dict.__init__(self, *args)
             self.creator = creator
@@ -758,6 +808,7 @@ if sys.version_info >= (2, 5):
 else:
     class LazyDict(dict):
         """A dict that will load entries on-demand."""
+
         def __init__(self, creator):
             dict.__init__(self, *args)
             self.creator = creator
@@ -771,6 +822,7 @@ else:
 
 if sys.version_info >= (2, 6):
     from typing import MutableMapping
+
 
     class OrderedDict(dict, MutableMapping):
 
@@ -841,12 +893,13 @@ if sys.version_info >= (2, 6):
 else:
     from UserDict import DictMixin
 
+
     class OrderedDict(dict, DictMixin):
 
         def __init__(self, *args, **kwds):
             if len(args) > 1:
                 raise TypeError('expected at most 1 arguments, got %d'
-                    % len(args))
+                                % len(args))
             try:
                 self.__end
             except AttributeError:
@@ -855,8 +908,8 @@ else:
 
         def clear(self):
             self.__end = end = []
-            end += [None, end, end]      # sentinel node for doubly linked list
-            self.__map = {}              # key --> [key, prev, next]
+            end += [None, end, end]  # sentinel node for doubly linked list
+            self.__map = {}  # key --> [key, prev, next]
             dict.clear(self)
 
         def __setitem__(self, key, value):
@@ -935,10 +988,9 @@ else:
 
         def __eq__(self, other):
             if isinstance(other, OrderedDict):
-                return len(self)==len(other) and \
-                    all(p==q for p, q in  zip(list(self.items()), list(other.items())))
+                return len(self) == len(other) and \
+                    all(p == q for p, q in zip(list(self.items()), list(other.items())))
             return dict.__eq__(self, other)
 
         def __ne__(self, other):
             return not self == other
-
