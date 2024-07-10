@@ -183,13 +183,19 @@ class DownloaderBase(object):
         """
         link = self.getDownloadLink()
 
-        if not self.quiet: warn("Sending HEAD request to %s..." % link,
-            endline=False)
-        response = urllib.request.urlopen(link)
-        lastModified = response.info().getheader('Last-Modified')
-        if not self.quiet: warn("Done")
+        if not self.quiet:
+            warn("Sending HEAD request to %s..." % link, endline=False)
+
+        request = urllib.request.Request(link, method='HEAD')
+        response = urllib.request.urlopen(request)
+        lastModified = response.info().get('Last-Modified')
+
+        if not self.quiet:
+            warn("Done")
+
         if lastModified:
             return datetime.strptime(lastModified, '%a, %d %b %Y %H:%M:%S %Z')
+
 
     def download(self, **options):
         """
@@ -246,7 +252,8 @@ class DownloaderBase(object):
 class EDICTDownloader(DownloaderBase):
     """Downloader for the EDICT dictionary."""
     PROVIDES = 'EDICT'
-    DOWNLOAD_LINK = 'http://ftp.monash.edu.au/pub/nihongo/edict.gz'
+    DOWNLOAD_LINK = 'http://ftp.edrdg.org/pub/Nihongo/edict.gz'
+
 
     def getDownloadLink(self):
         return self.DOWNLOAD_LINK
