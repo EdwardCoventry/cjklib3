@@ -303,7 +303,7 @@ class CEDICTDownloader(PageDownloaderBase):
     """Downloader for the CEDICT dictionary."""
     PROVIDES = 'CEDICT'
     DEFAULT_DOWNLOAD_PAGE \
-        = 'http://www.mdbg.net/chindict/chindict.php?page=cc-cedict'
+        = 'https://www.mdbg.net/chinese/dictionary?page=cc-cedict'
     DOWNLOAD_REGEX = re.compile(
         '<a href="(export/cedict/cedict_1_0_ts_utf-8_mdbg.txt.gz)">')
     DATE_REGEX = re.compile('Latest release: <strong>([^<]+)</strong>')
