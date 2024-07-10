@@ -412,14 +412,8 @@ class DatabaseConnector(object):
         :rtype: str
         :return: schema name of database including table
         """
-        def hasTable(tableName, schema):
-            identifier_preparer = self.engine.dialect.identifier_preparer
-            qschema = identifier_preparer.quote_identifier(schema)
-            tableNames = self.selectScalars(
-                text("SELECT name FROM %s.sqlite_master"  % qschema))
-            return tableName in tableNames
 
-        if hasTable(tableName, schema=self._mainSchema):
+        if self.engine.has_table(tableName, schema=self._mainSchema):
             return self._mainSchema
         else:
             for schema in list(self.attached.values()):
