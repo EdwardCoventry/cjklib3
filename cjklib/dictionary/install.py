@@ -246,7 +246,8 @@ class DownloaderBase(object):
 class EDICTDownloader(DownloaderBase):
     """Downloader for the EDICT dictionary."""
     PROVIDES = 'EDICT'
-    DOWNLOAD_LINK = 'http://ftp.monash.edu.au/pub/nihongo/edict.gz'
+    DOWNLOAD_LINK = 'http://ftp.edrdg.org/pub/Nihongo/edict.gz'
+
 
     def getDownloadLink(self):
         return self.DOWNLOAD_LINK
