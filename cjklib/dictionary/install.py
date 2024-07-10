@@ -183,13 +183,19 @@ class DownloaderBase(object):
         """
         link = self.getDownloadLink()
 
-        if not self.quiet: warn("Sending HEAD request to %s..." % link,
-            endline=False)
-        response = urllib.request.urlopen(link)
-        lastModified = response.info().getheader('Last-Modified')
-        if not self.quiet: warn("Done")
+        if not self.quiet:
+            warn("Sending HEAD request to %s..." % link, endline=False)
+
+        request = urllib.request.Request(link, method='HEAD')
+        response = urllib.request.urlopen(request)
+        lastModified = response.info().get('Last-Modified')
+
+        if not self.quiet:
+            warn("Done")
+
         if lastModified:
             return datetime.strptime(lastModified, '%a, %d %b %Y %H:%M:%S %Z')
+
 
     def download(self, **options):
         """
