@@ -39,8 +39,7 @@ from sqlalchemy.types import String, Text
 def locateProjectFile(relPath, projectName='cjklib'):
     """
     Locates a project file relative to the project's directory. Returns ``None``
-    if module ``pkg_resources`` is not installed or package information is not
-    available.
+    if package metadata is not available.
 
     :type relPath: str
     :param relPath: path relative to project directory
@@ -49,13 +48,27 @@ def locateProjectFile(relPath, projectName='cjklib'):
         config file
     """
     try:
-        from pkg_resources import (Requirement, resource_filename,
-                                   DistributionNotFound)
+        from importlib import metadata as importlib_metadata
     except ImportError:
-        return
+        try:
+            import importlib_metadata
+        except ImportError:
+            return
+
     try:
-        return resource_filename(Requirement.parse(projectName), relPath)
-    except (DistributionNotFound, ValueError):
+        dist = importlib_metadata.distribution(projectName)
+    except importlib_metadata.PackageNotFoundError:
+        return
+    except ValueError:
+        return
+
+    try:
+        projectPath = str(dist.locate_file(relPath))
+    except (OSError, ValueError):
+        return
+    if os.path.exists(projectPath):
+        return projectPath
+    else:
         pass
 
 
