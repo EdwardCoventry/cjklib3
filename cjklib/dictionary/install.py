@@ -324,7 +324,7 @@ class HanDeDictDownloader(PageDownloaderBase):
         = 'http://handedict.zydeo.net/en/download'
     DOWNLOAD_REGEX = re.compile(
         '<a href="(api/export/download)">')
-    DATE_REGEX = re.compile('<a href="handedict/handedict-(\d+).tar.bz2">')
+    DATE_REGEX = re.compile(r'<a href="handedict/handedict-(\d+).tar.bz2">')
     DATE_FMT = '%Y%m%d'
 
 
@@ -364,7 +364,7 @@ class DictionaryInstaller(object):
                 path = os.path.join(os.environ['APPDATA'], projectName)
             else:
                 major, minor = sys.version_info[0:2]
-                path = "C:\Python%d%d\share\%s" % (major, minor, projectName)
+                path = r"C:\Python%d%d\share\%s" % (major, minor, projectName)
 
         elif sys.platform == 'darwin':
             if local:

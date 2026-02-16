@@ -60,9 +60,9 @@ class ReadingConverterTest(NeedsDatabaseTest):
     def shortDescription(self):
         methodName = getattr(self, self.id().split('.')[-1])
         # get whole doc string and remove superfluous white spaces
-        noWhitespaceDoc = re.sub('\s+', ' ', methodName.__doc__.strip())
+        noWhitespaceDoc = re.sub(r'\s+', ' ', methodName.__doc__.strip())
         # remove markup for epytext format
-        clearName = re.sub('[CLI]\{([^\}]*)}', r'\1', noWhitespaceDoc)
+        clearName = re.sub(r'[CLI]\{([^\}]*)}', r'\1', noWhitespaceDoc)
         # add information about conversion direction
         return clearName + ' (for %s to %s)' % self.CONVERSION_DIRECTION
 

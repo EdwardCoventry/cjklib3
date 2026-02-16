@@ -53,7 +53,7 @@ class ReadingFactory(object):
           copies from ReadingFactory objects for internal instances.
           Sharing saves memory but changing one object
           will affect all other objects using this instance.
-        * Impl: General reading options given for a converter with \*\*options
+        * Impl: General reading options given for a converter with \\*\\*options
           need to be used on creating a operator. How to raise errors to save
           user of specifying an operator twice, one per options, one per
           concrete instance (similar to sourceOptions and targetOptions)?

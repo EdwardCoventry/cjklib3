@@ -3789,7 +3789,7 @@ class SimpleWenlinFormatBuilder(EntryGeneratorBuilder):
                 elif re.match(r'^\s*$', line):
                     continue
 
-                pair = re.split('\s+', line.strip(), 1)
+                pair = re.split(r'\s+', line.strip(), 1)
                 if len(pair) != 2:
                     if not self.quiet:
                         warn("Error reading line: '%s'" % line.strip())
@@ -3843,7 +3843,7 @@ class SimpleWenlinFormatBuilder(EntryGeneratorBuilder):
                 warn("No characters defined for entry '%s'" % repr(entry))
             return entry
 
-        matchObj = re.match('^(.+)\s*\[(.+)\]\s*$', entry['characters'])
+        matchObj = re.match(r'^(.+)\s*\[(.+)\]\s*$', entry['characters'])
         if not matchObj:
             simplified = tranditional = entry['characters']
         else:

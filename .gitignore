@@ -13,3 +13,4 @@ cjklib.db-journal
 cedict_1_0_ts_utf-8_mdbg.txt.gz
 *.py.bak
 *.whl
+temp/

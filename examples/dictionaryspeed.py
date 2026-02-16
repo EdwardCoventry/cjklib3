@@ -66,8 +66,8 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
-import imp
 import sys
+import types
 from timeit import Timer
 from optparse import OptionParser, OptionGroup, Values
 
@@ -124,7 +124,7 @@ def runTests(tests, databases, registerUnicode, iteration=10):
             else:
                 requestList = [(request, {}) for request in SEARCH_REQUESTS]
 
-            mod = imp.new_module('timeit_runmod')
+            mod = types.ModuleType('timeit_runmod')
             mod.runRequest = runRequest
             mod.dictInstance = dictInstance
             mod.requestList = requestList

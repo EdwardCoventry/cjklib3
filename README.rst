@@ -32,6 +32,11 @@ Alternatively for MySQL as backend:
 .. _pysqlite2: http://code.google.com/p/pysqlite/downloads/list
 .. _MySQL-Python: http://sourceforge.net/projects/mysql-python/
 
+Packaging notes
+===============
+- ``setup.py`` now relies on installed ``setuptools`` directly (no ``ez_setup.py`` bootstrap).
+- Prefer ``python -m pip install .`` for local source installs.
+
 Porting to Python 3
 ===================
 

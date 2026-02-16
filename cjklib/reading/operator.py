@@ -850,7 +850,7 @@ class TonalIPAOperator(TonalFixedEntityOperator):
                 % repr(self.missingToneMark))
 
         # split regex
-        self._splitRegex = re.compile('([\.\s]+)')
+        self._splitRegex = re.compile(r'([.\s]+)')
 
     @classmethod
     def getDefaultOptions(cls):
@@ -2017,8 +2017,8 @@ class WadeGilesOperator(TonalRomanisationOperator):
     Provides an operator for the Mandarin *Wade-Giles* romanisation.
 
     .. todo::
-        * Lang: Asterisk (\*) marking the entering tone (入聲): e.g. *chio²\**
-          and *chüeh²\** for 覺 used by Giles (A Chinese-English Dictionary,
+        * Lang: Asterisk (\\*) marking the entering tone (入聲): e.g. *chio²\\**
+          and *chüeh²\\** for 覺 used by Giles (A Chinese-English Dictionary,
           second edition, 1912).
     """
     READING_NAME = 'WadeGiles'
@@ -2542,7 +2542,7 @@ class WadeGilesOperator(TonalRomanisationOperator):
         an ambiguous case.
 
         Examples:
-        While form *\*erh* can be clearly traced to *êrh*, form *kuei* has
+        While form *\\*erh* can be clearly traced to *êrh*, form *kuei* has
         no equivalent part with diacritcs. The former is a case of a ``'lost'``
         vowel, the second of a ``'strict'`` form. Syllable *ch’u* though is an
         ``'ambiguous'`` case as both *ch’u* and *ch’ü* are valid.
@@ -2807,7 +2807,7 @@ class GROperator(TonalRomanisationOperator):
 
         self._readingEntityRegex = re.compile("( |" \
             + re.escape(self.grSyllableSeparatorApostrophe) \
-            + "|[\.%s]?(?:" % self.optionalNeutralToneMarker \
+            + "|[.%s]?(?:" % self.optionalNeutralToneMarker \
             + re.escape(self.grRhotacisedFinalApostrophe) + "|[A-Za-z])+)")
 
     @classmethod

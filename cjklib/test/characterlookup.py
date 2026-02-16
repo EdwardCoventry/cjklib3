@@ -44,9 +44,9 @@ class CharacterLookupTest(NeedsDatabaseTest):
     def shortDescription(self):
         methodName = getattr(self, self.id().split('.')[-1])
         # get whole doc string and remove superfluous white spaces
-        noWhitespaceDoc = re.sub('\s+', ' ', methodName.__doc__.strip())
+        noWhitespaceDoc = re.sub(r'\s+', ' ', methodName.__doc__.strip())
         # remove markup for epytext format
-        return re.sub('[CLI]\{([^\}]*)}', r'\1', noWhitespaceDoc)
+        return re.sub(r'[CLI]\{([^\}]*)}', r'\1', noWhitespaceDoc)
 
 
 class CharacterLookupMetaTest(CharacterLookupTest, unittest.TestCase):
@@ -306,9 +306,9 @@ class CharacterLookupReferenceTest(CharacterLookupTest):
     def shortDescription(self):
         methodName = getattr(self, self.id().split('.')[-1])
         # get whole doc string and remove superfluous white spaces
-        noWhitespaceDoc = re.sub('\s+', ' ', methodName.__doc__.strip())
+        noWhitespaceDoc = re.sub(r'\s+', ' ', methodName.__doc__.strip())
         # remove markup for epytext format
-        clearName = re.sub('[CL]\{([^\}]*)}', r'\1', noWhitespaceDoc)
+        clearName = re.sub(r'[CL]\{([^\}]*)}', r'\1', noWhitespaceDoc)
         # add name of reading
         return clearName + ' (for %s)' % self.METHOD_NAME
 

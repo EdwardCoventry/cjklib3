@@ -1,14 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from ez_setup import use_setuptools
-use_setuptools()
 from setuptools import setup
 import re
 import cjklib
 
 VERSION = str(cjklib.__version__)
-(AUTHOR, EMAIL) = re.match('^(.*?)\s*<(.*)>$', cjklib.__author__).groups()
+(AUTHOR, EMAIL) = re.match(r'^(.*?)\s*<(.*)>$', cjklib.__author__).groups()
 URL = cjklib.__url__
 LICENSE = cjklib.__license__
 

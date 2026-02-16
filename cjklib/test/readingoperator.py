@@ -54,9 +54,9 @@ class ReadingOperatorTest(NeedsDatabaseTest):
     def shortDescription(self):
         methodName = getattr(self, self.id().split('.')[-1])
         # get whole doc string and remove superfluous white spaces
-        noWhitespaceDoc = re.sub('\s+', ' ', methodName.__doc__.strip())
+        noWhitespaceDoc = re.sub(r'\s+', ' ', methodName.__doc__.strip())
         # remove markup for epytext format
-        clearName = re.sub('[CLI]\{([^\}]*)}', r'\1', noWhitespaceDoc)
+        clearName = re.sub(r'[CLI]\{([^\}]*)}', r'\1', noWhitespaceDoc)
         # add name of reading
         return clearName + ' (for %s)' % self.READING_NAME
 
@@ -2414,7 +2414,7 @@ u:nr            iuel    yuel    euel    iuell           hiuel   iuel
             if line.strip() == "":
                 continue
             matchObj = re.match(r"((?:\w|:)+)\s+((?:\w|')+|-)\s+" \
-                + "((?:\w|')+|-)\s+((?:\w|')+|-)\s+((?:\w|')+|-)", line)
+                + r"((?:\w|')+|-)\s+((?:\w|')+|-)\s+((?:\w|')+|-)", line)
             assert(matchObj is not None)
             pinyinSyllable, gr1, gr2, gr3, gr4 = matchObj.groups()
 
@@ -2425,8 +2425,8 @@ u:nr            iuel    yuel    euel    iuell           hiuel   iuel
         self.grJunctionFinalMNLRMapping = {}
         for line in self.FINAL_MAPPING.split("\n"):
             matchObj = re.match(r"((?:\w|\:)+)\s+((?:\w|')+|-)\s+" \
-                + "((?:\w|')+|-)\s+((?:\w|')+|-)\s+((?:\w|')+|-)" \
-                + "\s+((?:\w|')+|-)\s+((?:\w|')+|-)", line)
+                + r"((?:\w|')+|-)\s+((?:\w|')+|-)\s+((?:\w|')+|-)" \
+                + r"\s+((?:\w|')+|-)\s+((?:\w|')+|-)", line)
             if not matchObj:
                 continue
 
