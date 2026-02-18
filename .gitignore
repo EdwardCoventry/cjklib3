@@ -14,3 +14,6 @@ cedict_1_0_ts_utf-8_mdbg.txt.gz
 *.py.bak
 *.whl
 temp/
+__pycache__/
+.pytest_cache/
+.mypy_cache/

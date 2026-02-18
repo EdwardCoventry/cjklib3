@@ -23,7 +23,6 @@ Unit tests for :mod:`cjklib.build.builder`.
 #  testcase attributes and methods are only available in concrete classes
 
 import unittest
-import types
 import re
 import os.path
 
@@ -289,6 +288,9 @@ for builderClass in DatabaseBuilder.getTableBuilderClasses(
     resolveConflicts=False):
     testClassName = '%sTest' % builderClass.__name__
     if testClassName not in globals():
-        globals()[testClassName] = types.ClassType(testClassName,
-            (TableBuilderTest, unittest.TestCase), {'BUILDER': builderClass})
+        globals()[testClassName] = type(
+            testClassName,
+            (TableBuilderTest, unittest.TestCase),
+            {'BUILDER': builderClass},
+        )
     del testClassName

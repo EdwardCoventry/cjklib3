@@ -422,7 +422,7 @@ def crossDict(*args):
 
     def joinDict(a, b):
         a = a.copy()
-        a.update(y)
+        a.update(b)
         return a
 
     ans = [{}]

@@ -26,7 +26,7 @@ import logging
 import glob
 import operator
 
-from sqlalchemy import MetaData, Table, engine_from_config
+from sqlalchemy import MetaData, Table, engine_from_config, inspect as sqlalchemy_inspect
 from sqlalchemy.sql import text
 from sqlalchemy.engine.url import make_url
 
@@ -200,7 +200,7 @@ class DatabaseConnector(object):
         """SQLAlchemy engine object"""
         self.connection = self.engine.connect()
         """SQLAlchemy database connection object"""
-        self.metadata = MetaData(bind=self.connection)
+        self.metadata = MetaData()
         """SQLAlchemy metadata object"""
 
         # multi-database table access
@@ -240,7 +240,7 @@ class DatabaseConnector(object):
             if '://' in name:
                 # database url
                 attachable.append(name)
-            elif os.path.isabs(name):
+            elif os.path.isabs(name) or name.startswith('/'):
                 # path
                 if not os.path.exists(name):
                     continue
@@ -378,10 +378,12 @@ class DatabaseConnector(object):
         :rtype: iterable
         :return: all tables and views
         """
+        inspector = sqlalchemy_inspect(self.engine)
+
         tables = set(self._getViews())
-        tables.update(self.engine.table_names(schema=self._mainSchema))
+        tables.update(inspector.get_table_names(schema=self._mainSchema))
         for schema in list(self.attached.values()):
-            tables.update(self.engine.table_names(schema=schema))
+            tables.update(inspector.get_table_names(schema=schema))
 
         return tables
 
@@ -393,12 +395,15 @@ class DatabaseConnector(object):
         def getTable(tableName):
             schema = self._findTable(tableName)
             if schema is not None:
-                return Table(tableName, self.metadata, autoload=True,
+                return Table(tableName, self.metadata,
                     autoload_with=self.engine, schema=schema)
 
             raise KeyError("Table '%s' not found in any database" % tableName)
 
         return getTable
+
+    def _has_table(self, tableName, schema):
+        return sqlalchemy_inspect(self.engine).has_table(tableName, schema=schema)
 
     def _findTable(self, tableName):
         """
@@ -413,11 +418,11 @@ class DatabaseConnector(object):
         :return: schema name of database including table
         """
 
-        if self.engine.has_table(tableName, schema=self._mainSchema):
+        if self._has_table(tableName, schema=self._mainSchema):
             return self._mainSchema
         else:
             for schema in list(self.attached.values()):
-                if hasTable(tableName, schema=schema):
+                if self._has_table(tableName, schema=schema):
                     return schema
         return None
 
@@ -446,7 +451,7 @@ class DatabaseConnector(object):
         :rtype: bool
         :return: ``True`` if table is found, ``False`` otherwise
         """
-        return self.engine.has_table(tableName, schema=self._mainSchema)
+        return self._has_table(tableName, schema=self._mainSchema)
 
     #}
     #{ Select commands

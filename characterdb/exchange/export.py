@@ -53,7 +53,7 @@ def decompositionEntryPreparator(entryList):
     character, glyphIndex = entryDict['glyph'].split('/', 1)
 
     decomp = entryDict.get('decomposition', '').strip('"')
-    decompositionEntries = re.findall('([^ ,]+); (\d+)', decomp)
+    decompositionEntries = re.findall(r'([^ ,]+); (\d+)', decomp)
 
     entries = []
     for decomposition, index in decompositionEntries:

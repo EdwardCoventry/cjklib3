@@ -28,26 +28,26 @@ debug = 1
 class DicoModule:
 
     def __init__ (self, *argv):
-	if argv:
-	    self._dictionaryName = argv[0]
+        if argv:
+            self._dictionaryName = argv[0]
 
     def open (self, dbname):
         """Open the database."""
         self.dbname = dbname
         if not hasattr(self, '_dictionaryName'):
-	    self._dictionaryName = dbname
+            self._dictionaryName = dbname
         try:
             self._dictInst = getDictionary(self._dictionaryName,
-		entryFactory=entry.UnifiedHeadword())
+                entryFactory=entry.UnifiedHeadword())
         except ValueError as e:
             if debug: print(e, file=sys.stderr)
             return False
 
-	if self._dictInst.READING:
-	    f = ReadingFactory()
-	    opClass = f.getReadingOperatorClass(self._dictInst.READING)
-	    if hasattr(opClass, 'guessReadingDialect'):
-		self._opClass = opClass
+        if self._dictInst.READING:
+            f = ReadingFactory()
+            opClass = f.getReadingOperatorClass(self._dictInst.READING)
+            if hasattr(opClass, 'guessReadingDialect'):
+                self._opClass = opClass
 
         return True
 
@@ -75,15 +75,15 @@ class DicoModule:
             entry = "%s, %s, %s" % (e.Headword, e.Reading, e.Translation)
             results.append(entry.encode('utf8'))
 
-	options = {}
-	if hasattr(self, '_opClass'):
-	    options = self._opClass.guessReadingDialect(word.decode('utf8'))
-	entries = self._dictInst.getForReading(word.decode('utf8'), **options)
+        options = {}
+        if hasattr(self, '_opClass'):
+            options = self._opClass.guessReadingDialect(word.decode('utf8'))
+        entries = self._dictInst.getForReading(word.decode('utf8'), **options)
         for e in entries:
             entry = "%s, %s, %s" % (e.Headword, e.Reading, e.Translation)
             results.append(entry.encode('utf8'))
-	if len(results) > 1:
-	    return results
+        if len(results) > 1:
+            return results
         return False
 
     def match_word (self, strat, word):
@@ -119,3 +119,4 @@ class DicoModule:
     def free_result (self, rh):
         """Free any resources used by the result set."""
         pass
+
