@@ -21,7 +21,7 @@ Chinese character based functions.
 __all__ = ["CharacterLookup"]
 
 import math
-from sqlalchemy import select, union
+from sqlalchemy import select as _sqlalchemy_select, union
 from sqlalchemy.sql import and_, or_
 
 from cjklib import reading
@@ -29,6 +29,27 @@ from cjklib import exception
 from cjklib import dbconnector
 from cjklib import util
 import warnings
+
+
+def select(*entities, **kwargs):
+    """Accept the SQLAlchemy 1.x select() call shape used by cjklib."""
+    from_obj = kwargs.pop('from_obj', None)
+    if kwargs:
+        return _sqlalchemy_select(*entities, **kwargs)
+
+    whereclause = ()
+    if entities and isinstance(entities[0], list):
+        columns = tuple(entities[0])
+        whereclause = entities[1:]
+    else:
+        columns = entities
+
+    statement = _sqlalchemy_select(*columns)
+    for selectable in from_obj or ():
+        statement = statement.select_from(selectable)
+    if whereclause:
+        statement = statement.where(*whereclause)
+    return statement
 
 class CharacterLookup(object):
     """
